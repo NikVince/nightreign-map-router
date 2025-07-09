@@ -1,53 +1,45 @@
-import Link from "next/link";
+'use client';
 
-import { LatestPost } from "~/app/_components/post";
-import { api, HydrateClient } from "~/trpc/server";
+import { useState, useEffect } from "react";
+import { Header } from "./_components/Header";
+import { Sidebar } from "./_components/Sidebar";
+import { MainPanel } from "./_components/MainPanel";
 
-export default async function Home() {
-  const hello = await api.post.hello({ text: "from tRPC" });
+export default function Home() {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [isDesktop, setIsDesktop] = useState(false);
 
-  void api.post.getLatest.prefetch();
+  useEffect(() => {
+    // Set isDesktop based on window width
+    const checkDesktop = () => setIsDesktop(window.innerWidth >= 640);
+    checkDesktop();
+    window.addEventListener('resize', checkDesktop);
+    return () => window.removeEventListener('resize', checkDesktop);
+  }, []);
+
+  // Sidebar is open if desktop or manually opened on mobile
+  const showSidebar = isDesktop || sidebarOpen;
 
   return (
-    <HydrateClient>
-      <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c] text-white">
-        <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16">
-          <h1 className="text-5xl font-extrabold tracking-tight sm:text-[5rem]">
-            Create <span className="text-[hsl(280,100%,70%)]">T3</span> App
-          </h1>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-8">
-            <Link
-              className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 hover:bg-white/20"
-              href="https://create.t3.gg/en/usage/first-steps"
-              target="_blank"
-            >
-              <h3 className="text-2xl font-bold">First Steps →</h3>
-              <div className="text-lg">
-                Just the basics - Everything you need to know to set up your
-                database and authentication.
-              </div>
-            </Link>
-            <Link
-              className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 hover:bg-white/20"
-              href="https://create.t3.gg/en/introduction"
-              target="_blank"
-            >
-              <h3 className="text-2xl font-bold">Documentation →</h3>
-              <div className="text-lg">
-                Learn more about Create T3 App, the libraries it uses, and how
-                to deploy it.
-              </div>
-            </Link>
-          </div>
-          <div className="flex flex-col items-center gap-2">
-            <p className="text-2xl text-white">
-              {hello ? hello.greeting : "Loading tRPC query..."}
-            </p>
-          </div>
-
-          <LatestPost />
+    <div className="min-h-screen bg-[var(--elden-background)] text-[var(--elden-text)] flex flex-col">
+      <Header onOpenObjectives={() => setSidebarOpen(true)} />
+      <div className="flex-1 w-full max-w-screen-2xl mx-auto px-0 sm:px-4 flex flex-col sm:flex-row gap-0 sm:gap-4 relative">
+        <Sidebar
+          isOpen={showSidebar}
+          onClose={() => setSidebarOpen(false)}
+        />
+        {/* Overlay for mobile when sidebar is open */}
+        {sidebarOpen && !isDesktop && (
+          <div
+            className="fixed inset-0 bg-black/40 z-30 sm:hidden"
+            onClick={() => setSidebarOpen(false)}
+            aria-label="Close overlay"
+          />
+        )}
+        <div className="flex-1 flex flex-col">
+          <MainPanel />
         </div>
-      </main>
-    </HydrateClient>
+      </div>
+    </div>
   );
 }
