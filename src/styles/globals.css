@@ -1,6 +1,41 @@
 @import "tailwindcss";
 
-@theme {
-  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif,
-    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+:root {
+  --elden-primary: #ed8a09;
+  --elden-background: #040200;
+  --elden-text: #f5f3e0;
+  --elden-border: #27170d;
+  --elden-accent: #f9c043;
+  --elden-panel-bg: rgba(20, 20, 20, 0.9);
+  --elden-panel-border: #8B4513;
+  --elden-panel-radius: 3px;
+  --elden-panel-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
+  --elden-panel-text: #F5F5DC;
+  --elden-panel-text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+  --elden-title-font: 'Mantinia', 'Garamond Premier Pro', 'Adobe Garamond', serif;
+  --elden-ui-font: 'Agmena Pro', 'Adobe Garamond', 'Cormorant Garamond', serif;
+}
+
+.elden-panel {
+  background: var(--elden-panel-bg);
+  border: 2px solid var(--elden-panel-border);
+  border-radius: var(--elden-panel-radius);
+  box-shadow: var(--elden-panel-shadow);
+  color: var(--elden-panel-text);
+  text-shadow: var(--elden-panel-text-shadow);
+}
+
+.elden-button {
+  background: var(--elden-panel-bg);
+  border: 2px solid var(--elden-panel-border);
+  border-radius: var(--elden-panel-radius);
+  color: var(--elden-panel-text);
+  padding: 12px 24px;
+  transition: all 0.3s ease;
+}
+
+.elden-button:hover {
+  background: rgba(40, 40, 40, 0.95);
+  border-color: #CD853F;
+  box-shadow: 0 0 8px rgba(205, 133, 63, 0.3);
 }
