@@ -52,3 +52,10 @@
 - README updates for new features
 - Asset extraction procedure documentation
 - Decision rationale for major architectural choices
+
+## Mobile-First & Responsive Design
+
+- All UI components must be designed mobile-first, ensuring full functionality and usability on small screens before scaling up to desktop.
+- Sidebar/objectives checklist should be accessible via a header button on mobile, overlaying the map when open and hidden otherwise.
+- Layouts should use responsive CSS (Tailwind, Flexbox, Grid) and avoid fixed pixel values where possible.
+- Test all features on both mobile and desktop resolutions before merging.

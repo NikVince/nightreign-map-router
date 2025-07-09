@@ -9,13 +9,15 @@
 - Project setup with T3 app stack
 - Core type definitions for game data
 - Database schema design (Supabase/PostgreSQL)
-- Basic UI framework implementation
+- Basic UI framework implementation (mobile-first, responsive)
+- Sidebar/objectives checklist toggleable via header button on mobile
 
 ### Deliverables
 - Configured development environment
 - TypeScript interfaces for game mechanics
 - Prisma schema with initial migrations (Supabase/PostgreSQL)
-- Responsive layout components
+- Responsive, mobile-first layout components (Header, Sidebar, Main)
+- Sidebar/objectives checklist accessible via header button on mobile
 
 ## Phase 2: Map Rendering Engine (Week 2)
 **Goal**: Interactive map display with coordinate system
