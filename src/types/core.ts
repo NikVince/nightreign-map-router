@@ -65,7 +65,7 @@ export interface RouteCalculation {
   route: string[]; // Ordered list of landmark IDs to visit
   totalDistance: number; // Total travel distance (game units)
   estimatedTime: number; // Estimated time to complete route (seconds or minutes)
-  priorities: { [landmarkId: string]: number }; // Priority score per landmark
+  priorities: Record<string, number>; // Priority score per landmark
   notes?: string; // Optional strategy notes
 }
 
