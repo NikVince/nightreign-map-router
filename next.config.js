@@ -4,7 +4,19 @@
  */
 import "./src/env.js";
 
-/** @type {import("next").NextConfig} */
-const config = {};
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  // ...other config options...
+  webpack: (config, { isServer }) => {
+    if (isServer) {
+      config.plugins.push(
+        new (require('webpack')).IgnorePlugin({
+          resourceRegExp: /^konva$|^react-konva$/,
+        })
+      );
+    }
+    return config;
+  },
+};
 
-export default config;
+module.exports = nextConfig;
