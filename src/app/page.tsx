@@ -24,21 +24,24 @@ export default function Home() {
   return (
     <div className="h-screen w-screen overflow-hidden bg-[var(--elden-background)] text-[var(--elden-text)] flex flex-col">
       <Header onOpenObjectives={() => setSidebarOpen(true)} />
-      <div className="flex-1 flex flex-row gap-x-4 pb-0">
-        {/* Sidebar: 25% width on desktop, hidden on mobile unless open */}
-        <div className="h-full w-1/4 min-w-[220px] max-w-[400px] flex flex-col">
-          <Sidebar isOpen={showSidebar} onClose={() => setSidebarOpen(false)} />
-        </div>
-        {/* Overlay for mobile when sidebar is open */}
-        {sidebarOpen && !isDesktop && (
-          <div
-            className="fixed inset-0 bg-black/40 z-30 sm:hidden"
-            onClick={() => setSidebarOpen(false)}
-            aria-label="Close overlay"
-          />
+      <div className="flex-1 flex flex-col sm:flex-row gap-x-4 pb-0">
+        {/* Sidebar: overlay on mobile, sidebar on desktop */}
+        {isDesktop ? (
+          <div className="h-full w-1/4 min-w-[220px] max-w-[400px] flex flex-col">
+            <Sidebar isOpen={showSidebar} onClose={() => setSidebarOpen(false)} />
+          </div>
+        ) : (
+          sidebarOpen && (
+            <div className="fixed inset-0 z-50 flex">
+              <div className="h-full w-[85vw] max-w-none flex flex-col">
+                <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+              </div>
+              <div className="flex-1 h-full bg-black/40" onClick={() => setSidebarOpen(false)} aria-label="Close overlay" />
+            </div>
+          )
         )}
-        {/* MainPanel: 75% width on desktop, 100% on mobile */}
-        <div className="h-full flex-1 flex flex-col">
+        {/* MainPanel: 100% width on mobile, 75% on desktop */}
+        <div className="h-full flex-1 flex flex-col w-full sm:w-3/4">
           <MainPanel />
         </div>
       </div>
