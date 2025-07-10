@@ -1,14 +1,35 @@
 "use client";
-import React from 'react';
-import { Stage, Layer } from 'react-konva';
+import React, { useRef, useEffect, useState } from "react";
+import { Stage, Layer } from "react-konva";
 
 const MapCanvas: React.FC = () => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [dimensions, setDimensions] = useState({ width: 300, height: 300 });
+
+  useEffect(() => {
+    function updateSize() {
+      if (containerRef.current) {
+        setDimensions({
+          width: containerRef.current.offsetWidth,
+          height: containerRef.current.offsetHeight,
+        });
+      }
+    }
+    updateSize();
+    window.addEventListener("resize", updateSize);
+    return () => window.removeEventListener("resize", updateSize);
+  }, []);
+
   return (
-    <Stage width={800} height={600} style={{ border: '1px solid #ccc' }}>
-      <Layer>
-        {/* Map and landmarks will be rendered here */}
-      </Layer>
-    </Stage>
+    <div ref={containerRef} className="w-full h-full">
+      <Stage
+        width={dimensions.width}
+        height={dimensions.height}
+        style={{}}
+      >
+        <Layer>{/* Map and landmarks will be rendered here */}</Layer>
+      </Stage>
+    </div>
   );
 };
 
