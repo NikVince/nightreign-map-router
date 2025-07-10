@@ -11,6 +11,14 @@
 
 ---
 
+## Project Status: Work in Progress 🚧
+
+> **This project is in early development and is being made public to showcase the development process, receive feedback, and invite collaboration.**
+>
+> The web interface and features are under active construction. Expect frequent changes, incomplete features, and evolving documentation. If you are interested in the project, feel free to watch, star, or contribute!
+
+---
+
 > **Nightreign Router** is an interactive map and route planning tool for Elden Ring: Nightreign, designed to help players optimize their strategies across all 320 unique map patterns. This project is a fan-made, educational initiative and is **not affiliated with, endorsed by, or sponsored by FromSoftware or Bandai Namco**. All game content and assets are © FromSoftware and Bandai Namco. This project is and will always remain non-commercial.
 
 ## Features
@@ -25,6 +33,8 @@ This project uses **Supabase** as the managed PostgreSQL database solution. All 
 
 If you are migrating from another database (e.g., Planetscale, MySQL), please update your `.env` file with the Supabase PostgreSQL connection string. See the [Supabase docs](https://supabase.com/docs/guides/database) for more details.
 
+> **Note:** A `.env.example` file will be added soon to help contributors set up their environment. Please do not commit real secrets or credentials.
+
 ## Documentation
 Comprehensive documentation is available in the [`/docs`](./docs) directory:
 - **[PROJECT_OVERVIEW.md](./docs/PROJECT_OVERVIEW.md)**: Project vision and goals
@@ -35,6 +45,10 @@ Comprehensive documentation is available in the [`/docs`](./docs) directory:
 - **[DEVELOPMENT_CHECKLIST.md](./docs/DEVELOPMENT_CHECKLIST.md)**: Progress tracking
 - **[TECH_STACK.md](./docs/TECH_STACK.md)**: Technology stack details
 - **[docs_structure.md](./docs/docs_structure.md)**: Documentation hub
+
+## Contributing
+
+Contributions, feedback, and suggestions are welcome! If you notice issues, have ideas, or want to help, please open an issue or pull request. See [`/docs/DEVELOPMENT_GUIDELINES.md`](./docs/DEVELOPMENT_GUIDELINES.md) for more information on contributing.
 
 ## Legal Disclaimer
 This is a **fan project** created for educational and non-commercial purposes only. Nightreign Router is **not affiliated with, endorsed by, or sponsored by FromSoftware or Bandai Namco**. All referenced game content, names, and assets are © FromSoftware and Bandai Namco. No assets or code from this project may be used for commercial purposes.
