@@ -1,9 +1,10 @@
-'use client';
-
+"use client";
 import { useState, useEffect } from "react";
 import { Header } from "./_components/Header";
 import { Sidebar } from "./_components/Sidebar";
-import { MainPanel } from "./_components/MainPanel";
+import dynamic from "next/dynamic";
+
+const MainPanel = dynamic(() => import("./_components/MainPanel").then(mod => mod.MainPanel), { ssr: false });
 
 export default function Home() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
