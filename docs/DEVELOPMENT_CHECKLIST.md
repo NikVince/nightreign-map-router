@@ -31,8 +31,11 @@
 
 ## Phase 2: Map Rendering Engine
 ### Canvas Implementation
-- [ ] Set up react-konva for rendering
-  - [ ] Create map canvas component using Stage and Layer
+- [x] Set up react-konva for rendering
+  - [x] Create map canvas component using Stage and Layer
+  - [x] Responsive layout: objectives pane overlays on mobile, 25/75 split on desktop, map canvas 100% width on mobile
+  - [x] Make the Konva canvas dynamically resize to fill the orange border exactly, with no padding or gaps
+  - [x] Remove the white border from the canvas so only the orange border is visible
 - [ ] Implement zoom controls (mouse wheel)
 - [ ] Implement pan controls (drag to move map)
 - [ ] Maintain state for scale and position
