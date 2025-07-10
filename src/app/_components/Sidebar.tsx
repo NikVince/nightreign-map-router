@@ -8,7 +8,7 @@ export type SidebarProps = {
 export function Sidebar({ isOpen, onClose }: SidebarProps) {
   if (!isOpen) return null;
   return (
-    <aside className="elden-panel flex flex-col w-72 min-h-0 p-6 mr-4 fixed inset-y-0 left-0 z-40 sm:static sm:mr-4 sm:w-72 bg-[var(--elden-background)]" style={{ fontFamily: "var(--elden-ui-font)" }}>
+    <aside className="elden-panel flex flex-col h-full flex-1 p-6 bg-[var(--elden-background)]" style={{ fontFamily: "var(--elden-ui-font)" }}>
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-xl" style={{ color: "var(--elden-accent)" }}>Objectives</h2>
         {onClose && (
