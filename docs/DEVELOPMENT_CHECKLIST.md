@@ -32,20 +32,31 @@
 ## Phase 2: Map Rendering Engine
 ### Canvas Implementation
 - [ ] Set up react-konva for rendering
-- [ ] Implement zoom controls
-- [ ] Implement pan controls
-- [ ] Create coordinate system mapping
+  - [ ] Create map canvas component using Stage and Layer
+- [ ] Implement zoom controls (mouse wheel)
+- [ ] Implement pan controls (drag to move map)
+- [ ] Maintain state for scale and position
+- [ ] Create coordinate system mapping (game → screen)
+- [ ] Ensure accurate placement of landmarks and circles
 - [ ] Add mouse/touch interaction handling
+  - [ ] Implement click/tap handlers for selecting landmarks
+  - [ ] Add hover/cursor feedback for interactive elements
 
 ### Mock Data Integration
 - [ ] Create sample pattern data (5-10 patterns)
+- [ ] Integrate mock MapPattern and Landmark data
+- [ ] Render landmarks as icons on the map using mock data
+
+### Landmark Rendering & Interaction
 - [ ] Implement landmark rendering with placeholder icons
-- [ ] Add basic landmark tooltips
-- [ ] Add landmark selection functionality
-- [ ] Test performance with multiple landmarks
+- [ ] Add tooltips or popovers on hover/click with landmark info
+- [ ] Add landmark selection functionality (highlight, show details)
+- [ ] Show selected landmark details in sidebar or modal
+- [ ] Test performance with multiple landmarks (populate map with more mock data)
+- [ ] Check for smooth interaction and rendering
 
 ### Pattern Display Logic
-- [ ] Build seed-to-pattern conversion algorithm
+- [ ] Build seed-to-pattern conversion algorithm (optional/advanced)
 - [ ] Create pattern selection UI
 - [ ] Implement pattern switching with transitions
 - [ ] Add pattern comparison view
