@@ -18,10 +18,10 @@
 
 ### Database Schema Design (Supabase/PostgreSQL)
 - [x] Design Prisma schema for patterns *(boilerplate only)*
-- [ ] Design Prisma schema for landmarks
-- [ ] Design Prisma schema for routes
+- [x] Design Prisma schema for landmarks
+- [x] Design Prisma schema for routes
 - [x] Set up database migrations (target: Supabase/PostgreSQL) *(boilerplate only)*
-- [ ] Create seed data structure
+- [x] Create seed data structure *(lightweight seeding implemented)*
 
 ### Basic UI Framework
 - [x] Create layout components (Header, Sidebar, Main) *(rudimentary UI with header, objectives area, and map canvas placeholder implemented)*
@@ -128,9 +128,7 @@
 - [ ] Document API endpoints and data structures
 
 ## Current Status
-**Active Phase**: Phase 1 - Foundation & Architecture  
+**Active Phase**: Phase 2 - Map Rendering Engine  
 **Last Updated**: 2024-06-09  
-**Next Milestone**: Begin core type definitions and database schema design  
+**Next Milestone**: Begin map rendering engine implementation (canvas, mock data, interaction)  
 **Blockers**: None
-
-**Note:** Supabase connection and Vercel deployment are complete. Only boilerplate implementation exists so far; no core features or custom schema beyond initial setup.
