@@ -10,10 +10,11 @@
 - [x] Create project structure with asset directories
 
 ### Core Type Definitions
-- [ ] Define MapPattern interface
-- [ ] Define Landmark interface
-- [ ] Define Nightlord enum/type
-- [ ] Define RouteCalculation interface
+- [x] Define MapPattern interface
+- [x] Define Landmark interface
+- [x] Define Nightlord enum/type
+- [x] Define RouteCalculation interface
+- [x] Implement comprehensive, categorized boss lists and types (Nightlords, Night Bosses, Field Bosses, Evergaol Bosses, Event/Special Bosses, Remembrance Bosses)
 
 ### Database Schema Design (Supabase/PostgreSQL)
 - [x] Design Prisma schema for patterns *(boilerplate only)*
