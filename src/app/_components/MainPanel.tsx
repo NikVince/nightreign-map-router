@@ -1,6 +1,8 @@
 "use client";
 import React from "react";
-import MapCanvas from "./MapCanvas";
+import dynamic from "next/dynamic";
+
+const MapCanvas = dynamic(() => import("./MapCanvas"), { ssr: false });
 
 export function MainPanel() {
   return (
