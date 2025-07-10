@@ -1,4 +1,5 @@
-import { Boss, BossCategory } from "../types/core";
+import type { Boss } from "../types/core";
+import { BossCategory } from "../types/core";
 
 export const NIGHTLORD_BOSSES: Boss[] = [
   { id: "gladius", name: "Gladius, Beast of Night", category: BossCategory.Nightlord },
