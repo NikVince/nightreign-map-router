@@ -22,13 +22,13 @@ export default function Home() {
   const showSidebar = isDesktop || sidebarOpen;
 
   return (
-    <div className="min-h-screen bg-[var(--elden-background)] text-[var(--elden-text)] flex flex-col">
+    <div className="h-screen w-screen overflow-hidden bg-[var(--elden-background)] text-[var(--elden-text)] flex flex-col">
       <Header onOpenObjectives={() => setSidebarOpen(true)} />
-      <div className="flex-1 w-full max-w-screen-2xl mx-auto px-0 sm:px-4 flex flex-col sm:flex-row gap-0 sm:gap-4 relative">
-        <Sidebar
-          isOpen={showSidebar}
-          onClose={() => setSidebarOpen(false)}
-        />
+      <div className="flex-1 flex flex-row gap-x-4 pb-0">
+        {/* Sidebar: 25% width on desktop, hidden on mobile unless open */}
+        <div className="h-full w-1/4 min-w-[220px] max-w-[400px] flex flex-col">
+          <Sidebar isOpen={showSidebar} onClose={() => setSidebarOpen(false)} />
+        </div>
         {/* Overlay for mobile when sidebar is open */}
         {sidebarOpen && !isDesktop && (
           <div
@@ -37,7 +37,8 @@ export default function Home() {
             aria-label="Close overlay"
           />
         )}
-        <div className="flex-1 flex flex-col">
+        {/* MainPanel: 75% width on desktop, 100% on mobile */}
+        <div className="h-full flex-1 flex flex-col">
           <MainPanel />
         </div>
       </div>
