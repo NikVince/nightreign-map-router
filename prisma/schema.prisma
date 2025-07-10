@@ -19,3 +19,183 @@ model Post {
 
     @@index([name])
 }
+
+enum LandmarkType {
+  Church
+  GreatChurch
+  Castle
+  Fort
+  Tunnel
+  MainEncampment
+  Ruins
+  SorcerersRise
+  OldSorcerersRise
+  Township
+  Evergaol
+  SiteOfGrace
+  SpectralHawkTree
+  Spiritstream
+  Scarab
+  TunnelEntrance
+  FieldBoss
+}
+
+enum Nightlord {
+  Gladius
+  Maris
+  Gnoster
+  Libra
+  Fulghor
+  Caligo
+  Adel
+  Heolstor
+}
+
+enum BossCategory {
+  Nightlord
+  Evergaol
+  Field
+  Night
+  Event
+  Remembrance
+  Other
+}
+
+enum NightfarerClassType {
+  Wylder
+  Guardian
+  Ironeye
+  Raider
+  Recluse
+  Executor
+  Duchess
+  Revenant
+}
+
+enum ShiftingEarthEventType {
+  Crater
+  Mountaintop
+  RottedWoods
+  Noklateo
+}
+
+enum DamageType {
+  Standard
+  Strike
+  Slash
+  Pierce
+  Fire
+  Lightning
+  Magic
+  Holy
+}
+
+enum StatusEffect {
+  BloodLoss
+  Frostbite
+  Poison
+  ScarletRot
+  Sleep
+  Madness
+  DeathBlight
+}
+
+model Landmark {
+  id        String      @id @default(uuid())
+  type      LandmarkType
+  name      String?
+  x         Float
+  y         Float
+  icon      String?
+  priority  Int?
+  contents  String[]
+  notes     String?
+  // Relations
+  routeLandmarks RouteLandmark[]
+  bosses      Boss[]
+  patternLandmarks MapPatternLandmark[]
+}
+
+model Route {
+  id            String      @id @default(uuid())
+  patternId     String
+  nightlord     Nightlord
+  totalDistance Float
+  estimatedTime Float
+  priorities    Json
+  notes         String?
+  // Relations
+  routeLandmarks RouteLandmark[]
+}
+
+model RouteLandmark {
+  id         String   @id @default(uuid())
+  route      Route    @relation(fields: [routeId], references: [id])
+  routeId    String
+  landmark   Landmark @relation(fields: [landmarkId], references: [id])
+  landmarkId String
+  order      Int      // Order in the route
+
+  @@unique([routeId, order])
+  @@index([landmarkId])
+}
+
+model Boss {
+  id          String        @id @default(uuid())
+  name        String
+  category    BossCategory
+  description String?
+  expedition  String?
+  phases      Int?
+  weaknesses  DamageType[]
+  statusWeaknesses StatusEffect[]
+  notes       String?
+  // Relations
+  landmark    Landmark?    @relation(fields: [landmarkId], references: [id])
+  landmarkId  String?
+}
+
+model NightfarerClass {
+  id           NightfarerClassType @id
+  archetype    String
+  difficulty   String
+  relicSlots   String[]
+  startingGear String[]
+  abilities    Json
+  notes        String?
+}
+
+model ShiftingEarthEvent {
+  id                   ShiftingEarthEventType @id
+  name                 String
+  location             String
+  theme                String
+  environmentalChanges String
+  bosses               String[] // Boss IDs or names
+  uniqueReward         String
+  notes                String?
+}
+
+model MapPattern {
+  id                String   @id @default(uuid())
+  nightlord         Nightlord
+  patternIndex      Int
+  seed              Int
+  shiftingEarthEvents ShiftingEarthEventType[]
+  circleSequence    Json // Array of { x, y, radius }
+  // Relations
+  patternLandmarks  MapPatternLandmark[]
+}
+
+model MapPatternLandmark {
+  id           String   @id @default(uuid())
+  mapPattern   MapPattern @relation(fields: [mapPatternId], references: [id])
+  mapPatternId String
+  landmark     Landmark  @relation(fields: [landmarkId], references: [id])
+  landmarkId   String
+  // Optionally, add order or pattern-specific data here
+  order        Int?
+
+  @@unique([mapPatternId, landmarkId])
+  @@index([landmarkId])
+}

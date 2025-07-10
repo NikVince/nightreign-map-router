@@ -24,7 +24,7 @@
 - [ ] Create seed data structure
 
 ### Basic UI Framework
-- [ ] Create layout components (Header, Sidebar, Main)
+- [x] Create layout components (Header, Sidebar, Main) *(rudimentary UI with header, objectives area, and map canvas placeholder implemented)*
 - [ ] Implement responsive grid system
 - [ ] Add dark/light theme support
 - [ ] Set up loading states and error boundaries
