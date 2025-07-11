@@ -2,6 +2,7 @@
 import React, { useRef, useEffect, useState } from "react";
 import { Stage, Layer } from "react-konva";
 import { Image as KonvaImage } from "react-konva";
+import type { Stage as KonvaStageType } from "konva/lib/Stage";
 import type { KonvaEventObject } from "konva/lib/Node";
 
 function getTileGridUrls() {
@@ -23,7 +24,7 @@ function getTileGridUrls() {
 
 const MapCanvas: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const stageRef = useRef<any>(null);
+  const stageRef = useRef<KonvaStageType>(null);
   const [dimensions, setDimensions] = useState({ width: 300, height: 300 });
   const [images, setImages] = useState<(HTMLImageElement | null)[][]>([]);
   const [tileSize, setTileSize] = useState<{ width: number; height: number }>({ width: 0, height: 0 });
@@ -114,17 +115,21 @@ const MapCanvas: React.FC = () => {
 
   // Touch pan logic
   const handleTouchStart = (e: KonvaEventObject<TouchEvent>) => {
-    if (e.evt?.touches?.length === 1 && e.evt.touches[0]) {
-      setIsDragging(true);
-      setLastPointerPos({ x: e.evt.touches[0].clientX, y: e.evt.touches[0].clientY });
-    }
+    const touch = e.evt?.touches?.[0];
+    setIsDragging(!!touch);
+    // eslint-disable-next-line @typescript-eslint/prefer-optional-chain
+    setLastPointerPos({ x: touch?.clientX ?? 0, y: touch?.clientY ?? 0 });
   };
   const handleTouchMove = (e: KonvaEventObject<TouchEvent>) => {
-    if (!isDragging || !lastPointerPos || e.evt?.touches?.length !== 1 || !e.evt.touches[0]) return;
-    const dx = e.evt.touches[0].clientX - lastPointerPos.x;
-    const dy = e.evt.touches[0].clientY - lastPointerPos.y;
-    setStagePos(pos => ({ x: pos.x + dx, y: pos.y + dy }));
-    setLastPointerPos({ x: e.evt.touches[0].clientX, y: e.evt.touches[0].clientY });
+    const touch = e.evt?.touches?.[0];
+    if (!isDragging || !touch) return;
+    const lastX = lastPointerPos?.x ?? 0;
+    const lastY = lastPointerPos?.y ?? 0;
+    const dx = (e.evt?.touches?.[0]?.clientX ?? 0) - lastX;
+    const dy = (e.evt?.touches?.[0]?.clientY ?? 0) - lastY;
+    setStagePos(pos => ({ x: pos.x + (dx ?? 0), y: pos.y + (dy ?? 0) }));
+    // eslint-disable-next-line @typescript-eslint/prefer-optional-chain
+    setLastPointerPos({ x: e.evt?.touches?.[0]?.clientX ?? 0, y: e.evt?.touches?.[0]?.clientY ?? 0 });
   };
   const handleTouchEnd = (_e: KonvaEventObject<TouchEvent>) => {
     setIsDragging(false);
@@ -136,8 +141,7 @@ const MapCanvas: React.FC = () => {
     e.evt.preventDefault();
     const scaleBy = 1.1;
     const oldScale = stageScale;
-    if (!stageRef.current || typeof stageRef.current.getPointerPosition !== 'function') return;
-    const pointer = stageRef.current.getPointerPosition();
+    const pointer = stageRef.current?.getPointerPosition?.();
     if (!pointer) return;
     const mousePointTo = {
       x: (pointer.x - stagePos.x) / oldScale,
@@ -164,29 +168,29 @@ const MapCanvas: React.FC = () => {
   // (Simple version: only supports two-finger pinch, not rotation)
   const lastDistRef = useRef<number | null>(null);
   const handleTouchPinch = (e: KonvaEventObject<TouchEvent>) => {
-    if (e.evt?.touches?.length === 2) {
-      const [touch1, touch2] = e.evt.touches;
-      if (!touch1 || !touch2) return;
-      const dist = Math.sqrt(
-        Math.pow(touch1.clientX - touch2.clientX, 2) +
-        Math.pow(touch1.clientY - touch2.clientY, 2)
-      );
-      if (lastDistRef.current !== null) {
-        const scaleBy = 1.02;
-        let newScale = stageScale;
-        if (dist > lastDistRef.current) {
-          newScale = stageScale * scaleBy;
-        } else if (dist < lastDistRef.current) {
-          newScale = stageScale / scaleBy;
-        }
-        newScale = Math.max(0.2, Math.min(4, newScale));
-        setStageScale(newScale);
+    const [touch1, touch2] = e.evt?.touches ?? [];
+    if (!touch1 || !touch2) return;
+    const dist = Math.sqrt(
+      Math.pow((touch1?.clientX ?? 0) - (touch2?.clientX ?? 0), 2) +
+      Math.pow((touch1?.clientY ?? 0) - (touch2?.clientY ?? 0), 2)
+    );
+    if (lastDistRef.current !== null) {
+      const scaleBy = 1.02;
+      let newScale = stageScale;
+      if (dist > lastDistRef.current) {
+        newScale = stageScale * scaleBy;
+      } else if (dist < lastDistRef.current) {
+        newScale = stageScale / scaleBy;
       }
-      lastDistRef.current = dist;
+      newScale = Math.max(0.2, Math.min(4, newScale));
+      setStageScale(newScale);
     }
+    lastDistRef.current = dist;
   };
   const handleTouchPinchEnd = (e: KonvaEventObject<TouchEvent>) => {
-    if (e.evt?.touches && e.evt.touches.length < 2) {
+    // eslint-disable-next-line @typescript-eslint/prefer-optional-chain
+    const touchesLength = e.evt?.touches?.length ?? 0;
+    if (touchesLength < 2) {
       lastDistRef.current = null;
     }
   };
