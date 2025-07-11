@@ -58,7 +58,9 @@ const MapCanvas: React.FC = () => {
         img.src = url;
         img.onload = () => {
           loaded++;
-          imgGrid[rowIdx][colIdx] = img;
+          if (imgGrid[rowIdx]) {
+            imgGrid[rowIdx][colIdx] = img;
+          }
           // Set tile size from the first loaded image
           if (!firstImgLoaded && img && img.width && img.height) {
             setTileSize({ width: img.width, height: img.height });
