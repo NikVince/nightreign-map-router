@@ -4,6 +4,7 @@ import { Stage, Layer } from "react-konva";
 import { Image as KonvaImage } from "react-konva";
 import type { Stage as KonvaStageType } from "konva/lib/Stage";
 import type { KonvaEventObject } from "konva/lib/Node";
+import Konva from "konva";
 
 function getTileGridUrls() {
   // 6x6 grid for L0 (surface) tiles
@@ -151,12 +152,17 @@ const MapCanvas: React.FC = () => {
     }
   };
 
-  const handleTouchMove = (e: KonvaEventObject<TouchEvent>) => {
+  // Add requestAnimationFrame throttling for touchmove
+  const rafRef = useRef<number | null>(null);
+  const latestTouchMoveEvent = useRef<KonvaEventObject<TouchEvent> | null>(null);
+
+  const processTouchMove = () => {
+    if (!latestTouchMoveEvent.current) return;
+    const e = latestTouchMoveEvent.current;
     const touches = e.evt.touches;
     if (touches.length === 1 && isDragging && lastPointerPos) {
       const t0 = touches[0];
       if (!t0) return;
-      // Pan
       const dx = t0.clientX - lastPointerPos.x;
       const dy = t0.clientY - lastPointerPos.y;
       setStagePos(pos => ({ x: pos.x + dx, y: pos.y + dy }));
@@ -164,7 +170,6 @@ const MapCanvas: React.FC = () => {
     } else if (touches.length === 2 && lastDistRef.current && lastMidRef.current) {
       const t0 = touches[0], t1 = touches[1];
       if (!t0 || !t1) return;
-      // Pinch zoom
       const prevDist = lastDistRef.current;
       const prevMid = lastMidRef.current;
       const prevScale = stageScaleRef.current;
@@ -178,23 +183,37 @@ const MapCanvas: React.FC = () => {
       };
       const scaleBy = dist / prevDist;
       const newScale = Math.max(0.2, Math.min(4, prevScale * scaleBy));
-      // Calculate map point under previous midpoint before scaling
       const pointTo = {
         x: (prevMid.x - prevPos.x) / prevScale,
         y: (prevMid.y - prevPos.y) / prevScale,
       };
-      // New position to keep the previous midpoint fixed
       const newPos = {
         x: mid.x - pointTo.x * newScale,
         y: mid.y - pointTo.y * newScale,
       };
       setStageScale(newScale);
       setStagePos(newPos);
-      // Update refs for next move
       lastDistRef.current = dist;
       lastMidRef.current = mid;
     }
+    latestTouchMoveEvent.current = null;
+    rafRef.current = null;
   };
+
+  const handleTouchMove = (e: KonvaEventObject<TouchEvent>) => {
+    latestTouchMoveEvent.current = e;
+    if (rafRef.current === null) {
+      rafRef.current = requestAnimationFrame(processTouchMove);
+    }
+  };
+
+  useEffect(() => {
+    return () => {
+      if (rafRef.current !== null) {
+        cancelAnimationFrame(rafRef.current);
+      }
+    };
+  }, []);
 
   const handleTouchEnd = (e: KonvaEventObject<TouchEvent>) => {
     const touches = e.evt.touches;
@@ -273,6 +292,12 @@ const MapCanvas: React.FC = () => {
   //   }
   // };
 
+  useEffect(() => {
+    // Global Konva performance settings
+    Konva.hitOnDragEnabled = true;
+    Konva.pixelRatio = 1; // For better performance on retina
+  }, []);
+
   return (
     <div ref={containerRef} className="w-full h-full">
       <Stage
@@ -290,9 +315,9 @@ const MapCanvas: React.FC = () => {
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
         onWheel={handleWheel}
-        style={{ cursor: isDragging ? 'grabbing' : 'grab' }}
+        style={{ cursor: isDragging ? 'grabbing' : 'grab', touchAction: 'none' }}
       >
-        <Layer>
+        <Layer listening={false}>
           {images.length === 6 && tileSize.width > 0 && tileSize.height > 0 &&
             images.map((row, rowIdx) =>
               row.map((img, colIdx) =>
@@ -304,6 +329,7 @@ const MapCanvas: React.FC = () => {
                     y={rowIdx * tileSize.height}
                     width={tileSize.width}
                     height={tileSize.height}
+                    perfectDrawEnabled={false}
                   />
                 ) : null
               )

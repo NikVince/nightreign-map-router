@@ -39,3 +39,11 @@
   border-color: #CD853F;
   box-shadow: 0 0 8px rgba(205, 133, 63, 0.3);
 }
+
+.konva-stage {
+  touch-action: none;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+  overscroll-behavior: none;
+}
