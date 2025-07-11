@@ -10,11 +10,12 @@ function getTileGridUrls() {
   const basePath = "/assets/maps/default_map_tiles/";
   const urls: string[][] = [];
   for (let row = 0; row < rows; row++) {
-    urls[row] = []; // Ensure the row array exists
+    const rowArr: string[] = [];
     for (let col = 0; col < cols; col++) {
       const filename = `MENU_MapTile_L0_${row.toString().padStart(2, "0")}_${col.toString().padStart(2, "0")}_webp.webp`;
-      urls[row][col] = basePath + filename;
+      rowArr.push(basePath + filename);
     }
+    urls.push(rowArr);
   }
   return urls;
 }
