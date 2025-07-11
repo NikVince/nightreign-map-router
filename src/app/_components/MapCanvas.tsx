@@ -154,35 +154,36 @@ const MapCanvas: React.FC = () => {
   const handleTouchMove = (e: KonvaEventObject<TouchEvent>) => {
     const touches = e.evt.touches;
     if (touches.length === 1 && isDragging && lastPointerPos) {
-      // Pan
       const t0 = touches[0];
       if (!t0) return;
+      // Pan
       const dx = t0.clientX - lastPointerPos.x;
       const dy = t0.clientY - lastPointerPos.y;
       setStagePos(pos => ({ x: pos.x + dx, y: pos.y + dy }));
       setLastPointerPos({ x: t0.clientX, y: t0.clientY });
     } else if (touches.length === 2 && lastDistRef.current && lastMidRef.current) {
-      // Pinch zoom
       const t0 = touches[0], t1 = touches[1];
       if (!t0 || !t1) return;
+      // Pinch zoom
+      const prevDist = lastDistRef.current;
+      const prevMid = lastMidRef.current;
+      const prevScale = stageScaleRef.current;
+      const prevPos = stagePosRef.current;
       const dx = t0.clientX - t1.clientX;
       const dy = t0.clientY - t1.clientY;
       const dist = Math.sqrt(dx * dx + dy * dy);
-      const scaleBy = dist / lastDistRef.current;
-      const prevScale = stageScaleRef.current;
-      const prevPos = stagePosRef.current;
-      const newScale = Math.max(0.2, Math.min(4, prevScale * scaleBy));
-      // Midpoint between fingers
       const mid = {
         x: (t0.clientX + t1.clientX) / 2,
         y: (t0.clientY + t1.clientY) / 2,
       };
-      // Calculate map point under midpoint before scaling
+      const scaleBy = dist / prevDist;
+      const newScale = Math.max(0.2, Math.min(4, prevScale * scaleBy));
+      // Calculate map point under previous midpoint before scaling
       const pointTo = {
-        x: (mid.x - prevPos.x) / prevScale,
-        y: (mid.y - prevPos.y) / prevScale,
+        x: (prevMid.x - prevPos.x) / prevScale,
+        y: (prevMid.y - prevPos.y) / prevScale,
       };
-      // New position to keep midpoint fixed
+      // New position to keep the previous midpoint fixed
       const newPos = {
         x: mid.x - pointTo.x * newScale,
         y: mid.y - pointTo.y * newScale,
