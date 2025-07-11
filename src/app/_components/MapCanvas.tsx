@@ -2,6 +2,7 @@
 import React, { useRef, useEffect, useState } from "react";
 import { Stage, Layer } from "react-konva";
 import { Image as KonvaImage } from "react-konva";
+import type { KonvaEventObject } from "konva/lib/Node";
 
 function getTileGridUrls() {
   // 6x6 grid for L0 (surface) tiles
@@ -95,43 +96,43 @@ const MapCanvas: React.FC = () => {
   }, [mapWidth, mapHeight, dimensions.width, dimensions.height]);
 
   // Pan logic
-  const handleMouseDown = (e: any) => {
+  const handleMouseDown = (e: KonvaEventObject<MouseEvent>) => {
     setIsDragging(true);
     setLastPointerPos({ x: e.evt.clientX, y: e.evt.clientY });
   };
-  const handleMouseMove = (e: any) => {
+  const handleMouseMove = (e: KonvaEventObject<MouseEvent>) => {
     if (!isDragging || !lastPointerPos) return;
     const dx = e.evt.clientX - lastPointerPos.x;
     const dy = e.evt.clientY - lastPointerPos.y;
     setStagePos(pos => ({ x: pos.x + dx, y: pos.y + dy }));
     setLastPointerPos({ x: e.evt.clientX, y: e.evt.clientY });
   };
-  const handleMouseUp = () => {
+  const handleMouseUp = (_e: KonvaEventObject<MouseEvent>) => {
     setIsDragging(false);
     setLastPointerPos(null);
   };
 
   // Touch pan logic
-  const handleTouchStart = (e: any) => {
-    if (e.evt.touches.length === 1) {
+  const handleTouchStart = (e: KonvaEventObject<TouchEvent>) => {
+    if (e.evt?.touches?.length === 1 && e.evt.touches[0]) {
       setIsDragging(true);
       setLastPointerPos({ x: e.evt.touches[0].clientX, y: e.evt.touches[0].clientY });
     }
   };
-  const handleTouchMove = (e: any) => {
-    if (!isDragging || !lastPointerPos || e.evt.touches.length !== 1) return;
+  const handleTouchMove = (e: KonvaEventObject<TouchEvent>) => {
+    if (!isDragging || !lastPointerPos || e.evt?.touches?.length !== 1 || !e.evt.touches[0]) return;
     const dx = e.evt.touches[0].clientX - lastPointerPos.x;
     const dy = e.evt.touches[0].clientY - lastPointerPos.y;
     setStagePos(pos => ({ x: pos.x + dx, y: pos.y + dy }));
     setLastPointerPos({ x: e.evt.touches[0].clientX, y: e.evt.touches[0].clientY });
   };
-  const handleTouchEnd = () => {
+  const handleTouchEnd = (_e: KonvaEventObject<TouchEvent>) => {
     setIsDragging(false);
     setLastPointerPos(null);
   };
 
   // Zoom logic (mouse wheel and pinch)
-  const handleWheel = (e: any) => {
+  const handleWheel = (e: KonvaEventObject<WheelEvent>) => {
     e.evt.preventDefault();
     const scaleBy = 1.1;
     const oldScale = stageScale;
@@ -162,9 +163,10 @@ const MapCanvas: React.FC = () => {
   // Pinch zoom for touch
   // (Simple version: only supports two-finger pinch, not rotation)
   const lastDistRef = useRef<number | null>(null);
-  const handleTouchPinch = (e: any) => {
-    if (e.evt.touches.length === 2) {
+  const handleTouchPinch = (e: KonvaEventObject<TouchEvent>) => {
+    if (e.evt?.touches?.length === 2) {
       const [touch1, touch2] = e.evt.touches;
+      if (!touch1 || !touch2) return;
       const dist = Math.sqrt(
         Math.pow(touch1.clientX - touch2.clientX, 2) +
         Math.pow(touch1.clientY - touch2.clientY, 2)
@@ -183,8 +185,8 @@ const MapCanvas: React.FC = () => {
       lastDistRef.current = dist;
     }
   };
-  const handleTouchPinchEnd = (e: any) => {
-    if (e.evt.touches.length < 2) {
+  const handleTouchPinchEnd = (e: KonvaEventObject<TouchEvent>) => {
+    if (e.evt?.touches && e.evt.touches.length < 2) {
       lastDistRef.current = null;
     }
   };
@@ -204,7 +206,7 @@ const MapCanvas: React.FC = () => {
         onMouseUp={handleMouseUp}
         onTouchStart={e => { handleTouchStart(e); handleTouchPinch(e); }}
         onTouchMove={e => { handleTouchMove(e); handleTouchPinch(e); }}
-        onTouchEnd={e => { handleTouchEnd(); handleTouchPinchEnd(e); }}
+        onTouchEnd={e => { handleTouchEnd(e); handleTouchPinchEnd(e); }}
         onWheel={handleWheel}
         style={{ cursor: isDragging ? 'grabbing' : 'grab' }}
       >
