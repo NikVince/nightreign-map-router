@@ -21,13 +21,18 @@ function getTileGridUrls() {
 
 const MapCanvas: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
+  const stageRef = useRef<any>(null);
   const [dimensions, setDimensions] = useState({ width: 300, height: 300 });
   const [images, setImages] = useState<(HTMLImageElement | null)[][]>([]);
   const [tileSize, setTileSize] = useState<{ width: number; height: number }>({ width: 0, height: 0 });
+  const [stageScale, setStageScale] = useState(1);
+  const [stagePos, setStagePos] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+  const [lastPointerPos, setLastPointerPos] = useState<{ x: number; y: number } | null>(null);
 
   useEffect(() => {
     function updateSize() {
-      if (containerRef.current) {
+      if (containerRef.current && typeof containerRef.current.offsetWidth === 'number' && typeof containerRef.current.offsetHeight === 'number') {
         setDimensions({
           width: containerRef.current.offsetWidth,
           height: containerRef.current.offsetHeight,
@@ -47,13 +52,15 @@ const MapCanvas: React.FC = () => {
     let firstImgLoaded = false;
     for (let row = 0; row < 6; row++) {
       for (let col = 0; col < 6; col++) {
+        const url = urls[row][col];
+        if (!url) continue;
         const img = new window.Image();
-        img.src = urls[row][col];
+        img.src = url;
         img.onload = () => {
           loaded++;
           imgGrid[row][col] = img;
           // Set tile size from the first loaded image
-          if (!firstImgLoaded) {
+          if (!firstImgLoaded && img && img.width && img.height) {
             setTileSize({ width: img.width, height: img.height });
             firstImgLoaded = true;
           }
@@ -71,19 +78,139 @@ const MapCanvas: React.FC = () => {
     }
   }, []);
 
-  // No scaling: use natural image size
+  // Calculate map size
+  const mapWidth = tileSize.width * 6;
+  const mapHeight = tileSize.height * 6;
+
+  // Center map in viewport on first load
+  useEffect(() => {
+    if (mapWidth > 0 && mapHeight > 0 && dimensions.width > 0 && dimensions.height > 0) {
+      setStagePos({
+        x: (dimensions.width - mapWidth) / 2,
+        y: (dimensions.height - mapHeight) / 2,
+      });
+    }
+  }, [mapWidth, mapHeight, dimensions.width, dimensions.height]);
+
+  // Pan logic
+  const handleMouseDown = (e: any) => {
+    setIsDragging(true);
+    setLastPointerPos({ x: e.evt.clientX, y: e.evt.clientY });
+  };
+  const handleMouseMove = (e: any) => {
+    if (!isDragging || !lastPointerPos) return;
+    const dx = e.evt.clientX - lastPointerPos.x;
+    const dy = e.evt.clientY - lastPointerPos.y;
+    setStagePos(pos => ({ x: pos.x + dx, y: pos.y + dy }));
+    setLastPointerPos({ x: e.evt.clientX, y: e.evt.clientY });
+  };
+  const handleMouseUp = () => {
+    setIsDragging(false);
+    setLastPointerPos(null);
+  };
+
+  // Touch pan logic
+  const handleTouchStart = (e: any) => {
+    if (e.evt.touches.length === 1) {
+      setIsDragging(true);
+      setLastPointerPos({ x: e.evt.touches[0].clientX, y: e.evt.touches[0].clientY });
+    }
+  };
+  const handleTouchMove = (e: any) => {
+    if (!isDragging || !lastPointerPos || e.evt.touches.length !== 1) return;
+    const dx = e.evt.touches[0].clientX - lastPointerPos.x;
+    const dy = e.evt.touches[0].clientY - lastPointerPos.y;
+    setStagePos(pos => ({ x: pos.x + dx, y: pos.y + dy }));
+    setLastPointerPos({ x: e.evt.touches[0].clientX, y: e.evt.touches[0].clientY });
+  };
+  const handleTouchEnd = () => {
+    setIsDragging(false);
+    setLastPointerPos(null);
+  };
+
+  // Zoom logic (mouse wheel and pinch)
+  const handleWheel = (e: any) => {
+    e.evt.preventDefault();
+    const scaleBy = 1.1;
+    const oldScale = stageScale;
+    if (!stageRef.current || typeof stageRef.current.getPointerPosition !== 'function') return;
+    const pointer = stageRef.current.getPointerPosition();
+    if (!pointer) return;
+    const mousePointTo = {
+      x: (pointer.x - stagePos.x) / oldScale,
+      y: (pointer.y - stagePos.y) / oldScale,
+    };
+    let newScale = oldScale;
+    if (e.evt.deltaY > 0) {
+      newScale = oldScale / scaleBy;
+    } else if (e.evt.deltaY < 0) {
+      newScale = oldScale * scaleBy;
+    }
+    // Clamp scale
+    newScale = Math.max(0.2, Math.min(4, newScale));
+    // Adjust position to zoom to pointer
+    const newPos = {
+      x: pointer.x - mousePointTo.x * newScale,
+      y: pointer.y - mousePointTo.y * newScale,
+    };
+    setStageScale(newScale);
+    setStagePos(newPos);
+  };
+
+  // Pinch zoom for touch
+  // (Simple version: only supports two-finger pinch, not rotation)
+  const lastDistRef = useRef<number | null>(null);
+  const handleTouchPinch = (e: any) => {
+    if (e.evt.touches.length === 2) {
+      const [touch1, touch2] = e.evt.touches;
+      const dist = Math.sqrt(
+        Math.pow(touch1.clientX - touch2.clientX, 2) +
+        Math.pow(touch1.clientY - touch2.clientY, 2)
+      );
+      if (lastDistRef.current !== null) {
+        const scaleBy = 1.02;
+        let newScale = stageScale;
+        if (dist > lastDistRef.current) {
+          newScale = stageScale * scaleBy;
+        } else if (dist < lastDistRef.current) {
+          newScale = stageScale / scaleBy;
+        }
+        newScale = Math.max(0.2, Math.min(4, newScale));
+        setStageScale(newScale);
+      }
+      lastDistRef.current = dist;
+    }
+  };
+  const handleTouchPinchEnd = (e: any) => {
+    if (e.evt.touches.length < 2) {
+      lastDistRef.current = null;
+    }
+  };
+
   return (
     <div ref={containerRef} className="w-full h-full">
       <Stage
+        ref={stageRef}
         width={dimensions.width}
         height={dimensions.height}
-        style={{}}
+        scaleX={stageScale}
+        scaleY={stageScale}
+        x={stagePos.x}
+        y={stagePos.y}
+        onMouseDown={handleMouseDown}
+        onMouseMove={handleMouseMove}
+        onMouseUp={handleMouseUp}
+        onTouchStart={e => { handleTouchStart(e); handleTouchPinch(e); }}
+        onTouchMove={e => { handleTouchMove(e); handleTouchPinch(e); }}
+        onTouchEnd={e => { handleTouchEnd(); handleTouchPinchEnd(e); }}
+        onWheel={handleWheel}
+        style={{ cursor: isDragging ? 'grabbing' : 'grab' }}
       >
         <Layer>
           {images.length === 6 && tileSize.width > 0 && tileSize.height > 0 &&
             images.map((row, rowIdx) =>
               row.map((img, colIdx) =>
-                img ? (
+                img && img.width && img.height ? (
                   <KonvaImage
                     key={`${rowIdx}-${colIdx}`}
                     image={img}
