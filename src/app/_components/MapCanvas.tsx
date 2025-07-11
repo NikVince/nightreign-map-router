@@ -33,6 +33,17 @@ const MapCanvas: React.FC = () => {
   const [isDragging, setIsDragging] = useState(false);
   const [lastPointerPos, setLastPointerPos] = useState<{ x: number; y: number } | null>(null);
 
+  // Add refs for scale and position
+  const stageScaleRef = useRef(stageScale);
+  const stagePosRef = useRef(stagePos);
+
+  useEffect(() => {
+    stageScaleRef.current = stageScale;
+  }, [stageScale]);
+  useEffect(() => {
+    stagePosRef.current = stagePos;
+  }, [stagePos]);
+
   useEffect(() => {
     function updateSize() {
       if (containerRef.current && typeof containerRef.current.offsetWidth === 'number' && typeof containerRef.current.offsetHeight === 'number') {
@@ -158,7 +169,9 @@ const MapCanvas: React.FC = () => {
       const dy = t0.clientY - t1.clientY;
       const dist = Math.sqrt(dx * dx + dy * dy);
       const scaleBy = dist / lastDistRef.current;
-      const newScale = Math.max(0.2, Math.min(4, stageScale * scaleBy));
+      const prevScale = stageScaleRef.current;
+      const prevPos = stagePosRef.current;
+      const newScale = Math.max(0.2, Math.min(4, prevScale * scaleBy));
       // Midpoint between fingers
       const mid = {
         x: (t0.clientX + t1.clientX) / 2,
@@ -166,8 +179,8 @@ const MapCanvas: React.FC = () => {
       };
       // Calculate map point under midpoint before scaling
       const pointTo = {
-        x: (mid.x - stagePos.x) / stageScale,
-        y: (mid.y - stagePos.y) / stageScale,
+        x: (mid.x - prevPos.x) / prevScale,
+        y: (mid.y - prevPos.y) / prevScale,
       };
       // New position to keep midpoint fixed
       const newPos = {
