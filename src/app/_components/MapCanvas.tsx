@@ -51,15 +51,14 @@ const MapCanvas: React.FC = () => {
     let loaded = 0;
     const total = 36;
     let firstImgLoaded = false;
-    for (let row = 0; row < 6; row++) {
-      for (let col = 0; col < 6; col++) {
-        const url = urls[row][col];
-        if (!url) continue;
+    urls.forEach((rowArr, rowIdx) => {
+      rowArr.forEach((url, colIdx) => {
+        if (!url) return;
         const img = new window.Image();
         img.src = url;
         img.onload = () => {
           loaded++;
-          imgGrid[row][col] = img;
+          imgGrid[rowIdx][colIdx] = img;
           // Set tile size from the first loaded image
           if (!firstImgLoaded && img && img.width && img.height) {
             setTileSize({ width: img.width, height: img.height });
@@ -75,8 +74,8 @@ const MapCanvas: React.FC = () => {
             setImages(imgGrid);
           }
         };
-      }
-    }
+      });
+    });
   }, []);
 
   // Calculate map size
