@@ -319,20 +319,24 @@ const MapCanvas: React.FC = () => {
       >
         <Layer listening={false}>
           {images.length === 6 && tileSize.width > 0 && tileSize.height > 0 &&
-            images.map((row, rowIdx) =>
-              row.map((img, colIdx) =>
-                img && img.width && img.height ? (
+            // Rotate the grid 90 degrees counterclockwise: (row, col) -> (5 - col, row)
+            [...Array(6).keys()].map(newRow =>
+              [...Array(6).keys()].map(newCol => {
+                const oldRow = newCol;
+                const oldCol = 5 - newRow;
+                const img = images[oldRow]?.[oldCol];
+                return img && img.width && img.height ? (
                   <KonvaImage
-                    key={`${rowIdx}-${colIdx}`}
+                    key={`${oldRow}_${(oldCol + 1).toString().padStart(2, "0")}`}
                     image={img}
-                    x={colIdx * tileSize.width}
-                    y={rowIdx * tileSize.height}
+                    x={newCol * tileSize.width}
+                    y={newRow * tileSize.height}
                     width={tileSize.width}
                     height={tileSize.height}
                     perfectDrawEnabled={false}
                   />
-                ) : null
-              )
+                ) : null;
+              })
             )}
         </Layer>
       </Stage>
