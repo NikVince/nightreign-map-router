@@ -47,3 +47,33 @@
   user-select: none;
   overscroll-behavior: none;
 }
+
+.elden-select {
+  background: #181511;
+  border: 2px solid var(--elden-border, #27170d);
+  color: var(--elden-text, #f5f3e0);
+  border-radius: 3px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  font-family: 'Cormorant Garamond', Garamond, serif;
+  font-size: 1rem;
+  padding: 8px 12px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.elden-select:focus {
+  outline: none;
+  border-color: var(--elden-accent, #f9c043);
+  box-shadow: 0 0 0 2px var(--elden-accent, #f9c043);
+}
+.elden-select option {
+  background: #181511;
+  color: var(--elden-text, #f5f3e0);
+}
+
+/* For better cross-browser dropdown styling */
+.elden-select::-ms-expand {
+  display: none;
+}
+.elden-select:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

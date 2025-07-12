@@ -9,6 +9,7 @@ const MainPanel = dynamic(() => import("./_components/MainPanel").then(mod => mo
 export default function Home() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isDesktop, setIsDesktop] = useState(false);
+  const [mapLayout, setMapLayout] = useState("default");
 
   useEffect(() => {
     // Set isDesktop based on window width
@@ -28,13 +29,13 @@ export default function Home() {
         {/* Sidebar: overlay on mobile, sidebar on desktop */}
         {isDesktop ? (
           <div className="h-full w-1/4 min-w-[220px] max-w-[400px] flex flex-col">
-            <Sidebar isOpen={showSidebar} onClose={() => setSidebarOpen(false)} />
+            <Sidebar isOpen={showSidebar} onClose={() => setSidebarOpen(false)} mapLayout={mapLayout} onMapLayoutChange={setMapLayout} />
           </div>
         ) : (
           sidebarOpen && (
             <div className="fixed inset-0 z-50 flex">
               <div className="h-full w-[85vw] max-w-none flex flex-col">
-                <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+                <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} mapLayout={mapLayout} onMapLayoutChange={setMapLayout} />
               </div>
               <div className="flex-1 h-full bg-black/40" onClick={() => setSidebarOpen(false)} aria-label="Close overlay" />
             </div>
@@ -42,7 +43,7 @@ export default function Home() {
         )}
         {/* MainPanel: 100% width on mobile, 75% on desktop */}
         <div className="h-full flex-1 flex flex-col w-full sm:w-3/4">
-          <MainPanel />
+          <MainPanel mapLayout={mapLayout} />
         </div>
       </div>
     </div>

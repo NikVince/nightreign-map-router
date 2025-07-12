@@ -6,11 +6,15 @@ import type { Stage as KonvaStageType } from "konva/lib/Stage";
 import type { KonvaEventObject } from "konva/lib/Node";
 import Konva from "konva";
 
-function getTileGridUrls() {
+function getTileGridUrls(mapLayout: string) {
   // 6x6 grid for L0 (surface) tiles
   const rows = 6;
   const cols = 6;
-  const basePath = "/assets/maps/default_map_tiles/";
+  let basePath = "/assets/maps/default_map_tiles/";
+  if (mapLayout === "the_crater_shifted") basePath = "/assets/maps/the_crater_shifted_map_tiles/";
+  else if (mapLayout === "the_mountaintop_shifted") basePath = "/assets/maps/the_mountaintop_shifted_map_tiles/";
+  else if (mapLayout === "the_rotten_woods_shifted") basePath = "/assets/maps/the_rotten_woods_shifted_map_tiles/";
+  else if (mapLayout === "noklateo_shifted") basePath = "/assets/maps/noklateo_shifted_map_tiles/";
   const urls: string[][] = [];
   for (let row = 0; row < rows; row++) {
     const rowArr: string[] = [];
@@ -23,7 +27,7 @@ function getTileGridUrls() {
   return urls;
 }
 
-const MapCanvas: React.FC = () => {
+const MapCanvas: React.FC<{ mapLayout: string }> = ({ mapLayout }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<KonvaStageType>(null);
   const [dimensions, setDimensions] = useState({ width: 300, height: 300 });
@@ -60,7 +64,7 @@ const MapCanvas: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    const urls = getTileGridUrls();
+    const urls = getTileGridUrls(mapLayout);
     const imgGrid: (HTMLImageElement | null)[][] = urls.map(row => row.map(() => null));
     let loaded = 0;
     const total = 36;
@@ -92,7 +96,7 @@ const MapCanvas: React.FC = () => {
         };
       });
     });
-  }, []);
+  }, [mapLayout]);
 
   // Calculate map size
   const mapWidth = tileSize.width * 6;
