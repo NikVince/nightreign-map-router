@@ -27,6 +27,32 @@ function getTileGridUrls(mapLayout: string) {
   return urls;
 }
 
+// Utility to clamp a value between min and max
+function clamp(val: number, min: number, max: number) {
+  return Math.max(min, Math.min(max, val));
+}
+
+// Calculate minimum scale so map height fits canvas
+function getMinScale(mapWidth: number, mapHeight: number, canvasWidth: number, canvasHeight: number) {
+  if (mapHeight === 0 || canvasHeight === 0) return 0.2;
+  return Math.min(1, canvasHeight / mapHeight);
+}
+
+// Clamp stage position so map stays in view
+function clampStagePos(pos: { x: number; y: number }, scale: number, mapWidth: number, mapHeight: number, canvasWidth: number, canvasHeight: number) {
+  const scaledMapWidth = mapWidth * scale;
+  const scaledMapHeight = mapHeight * scale;
+  // The map should at least cover the canvas
+  const minX = Math.min(0, canvasWidth - scaledMapWidth);
+  const maxX = Math.max(0, canvasWidth - scaledMapWidth);
+  const minY = Math.min(0, canvasHeight - scaledMapHeight);
+  const maxY = Math.max(0, canvasHeight - scaledMapHeight);
+  return {
+    x: clamp(pos.x, minX, maxX),
+    y: clamp(pos.y, minY, maxY),
+  };
+}
+
 const MapCanvas: React.FC<{ mapLayout: string }> = ({ mapLayout }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<KonvaStageType>(null);
@@ -101,13 +127,16 @@ const MapCanvas: React.FC<{ mapLayout: string }> = ({ mapLayout }) => {
   // Calculate map size
   const mapWidth = tileSize.width * 6;
   const mapHeight = tileSize.height * 6;
+  const minScale = getMinScale(mapWidth, mapHeight, dimensions.width, dimensions.height);
 
   // Center map in viewport on first load
   useEffect(() => {
     if (mapWidth > 0 && mapHeight > 0 && dimensions.width > 0 && dimensions.height > 0) {
+      const scale = getMinScale(mapWidth, mapHeight, dimensions.width, dimensions.height);
+      setStageScale(scale);
       setStagePos({
-        x: (dimensions.width - mapWidth) / 2,
-        y: (dimensions.height - mapHeight) / 2,
+        x: (dimensions.width - mapWidth * scale) / 2,
+        y: (dimensions.height - mapHeight * scale) / 2,
       });
     }
   }, [mapWidth, mapHeight, dimensions.width, dimensions.height]);
@@ -121,7 +150,10 @@ const MapCanvas: React.FC<{ mapLayout: string }> = ({ mapLayout }) => {
     if (!isDragging || !lastPointerPos) return;
     const dx = e.evt.clientX - lastPointerPos.x;
     const dy = e.evt.clientY - lastPointerPos.y;
-    setStagePos(pos => ({ x: pos.x + dx, y: pos.y + dy }));
+    setStagePos(pos => {
+      const newPos = { x: pos.x + dx, y: pos.y + dy };
+      return clampStagePos(newPos, stageScaleRef.current, mapWidth, mapHeight, dimensions.width, dimensions.height);
+    });
     setLastPointerPos({ x: e.evt.clientX, y: e.evt.clientY });
   };
   const handleMouseUp = (_e: KonvaEventObject<MouseEvent>) => {
@@ -169,7 +201,10 @@ const MapCanvas: React.FC<{ mapLayout: string }> = ({ mapLayout }) => {
       if (!t0) return;
       const dx = t0.clientX - lastPointerPos.x;
       const dy = t0.clientY - lastPointerPos.y;
-      setStagePos(pos => ({ x: pos.x + dx, y: pos.y + dy }));
+      setStagePos(pos => {
+        const newPos = { x: pos.x + dx, y: pos.y + dy };
+        return clampStagePos(newPos, stageScaleRef.current, mapWidth, mapHeight, dimensions.width, dimensions.height);
+      });
       setLastPointerPos({ x: t0.clientX, y: t0.clientY });
     } else if (touches.length === 2 && lastDistRef.current && lastMidRef.current) {
       const t0 = touches[0], t1 = touches[1];
@@ -186,7 +221,8 @@ const MapCanvas: React.FC<{ mapLayout: string }> = ({ mapLayout }) => {
         y: (t0.clientY + t1.clientY) / 2,
       };
       const scaleBy = dist / prevDist;
-      const newScale = Math.max(0.2, Math.min(4, prevScale * scaleBy));
+      let newScale = prevScale * scaleBy;
+      newScale = clamp(newScale, minScale, 4);
       const pointTo = {
         x: (prevMid.x - prevPos.x) / prevScale,
         y: (prevMid.y - prevPos.y) / prevScale,
@@ -196,7 +232,7 @@ const MapCanvas: React.FC<{ mapLayout: string }> = ({ mapLayout }) => {
         y: mid.y - pointTo.y * newScale,
       };
       setStageScale(newScale);
-      setStagePos(newPos);
+      setStagePos(clampStagePos(newPos, newScale, mapWidth, mapHeight, dimensions.width, dimensions.height));
       lastDistRef.current = dist;
       lastMidRef.current = mid;
     }
@@ -255,14 +291,14 @@ const MapCanvas: React.FC<{ mapLayout: string }> = ({ mapLayout }) => {
       newScale = oldScale * scaleBy;
     }
     // Clamp scale
-    newScale = Math.max(0.2, Math.min(4, newScale));
+    newScale = clamp(newScale, minScale, 4);
     // Adjust position to zoom to pointer
     const newPos = {
       x: pointer.x - mousePointTo.x * newScale,
       y: pointer.y - mousePointTo.y * newScale,
     };
     setStageScale(newScale);
-    setStagePos(newPos);
+    setStagePos(clampStagePos(newPos, newScale, mapWidth, mapHeight, dimensions.width, dimensions.height));
   };
 
   // Pinch zoom for touch
