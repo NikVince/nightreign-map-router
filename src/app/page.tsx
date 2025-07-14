@@ -47,7 +47,21 @@ export default function Home() {
     <div className="w-screen bg-[var(--elden-background)] text-[var(--elden-text)] flex flex-col overflow-hidden" style={{ height: '100dvh', minHeight: '100vh' }}>
       <Header onOpenObjectives={() => setSidebarOpen(true)} />
       <div style={{ height: 8 }} />
-      <div className="flex flex-row min-h-0 w-full" style={{ marginTop: 72, height: 'calc(100dvh - 72px)' }}>
+      <div
+        className="flex flex-row min-h-0 w-full"
+        style={
+          isDesktop
+            ? { marginTop: 72, height: 'calc(100dvh - 72px)' }
+            : {
+                position: 'fixed',
+                top: 72,
+                left: 0,
+                width: '100vw',
+                height: 'calc(100dvh - 72px)',
+                zIndex: 10,
+              }
+        }
+      >
         {isDesktop ? (
           <>
             {/* Objectives pane, no border */}
