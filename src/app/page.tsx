@@ -80,12 +80,22 @@ export default function Home() {
           <div className="h-full flex-1 flex flex-col w-full min-h-0">
             <MainPanel mapLayout={mapLayout} />
             {sidebarOpen && (
-              <div className="fixed inset-0 z-50 flex bg-black/40">
-                <div className="h-full w-[85vw] max-w-none flex flex-col bg-white/80 backdrop-blur">
+              <>
+                {/* Overlay for closing */}
+                <div className="fixed inset-0 z-40 bg-black/40" onClick={() => setSidebarOpen(false)} aria-label="Close overlay" />
+                {/* Sidebar below header+gap */}
+                <div
+                  className="fixed left-0 z-50 w-[85vw] max-w-none flex flex-col border border-[var(--elden-primary)]"
+                  style={{
+                    top: 72,
+                    height: 'calc(100dvh - 72px)',
+                    background: 'var(--elden-panel-bg)',
+                    backdropFilter: 'blur(8px)',
+                  }}
+                >
                   <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} mapLayout={mapLayout} onMapLayoutChange={setMapLayout} />
                 </div>
-                <div className="flex-1 h-full" onClick={() => setSidebarOpen(false)} aria-label="Close overlay" />
-              </div>
+              </>
             )}
           </div>
         )}
