@@ -45,19 +45,9 @@ export default function Home() {
 
   return (
     <div className="w-screen bg-[var(--elden-background)] text-[var(--elden-text)] flex flex-col overflow-hidden" style={{ height: '100dvh', minHeight: '100vh' }}>
-      <div ref={headerRef}>
-        <Header onOpenObjectives={() => setSidebarOpen(true)} />
-      </div>
-      {/* Main content: objectives + gap + map (desktop), map only (mobile) */}
-      <div
-        className="flex flex-row flex-1 min-h-0 w-full"
-        style={isDesktop
-          ? { marginTop: 80, height: 'calc(100dvh - 80px)' }
-          : mobileContentHeight !== undefined
-            ? { marginTop: 0, height: mobileContentHeight }
-            : { marginTop: 80, height: 'calc(100dvh - 80px)' }
-        }
-      >
+      <Header onOpenObjectives={() => setSidebarOpen(true)} />
+      <div style={{ height: 8 }} />
+      <div className="flex flex-row min-h-0 w-full" style={{ marginTop: 72, height: 'calc(100dvh - 72px)' }}>
         {isDesktop ? (
           <>
             {/* Objectives pane, no border */}
