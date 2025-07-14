@@ -25,26 +25,38 @@ export default function Home() {
   return (
     <div className="w-screen bg-[var(--elden-background)] text-[var(--elden-text)] flex flex-col overflow-hidden" style={{ height: '100dvh', minHeight: '100vh' }}>
       <Header onOpenObjectives={() => setSidebarOpen(true)} />
-      <div className="flex-1 flex flex-col sm:flex-row gap-x-4 pb-0 min-h-0">
-        {/* Sidebar: overlay on mobile, sidebar on desktop */}
+      {/* Main content: objectives + gap + map (desktop), map only (mobile) */}
+      <div
+        className="flex flex-row flex-1 min-h-0 w-full"
+        style={{ marginTop: 80, height: 'calc(100dvh - 80px)' }}
+      >
         {isDesktop ? (
-          <div className="h-full w-1/4 min-w-[220px] max-w-[400px] flex flex-col">
-            <Sidebar isOpen={showSidebar} onClose={() => setSidebarOpen(false)} mapLayout={mapLayout} onMapLayoutChange={setMapLayout} />
-          </div>
-        ) : (
-          sidebarOpen && (
-            <div className="fixed inset-0 z-50 flex">
-              <div className="h-full w-[85vw] max-w-none flex flex-col">
-                <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} mapLayout={mapLayout} onMapLayoutChange={setMapLayout} />
-              </div>
-              <div className="flex-1 h-full bg-black/40" onClick={() => setSidebarOpen(false)} aria-label="Close overlay" />
+          <>
+            {/* Objectives pane, no border */}
+            <div className="h-full w-1/4 min-w-[220px] max-w-[400px] flex flex-col">
+              <Sidebar isOpen={showSidebar} onClose={() => setSidebarOpen(false)} mapLayout={mapLayout} onMapLayoutChange={setMapLayout} />
             </div>
-          )
+            {/* 8px gap between objectives and map */}
+            <div style={{ width: 8 }} />
+            {/* Map panel, no border */}
+            <div className="h-full flex-1 flex flex-col w-full sm:w-3/4 min-h-0">
+              <MainPanel mapLayout={mapLayout} />
+            </div>
+          </>
+        ) : (
+          // Mobile: map canvas fills width, objectives overlays as before
+          <div className="h-full flex-1 flex flex-col w-full min-h-0">
+            <MainPanel mapLayout={mapLayout} />
+            {sidebarOpen && (
+              <div className="fixed inset-0 z-50 flex bg-black/40">
+                <div className="h-full w-[85vw] max-w-none flex flex-col bg-white/80 backdrop-blur">
+                  <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} mapLayout={mapLayout} onMapLayoutChange={setMapLayout} />
+                </div>
+                <div className="flex-1 h-full" onClick={() => setSidebarOpen(false)} aria-label="Close overlay" />
+              </div>
+            )}
+          </div>
         )}
-        {/* MainPanel: 100% width on mobile, 75% on desktop */}
-        <div className="h-full flex-1 flex flex-col w-full sm:w-3/4 min-h-0">
-          <MainPanel mapLayout={mapLayout} />
-        </div>
       </div>
     </div>
   );
