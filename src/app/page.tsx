@@ -23,9 +23,9 @@ export default function Home() {
   const showSidebar = isDesktop || sidebarOpen;
 
   return (
-    <div className="h-screen w-screen overflow-hidden bg-[var(--elden-background)] text-[var(--elden-text)] flex flex-col">
+    <div className="w-screen bg-[var(--elden-background)] text-[var(--elden-text)] flex flex-col overflow-hidden" style={{ height: '100dvh', minHeight: '100vh' }}>
       <Header onOpenObjectives={() => setSidebarOpen(true)} />
-      <div className="flex-1 flex flex-col sm:flex-row gap-x-4 pb-0">
+      <div className="flex-1 flex flex-col sm:flex-row gap-x-4 pb-0 min-h-0">
         {/* Sidebar: overlay on mobile, sidebar on desktop */}
         {isDesktop ? (
           <div className="h-full w-1/4 min-w-[220px] max-w-[400px] flex flex-col">
@@ -42,7 +42,7 @@ export default function Home() {
           )
         )}
         {/* MainPanel: 100% width on mobile, 75% on desktop */}
-        <div className="h-full flex-1 flex flex-col w-full sm:w-3/4">
+        <div className="h-full flex-1 flex flex-col w-full sm:w-3/4 min-h-0">
           <MainPanel mapLayout={mapLayout} />
         </div>
       </div>

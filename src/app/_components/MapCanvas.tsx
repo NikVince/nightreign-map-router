@@ -57,7 +57,6 @@ const MapCanvas: React.FC<{ mapLayout: string }> = ({ mapLayout }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<KonvaStageType>(null);
   const [dimensions, setDimensions] = useState({ width: 300, height: 300 });
-  const [containerHeight, setContainerHeight] = useState<string | number>('100%');
   const [images, setImages] = useState<(HTMLImageElement | null)[][]>([]);
   const [tileSize, setTileSize] = useState<{ width: number; height: number }>({ width: 0, height: 0 });
   const [stageScale, setStageScale] = useState(1);
@@ -75,25 +74,6 @@ const MapCanvas: React.FC<{ mapLayout: string }> = ({ mapLayout }) => {
   useEffect(() => {
     stagePosRef.current = stagePos;
   }, [stagePos]);
-
-  // Dynamically set container height to visible viewport height on mobile
-  useEffect(() => {
-    function updateContainerHeight() {
-      const isMobile = window.innerWidth < 640;
-      if (isMobile) {
-        setContainerHeight(window.innerHeight + 'px');
-      } else {
-        setContainerHeight('100%');
-      }
-    }
-    updateContainerHeight();
-    window.addEventListener('resize', updateContainerHeight);
-    window.addEventListener('orientationchange', updateContainerHeight);
-    return () => {
-      window.removeEventListener('resize', updateContainerHeight);
-      window.removeEventListener('orientationchange', updateContainerHeight);
-    };
-  }, []);
 
   useEffect(() => {
     function updateSize() {
@@ -359,7 +339,7 @@ const MapCanvas: React.FC<{ mapLayout: string }> = ({ mapLayout }) => {
   }, []);
 
   return (
-    <div ref={containerRef} className="w-full" style={{ height: containerHeight }}>
+    <div ref={containerRef} className="w-full h-full flex-1">
       <Stage
         ref={stageRef}
         width={dimensions.width}
