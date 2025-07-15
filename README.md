@@ -53,5 +53,8 @@ Contributions, feedback, and suggestions are welcome! If you notice issues, have
 ## Legal Disclaimer
 This is a **fan project** created for educational and non-commercial purposes only. Nightreign Router is **not affiliated with, endorsed by, or sponsored by FromSoftware or Bandai Namco**. All referenced game content, names, and assets are © FromSoftware and Bandai Namco. No assets or code from this project may be used for commercial purposes.
 
+## Credits
+Special thanks to **thefifthmatt** for his excellent CSV file compiling all the data related to map patterns. This resource was integral to the development of this project. You can find his work and more at: https://thefifthmatt.github.io/nightreign/
+
 ## License
 This project is licensed under the [MIT License](./LICENSE).
