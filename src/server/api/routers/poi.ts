@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
+import { LandmarkType } from "@prisma/client";
 
 export const poiRouter = createTRPCRouter({
   // Get all map patterns (with minimal info)
@@ -30,8 +31,12 @@ export const poiRouter = createTRPCRouter({
 
   // Get all landmarks (optionally filter by type)
   allLandmarks: publicProcedure.input(z.object({ type: z.string().optional() }).optional()).query(async ({ ctx, input }) => {
+    let where = undefined;
+    if (input?.type && Object.values(LandmarkType).includes(input.type as LandmarkType)) {
+      where = { type: input.type as LandmarkType };
+    }
     return ctx.db.landmark.findMany({
-      where: input?.type ? { type: input.type } : undefined,
+      where,
     });
   }),
 }); 

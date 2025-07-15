@@ -1,4 +1,5 @@
-import type { Landmark, MapPattern, Nightlord } from "../types/core";
+import type { Landmark, MapPattern } from "../types/core";
+import { Nightlord } from "../types/core";
 import { LandmarkType } from "../types/core";
 
 export const MOCK_LANDMARKS: Landmark[] = [
