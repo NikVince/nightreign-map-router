@@ -18,6 +18,11 @@ const landmarkTypeToIcon: Record<LandmarkType, string> = {
   [LandmarkType.Spiritstream]: "Spiritstream.png",
   [LandmarkType.Scarab]: "Scarab.png",
   [LandmarkType.TunnelEntrance]: "Tunnel_Entrance.png",
+  [LandmarkType.Tunnel]: "Tunnel.png",
+  [LandmarkType.OldSorcerersRise]: "Old_Sorcerers_Rise.png",
+  [LandmarkType.ArenaBoss]: "Arena_Boss.png",
+  [LandmarkType.RottedWoods]: "Rotted_Woods.png",
+  [LandmarkType.RotBlessing]: "Rot_Blessing.png",
   // Add more as needed
 };
 
