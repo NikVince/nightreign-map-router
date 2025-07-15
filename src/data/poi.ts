@@ -58,6 +58,18 @@ export const MOCK_LANDMARKS: Landmark[] = [
     notes: "Good for early rune farming.",
     patternId: "Gladius-0",
   },
+  {
+    id: "Gladius-0-Church-Center",
+    type: LandmarkType.Church,
+    name: "Test Center Church",
+    x: 500,
+    y: 500,
+    icon: landmarkTypeToIcon[LandmarkType.Church],
+    priority: 95,
+    contents: ["Test POI for icon rendering"],
+    notes: "This is a test church at the map center.",
+    patternId: "Gladius-0",
+  },
 ];
 
 export const MOCK_PATTERNS: MapPattern[] = [
