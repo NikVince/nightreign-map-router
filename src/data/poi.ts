@@ -2,6 +2,25 @@ import type { Landmark, MapPattern } from "../types/core";
 import { Nightlord } from "../types/core";
 import { LandmarkType } from "../types/core";
 
+const landmarkTypeToIcon: Record<LandmarkType, string> = {
+  [LandmarkType.Castle]: "Castle.png",
+  [LandmarkType.Church]: "Church.png",
+  [LandmarkType.Fort]: "Fort.png",
+  [LandmarkType.GreatChurch]: "Great_Church.png",
+  [LandmarkType.MainEncampment]: "Main_Encampment.png",
+  [LandmarkType.Ruins]: "Ruins.png",
+  [LandmarkType.SorcerersRise]: "Sorcerer's_Rise.png",
+  [LandmarkType.Township]: "Township.png",
+  [LandmarkType.Evergaol]: "Evergaol.png",
+  [LandmarkType.FieldBoss]: "Field_Boss.png",
+  [LandmarkType.SiteOfGrace]: "Site_of_Grace.png",
+  [LandmarkType.SpectralHawkTree]: "Spectral_Hawk_Tree.png",
+  [LandmarkType.Spiritstream]: "Spiritstream.png",
+  [LandmarkType.Scarab]: "Scarab.png",
+  [LandmarkType.TunnelEntrance]: "Tunnel_Entrance.png",
+  // Add more as needed
+};
+
 export const MOCK_LANDMARKS: Landmark[] = [
   {
     id: "Gladius-0-Castle",
@@ -9,7 +28,7 @@ export const MOCK_LANDMARKS: Landmark[] = [
     name: "Limveld Central Castle",
     x: 500,
     y: 500,
-    icon: "castle.png",
+    icon: landmarkTypeToIcon[LandmarkType.Castle],
     priority: 100,
     contents: ["Multiple bosses", "Chests"],
     notes: "Always in the center of the map.",
@@ -21,7 +40,7 @@ export const MOCK_LANDMARKS: Landmark[] = [
     name: "First Church of Limveld",
     x: 200,
     y: 300,
-    icon: "church.png",
+    icon: landmarkTypeToIcon[LandmarkType.Church],
     priority: 90,
     contents: ["Sacred Flask"],
     notes: "High priority for flask upgrade.",
@@ -33,7 +52,7 @@ export const MOCK_LANDMARKS: Landmark[] = [
     name: "North Fort",
     x: 700,
     y: 200,
-    icon: "fort.png",
+    icon: landmarkTypeToIcon[LandmarkType.Fort],
     priority: 80,
     contents: ["Map", "Mini-boss"],
     notes: "Good for early rune farming.",
