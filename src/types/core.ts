@@ -2,6 +2,7 @@
 // Reference: /docs/DEVELOPMENT_CHECKLIST.md, /reference_material/landmarks_map_system.md, /reference_material/nightlords_reference.md, /reference_material/timing_circle_mechanics.md
 
 // --- Landmark Types ---
+// Reference: /reference_material/landmarks_map_system.md, /reference_material/Elden Ring Nightreign map patterns - Patterns.csv
 export enum LandmarkType {
   Church = "Church",
   GreatChurch = "GreatChurch",
@@ -14,25 +15,31 @@ export enum LandmarkType {
   OldSorcerersRise = "OldSorcerersRise",
   Township = "Township",
   Evergaol = "Evergaol",
+  ArenaBoss = "ArenaBoss", // Added for Arena Boss POIs
+  FieldBoss = "FieldBoss", // Roaming bosses, revealed on day 2 or by fort map
+  RottedWoods = "RottedWoods", // Special region
+  RotBlessing = "RotBlessing", // Special event/bonus
   // Secondary elements (optional for core logic)
   SiteOfGrace = "SiteOfGrace",
   SpectralHawkTree = "SpectralHawkTree",
   Spiritstream = "Spiritstream",
   Scarab = "Scarab",
   TunnelEntrance = "TunnelEntrance",
-  FieldBoss = "FieldBoss",
 }
 
 export interface Landmark {
   id: string; // Unique identifier
   type: LandmarkType;
   name?: string; // Optional display name
-  x: number; // Map coordinate (game units)
-  y: number; // Map coordinate (game units)
+  x: number; // Map coordinate (game units or null if not yet assigned)
+  y: number; // Map coordinate (game units or null if not yet assigned)
   icon?: string; // Optional icon asset reference
   priority?: number; // For route calculation (higher = more important)
   contents?: string[]; // e.g. ["Mini-boss", "Merchant", "Smithing Table"]
   notes?: string; // Optional strategy or notes
+  patternId?: string; // Link to MapPattern
+  bossId?: string; // If this POI is a boss location
+  eventType?: string; // For special events (e.g. Shifting Earth, Rot Blessing)
 }
 
 // --- Nightlord Enum/Type ---
@@ -48,6 +55,7 @@ export enum Nightlord {
 }
 
 // --- Map Pattern ---
+// Reference: /reference_material/Elden Ring Nightreign map patterns - Patterns.csv
 export interface MapPattern {
   id: string; // Unique pattern identifier (e.g. "Gladius-01")
   nightlord: Nightlord;
@@ -56,6 +64,7 @@ export interface MapPattern {
   landmarks: Landmark[];
   shiftingEarthEvents?: string[]; // Optional, names or IDs of events
   circleSequence: { x: number; y: number; radius: number }[]; // Circle positions and radii for each phase
+  specialEvents?: string[]; // e.g. ["Day 1 Meteor Strike", "Day 2 Night Horde"]
 }
 
 // --- Route Calculation ---
@@ -70,6 +79,7 @@ export interface RouteCalculation {
 }
 
 // --- Boss Category ---
+// Reference: /reference_material/complete_boss_list.md
 export enum BossCategory {
   Nightlord = "Nightlord",
   Evergaol = "Evergaol",
@@ -77,6 +87,7 @@ export enum BossCategory {
   Night = "Night",
   Event = "Event",
   Remembrance = "Remembrance",
+  Arena = "Arena", // Added for Arena Bosses
   Other = "Other",
 }
 
