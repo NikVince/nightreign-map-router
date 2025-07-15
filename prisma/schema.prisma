@@ -32,12 +32,15 @@ enum LandmarkType {
   OldSorcerersRise
   Township
   Evergaol
+  ArenaBoss // Arena Boss POIs (see /reference_material/Elden Ring Nightreign map patterns - Patterns.csv)
+  FieldBoss // Roaming bosses, revealed on day 2 or by fort map
+  RottedWoods // Special region (see /reference_material/landmarks_map_system.md)
+  RotBlessing // Special event/bonus
   SiteOfGrace
   SpectralHawkTree
   Spiritstream
   Scarab
   TunnelEntrance
-  FieldBoss
 }
 
 enum Nightlord {
@@ -58,6 +61,7 @@ enum BossCategory {
   Night
   Event
   Remembrance
+  Arena // Arena Bosses (see /reference_material/complete_boss_list.md)
   Other
 }
 
@@ -183,6 +187,7 @@ model MapPattern {
   seed              Int
   shiftingEarthEvents ShiftingEarthEventType[]
   circleSequence    Json // Array of { x, y, radius }
+  specialEvents     String[] // e.g. ["Day 1 Meteor Strike", "Day 2 Night Horde"] from CSV
   // Relations
   patternLandmarks  MapPatternLandmark[]
 }
