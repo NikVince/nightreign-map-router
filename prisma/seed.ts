@@ -1,105 +1,106 @@
-import { PrismaClient, LandmarkType, Nightlord, BossCategory, NightfarerClassType, ShiftingEarthEventType, DamageType, StatusEffect } from '@prisma/client';
+import { PrismaClient, LandmarkType, Nightlord, BossCategory, ShiftingEarthEventType, DamageType, StatusEffect } from '@prisma/client';
+import fs from 'fs';
+import path from 'path';
+import { parse } from 'csv-parse/sync';
 
 const prisma = new PrismaClient();
 
+const CSV_PATH = path.join(__dirname, '../reference_material/Elden Ring Nightreign map patterns - Patterns.csv');
+
+// Helper: Map CSV column names to LandmarkType
+const landmarkTypeMap: Record<string, LandmarkType> = {
+  'Church': LandmarkType.Church,
+  'Great Church': LandmarkType.GreatChurch,
+  'Castle': LandmarkType.Castle,
+  'Fort': LandmarkType.Fort,
+  'Tunnel': LandmarkType.Tunnel,
+  'Main Encampment': LandmarkType.MainEncampment,
+  'Ruins': LandmarkType.Ruins,
+  "Sorcerer's Rise": LandmarkType.SorcerersRise,
+  'Old Sorcerer\'s Rise': LandmarkType.OldSorcerersRise,
+  'Township': LandmarkType.Township,
+  'Evergaol': LandmarkType.Evergaol,
+  'Arena Boss': LandmarkType.ArenaBoss,
+  'Field Boss': LandmarkType.FieldBoss,
+  'Rotted Woods': LandmarkType.RottedWoods,
+  'Rot Blessing': LandmarkType.RotBlessing,
+  // Add more as needed
+};
+
 async function main() {
-  // Seed a Landmark
-  const landmark = await prisma.landmark.create({
-    data: {
-      type: LandmarkType.Church,
-      name: 'First Church of Limveld',
-      x: 100.0,
-      y: 200.0,
-      icon: 'church.png',
-      priority: 95,
-      contents: ['Sacred Flask'],
-      notes: 'High priority for flask upgrade.'
-    }
-  });
+  // 1. Parse the CSV
+  const csvRaw = fs.readFileSync(CSV_PATH, 'utf-8');
+  const records = parse(csvRaw, { skip_empty_lines: true });
 
-  // Seed a Boss
-  const boss = await prisma.boss.create({
-    data: {
-      name: 'Gladius, Beast of Night',
-      category: BossCategory.Nightlord,
-      description: 'Three-headed dog Nightlord',
-      expedition: 'Tricephalos',
-      phases: 2,
-      weaknesses: [DamageType.Holy, DamageType.Standard],
-      statusWeaknesses: [StatusEffect.BloodLoss],
-      notes: 'Splits into three in phase 2.',
-      landmark: { connect: { id: landmark.id } }
-    }
-  });
+  // 2. Extract headers
+  const headerRow = records[0];
+  const subHeaderRow = records[1];
+  const dataRows = records.slice(2);
 
-  // Seed a NightfarerClass
-  await prisma.nightfarerClass.create({
-    data: {
-      id: NightfarerClassType.Wylder,
-      archetype: 'Balanced all-rounder',
-      difficulty: 'Easy',
-      relicSlots: ['Red', 'Red', 'Blue'],
-      startingGear: ['Greatsword', 'Buckler'],
-      abilities: {
-        passive: 'Sixth Sense',
-        skill: 'Clawshot',
-        ultimate: 'Onslaught Stake'
+  if (!headerRow) {
+    throw new Error('CSV header row is missing or malformed.');
+  }
+  // 3. For each pattern (row), create MapPattern, Landmarks, Bosses, and links
+  for (const row of dataRows) {
+    const [patternIndexRaw, nightlordRaw, shiftingEarth, spawnPoint, specialEvent, night1Boss, night2Boss, extraNightBoss, night1Circle, night2Circle, ...poiCells] = row;
+    const patternIndex = patternIndexRaw ? patternIndexRaw.toString() : '0';
+    const nightlord = nightlordRaw ? nightlordRaw.toString() : 'Gladius';
+    const patternId = `${nightlord}-${patternIndex}`;
+
+    // Upsert MapPattern
+    const mapPattern = await prisma.mapPattern.upsert({
+      where: { id: patternId },
+      update: {},
+      create: {
+        id: patternId,
+        nightlord: nightlord as Nightlord,
+        patternIndex: parseInt(patternIndex, 10),
+        seed: 0, // TODO: If seed is available, use it
+        shiftingEarthEvents: shiftingEarth ? [shiftingEarth as ShiftingEarthEventType] : [],
+        circleSequence: [], // TODO: Parse if available
+        specialEvents: [specialEvent, night1Circle, night2Circle].filter((v): v is string => typeof v === 'string' && !!v),
       },
-      notes: 'Beginner-friendly.'
-    }
-  });
+    });
 
-  // Seed a ShiftingEarthEvent
-  await prisma.shiftingEarthEvent.create({
-    data: {
-      id: ShiftingEarthEventType.Crater,
-      name: 'The Crater',
-      location: 'North',
-      theme: 'Volcanic',
-      environmentalChanges: 'Lava flows, underground temple',
-      bosses: ['Magma Wyrm'],
-      uniqueReward: 'Legendary Upgrade',
-      notes: 'Best approached on Day 2.'
-    }
-  });
+    // 4. For each POI column, create or upsert Landmarks and link to pattern
+    for (let i = 0; i < poiCells.length; i++) {
+      const colName = (subHeaderRow ? subHeaderRow[i + 10] : undefined) || headerRow[i + 10];
+      if (!colName) continue;
+      const cellValue = poiCells[i];
+      if (!cellValue) continue;
+      const landmarkType = landmarkTypeMap[colName] || LandmarkType.Ruins; // Default/fallback
+      const landmarkId = `${patternId}-${colName.replace(/\s+/g, '_')}`;
 
-  // Seed a MapPattern
-  const mapPattern = await prisma.mapPattern.create({
-    data: {
-      nightlord: Nightlord.Gladius,
-      patternIndex: 0,
-      seed: 123456,
-      shiftingEarthEvents: [ShiftingEarthEventType.Crater],
-      circleSequence: [
-        { x: 100, y: 200, radius: 300 },
-        { x: 150, y: 250, radius: 150 }
-      ],
-    }
-  });
+      // Upsert Landmark
+      const landmark = await prisma.landmark.upsert({
+        where: { id: landmarkId },
+        update: {},
+        create: {
+          id: landmarkId,
+          type: landmarkType,
+          name: cellValue,
+          x: 0, // Placeholder, to be updated with real coordinates
+          y: 0, // Placeholder
+          icon: undefined,
+          priority: undefined,
+          contents: [],
+          notes: '',
+        },
+      });
 
-  // Connect Landmark to MapPattern via join table
-  await prisma.mapPatternLandmark.create({
-    data: {
-      mapPatternId: mapPattern.id,
-      landmarkId: landmark.id,
-      order: 1
+      // Link Landmark to MapPattern
+      await prisma.mapPatternLandmark.upsert({
+        where: { mapPatternId_landmarkId: { mapPatternId: mapPattern.id, landmarkId: landmark.id } },
+        update: {},
+        create: {
+          mapPatternId: mapPattern.id,
+          landmarkId: landmark.id,
+          order: i + 1,
+        },
+      });
     }
-  });
-
-  // Seed a Route
-  await prisma.route.create({
-    data: {
-      patternId: mapPattern.id,
-      nightlord: Nightlord.Gladius,
-      totalDistance: 500.0,
-      estimatedTime: 600.0,
-      priorities: { [landmark.id]: 95 },
-      notes: 'Sample route for Gladius',
-      routeLandmarks: {
-        create: [{ landmarkId: landmark.id, order: 1 }]
-      }
-    }
-  });
+    // TODO: Bosses and more advanced logic can be added here
+  }
 }
 
 main()
