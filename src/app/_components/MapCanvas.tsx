@@ -75,6 +75,30 @@ const POI_ICONS = [
   "Ruins.png",
 ];
 
+// --- MANUAL ICON SIZE CONTROL ---
+// Edit the width/height for each icon here to test different sizes in realtime.
+// If an icon is not listed, it will use its natural size.
+export const POI_ICON_SIZES: Record<string, { width?: number; height?: number }> = {
+  "Mission_Objective.png": { width: 64 },
+  "Main_Encampment.png": { width: 96 },
+  "Great_Church.png": { width: 96 },
+  "Fort.png": { width: 128 },
+  "Field_Boss.png": { width: 64 },
+  "Evergaol.png": { width: 64 },
+  "Church.png": { width: 64 },
+  "Castle.png": { width: 128 },
+  "Buried_Treasure.png": { width: 64 },
+  "Tunnel_Entrance.png": { width: 64 },
+  "Township.png": { width: 128 },
+  "Spiritstream.png": { width: 48 },
+  "Spectral_Hawk_Tree.png": { width: 48 },
+  "Sorcerer's_Rise.png": { width: 48 },
+  "Site_of_Grace.png": { width: 48 },
+  "Scarab.png": { width: 48 },
+  "Ruins.png": { width: 128 },
+};
+// ---------------------------------
+
 const MapCanvas: React.FC<{ mapLayout: string }> = ({ mapLayout }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<KonvaStageType>(null);
@@ -360,8 +384,45 @@ const MapCanvas: React.FC<{ mapLayout: string }> = ({ mapLayout }) => {
     Konva.pixelRatio = 1; // For better performance on retina
   }, []);
 
-  // Load all POI icons
-  const poiImages = POI_ICONS.map((filename) => useImage(`/POI_icons/${filename}`)[0]);
+  // Individual useImage calls for each POI icon (must be at top level, not in a loop)
+  const missionObjectiveImg = useImage("/POI_icons/Mission_Objective.png")[0];
+  const mainEncampmentImg = useImage("/POI_icons/Main_Encampment.png")[0];
+  const greatChurchImg = useImage("/POI_icons/Great_Church.png")[0];
+  const fortImg = useImage("/POI_icons/Fort.png")[0];
+  const fieldBossImg = useImage("/POI_icons/Field_Boss.png")[0];
+  const evergaolImg = useImage("/POI_icons/Evergaol.png")[0];
+  const churchImg = useImage("/POI_icons/Church.png")[0];
+  const castleImg = useImage("/POI_icons/Castle.png")[0];
+  const buriedTreasureImg = useImage("/POI_icons/Buried_Treasure.png")[0];
+  const tunnelEntranceImg = useImage("/POI_icons/Tunnel_Entrance.png")[0];
+  const townshipImg = useImage("/POI_icons/Township.png")[0];
+  const spiritstreamImg = useImage("/POI_icons/Spiritstream.png")[0];
+  const spectralHawkTreeImg = useImage("/POI_icons/Spectral_Hawk_Tree.png")[0];
+  const sorcerersRiseImg = useImage("/POI_icons/Sorcerer's_Rise.png")[0];
+  const siteOfGraceImg = useImage("/POI_icons/Site_of_Grace.png")[0];
+  const scarabImg = useImage("/POI_icons/Scarab.png")[0];
+  const ruinsImg = useImage("/POI_icons/Ruins.png")[0];
+
+  // Assemble in the same order as POI_ICONS
+  const poiImages = [
+    missionObjectiveImg,
+    mainEncampmentImg,
+    greatChurchImg,
+    fortImg,
+    fieldBossImg,
+    evergaolImg,
+    churchImg,
+    castleImg,
+    buriedTreasureImg,
+    tunnelEntranceImg,
+    townshipImg,
+    spiritstreamImg,
+    spectralHawkTreeImg,
+    sorcerersRiseImg,
+    siteOfGraceImg,
+    scarabImg,
+    ruinsImg,
+  ];
 
   return (
     <div ref={containerRef} className="w-full h-full flex-1">
@@ -409,18 +470,38 @@ const MapCanvas: React.FC<{ mapLayout: string }> = ({ mapLayout }) => {
           {/* Arrange icons in a circle around the map center for easy comparison */}
           {poiImages.map((img, i) => {
             if (!img || mapWidth === 0 || mapHeight === 0) return null;
+            const iconName = POI_ICONS[i];
+            // --- RESIZE ICONS HERE ---
+            // To resize an icon, add an entry to POI_ICON_SIZES above.
+            const safeIconName = iconName ?? "";
+            const size: { width?: number; height?: number } = POI_ICON_SIZES[safeIconName] || {};
+            let displayWidth = img.width;
+            let displayHeight = img.height;
+            if (size.width && !size.height) {
+              displayWidth = size.width;
+              displayHeight = (img.height / img.width) * size.width;
+            } else if (!size.width && size.height) {
+              displayHeight = size.height;
+              displayWidth = (img.width / img.height) * size.height;
+            } else if (size.width && size.height) {
+              displayWidth = size.width;
+              displayHeight = size.height;
+            }
+            // ------------------------- 
             const angle = (2 * Math.PI * i) / poiImages.length;
             const radius = Math.min(mapWidth, mapHeight) / 4;
             const centerX = mapWidth / 2;
             const centerY = mapHeight / 2;
-            const x = centerX + radius * Math.cos(angle) - (img.width ?? 0) / 2;
-            const y = centerY + radius * Math.sin(angle) - (img.height ?? 0) / 2;
+            const x = centerX + radius * Math.cos(angle) - displayWidth / 2;
+            const y = centerY + radius * Math.sin(angle) - displayHeight / 2;
             return (
               <KonvaImage
-                key={POI_ICONS[i]}
+                key={iconName}
                 image={img}
                 x={x}
                 y={y}
+                width={displayWidth}
+                height={displayHeight}
               />
             );
           })}
