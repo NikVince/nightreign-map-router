@@ -54,7 +54,26 @@ function clampStagePos(pos: { x: number; y: number }, scale: number, mapWidth: n
   };
 }
 
-const TEST_LANDMARK_ICON = "/POI_icons/Site_of_Grace.png";
+// List of all POI icon filenames
+const POI_ICONS = [
+  "Mission_Objective.png",
+  "Main_Encampment.png",
+  "Great_Church.png",
+  "Fort.png",
+  "Field_Boss.png",
+  "Evergaol.png",
+  "Church.png",
+  "Castle.png",
+  "Buried_Treasure.png",
+  "Tunnel_Entrance.png",
+  "Township.png",
+  "Spiritstream.png",
+  "Spectral_Hawk_Tree.png",
+  "Sorcerer's_Rise.png",
+  "Site_of_Grace.png",
+  "Scarab.png",
+  "Ruins.png",
+];
 
 const MapCanvas: React.FC<{ mapLayout: string }> = ({ mapLayout }) => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -66,7 +85,6 @@ const MapCanvas: React.FC<{ mapLayout: string }> = ({ mapLayout }) => {
   const [stagePos, setStagePos] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
   const [lastPointerPos, setLastPointerPos] = useState<{ x: number; y: number } | null>(null);
-  const [landmarkImg] = useImage(TEST_LANDMARK_ICON);
 
   // Add refs for scale and position
   const stageScaleRef = useRef(stageScale);
@@ -342,6 +360,9 @@ const MapCanvas: React.FC<{ mapLayout: string }> = ({ mapLayout }) => {
     Konva.pixelRatio = 1; // For better performance on retina
   }, []);
 
+  // Load all POI icons
+  const poiImages = POI_ICONS.map((filename) => useImage(`/POI_icons/${filename}`)[0]);
+
   return (
     <div ref={containerRef} className="w-full h-full flex-1">
       <Stage
@@ -385,15 +406,24 @@ const MapCanvas: React.FC<{ mapLayout: string }> = ({ mapLayout }) => {
         </Layer>
         {/* Landmark Layer */}
         <Layer listening={false}>
-          {landmarkImg && mapWidth > 0 && mapHeight > 0 && (
-            <KonvaImage
-              image={landmarkImg}
-              x={mapWidth / 2 - (landmarkImg.width ?? 0) / 2}
-              y={mapHeight / 2 - (landmarkImg.height ?? 0) / 2}
-              width={landmarkImg.width}
-              height={landmarkImg.height}
-            />
-          )}
+          {/* Arrange icons in a circle around the map center for easy comparison */}
+          {poiImages.map((img, i) => {
+            if (!img || mapWidth === 0 || mapHeight === 0) return null;
+            const angle = (2 * Math.PI * i) / poiImages.length;
+            const radius = Math.min(mapWidth, mapHeight) / 4;
+            const centerX = mapWidth / 2;
+            const centerY = mapHeight / 2;
+            const x = centerX + radius * Math.cos(angle) - (img.width ?? 0) / 2;
+            const y = centerY + radius * Math.sin(angle) - (img.height ?? 0) / 2;
+            return (
+              <KonvaImage
+                key={POI_ICONS[i]}
+                image={img}
+                x={x}
+                y={y}
+              />
+            );
+          })}
         </Layer>
       </Stage>
     </div>
