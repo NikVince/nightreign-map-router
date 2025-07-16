@@ -5,6 +5,7 @@ import { Image as KonvaImage } from "react-konva";
 import type { Stage as KonvaStageType } from "konva/lib/Stage";
 import type { KonvaEventObject } from "konva/lib/Node";
 import Konva from "konva";
+import useImage from "use-image";
 
 function getTileGridUrls(mapLayout: string) {
   // 6x6 grid for L0 (surface) tiles
@@ -53,6 +54,8 @@ function clampStagePos(pos: { x: number; y: number }, scale: number, mapWidth: n
   };
 }
 
+const TEST_LANDMARK_ICON = "/POI_icons/Site_of_Grace.png";
+
 const MapCanvas: React.FC<{ mapLayout: string }> = ({ mapLayout }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<KonvaStageType>(null);
@@ -63,6 +66,7 @@ const MapCanvas: React.FC<{ mapLayout: string }> = ({ mapLayout }) => {
   const [stagePos, setStagePos] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
   const [lastPointerPos, setLastPointerPos] = useState<{ x: number; y: number } | null>(null);
+  const [landmarkImg] = useImage(TEST_LANDMARK_ICON);
 
   // Add refs for scale and position
   const stageScaleRef = useRef(stageScale);
@@ -378,6 +382,18 @@ const MapCanvas: React.FC<{ mapLayout: string }> = ({ mapLayout }) => {
                 ) : null;
               })
             )}
+        </Layer>
+        {/* Landmark Layer */}
+        <Layer listening={false}>
+          {landmarkImg && mapWidth > 0 && mapHeight > 0 && (
+            <KonvaImage
+              image={landmarkImg}
+              x={mapWidth / 2 - (landmarkImg.width ?? 0) / 2}
+              y={mapHeight / 2 - (landmarkImg.height ?? 0) / 2}
+              width={landmarkImg.width}
+              height={landmarkImg.height}
+            />
+          )}
         </Layer>
       </Stage>
     </div>
