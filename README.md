@@ -19,6 +19,17 @@
 
 ---
 
+### Current Focus & Scope
+- **Responsive grid system:** Implemented and working on both desktop and mobile (✅)
+- **Dark theme:** Fully implemented; no light mode planned (✅)
+- **Map centering on reload:** Current behavior is intentional and sufficient (✅)
+- **Asset extraction workflow:** Out of scope for this repository (❌)
+- **Image optimization pipeline:** Deferred until more assets or performance needs arise (⏳)
+- **Landmark interaction UI, tooltips/popovers, pattern selection/comparison UI:** Not planned for now (❌)
+- **Loading states, error boundaries, mock data, and advanced documentation:** Deferred until later development stages (⏳)
+
+The current focus is on core map rendering, basic POI placement (pending final coordinates), and maintaining a clean, responsive UI. Features and scope will be revisited as the project evolves and as new requirements or assets become available.
+
 > **Nightreign Router** is an interactive map and route planning tool for Elden Ring: Nightreign, designed to help players optimize their strategies across all 320 unique map patterns. This project is a fan-made, educational initiative and is **not affiliated with, endorsed by, or sponsored by FromSoftware or Bandai Namco**. All game content and assets are © FromSoftware and Bandai Namco. This project is and will always remain non-commercial.
 
 ## Features
@@ -40,7 +51,6 @@ Comprehensive documentation is available in the [`/docs`](./docs) directory:
 - **[PROJECT_OVERVIEW.md](./docs/PROJECT_OVERVIEW.md)**: Project vision and goals
 - **[GAME_MECHANICS.md](./docs/GAME_MECHANICS.md)**: Nightreign mechanics and timing
 - **[DEVELOPMENT_GUIDELINES.md](./docs/DEVELOPMENT_GUIDELINES.md)**: Core development philosophy
-- **[ASSET_EXTRACTION.md](./docs/ASSET_EXTRACTION.md)**: Game asset extraction procedures
 - **[IMPLEMENTATION_PHASES.md](./docs/IMPLEMENTATION_PHASES.md)**: Development roadmap
 - **[DEVELOPMENT_CHECKLIST.md](./docs/DEVELOPMENT_CHECKLIST.md)**: Progress tracking
 - **[TECH_STACK.md](./docs/TECH_STACK.md)**: Technology stack details

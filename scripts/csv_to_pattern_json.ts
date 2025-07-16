@@ -2,8 +2,8 @@
 // Script to convert Elden Ring Nightreign map patterns CSV to JSON for DB import
 // Usage: ts-node scripts/csv_to_pattern_json.ts
 
-import fs from 'fs';
-import path from 'path';
+import * as fs from 'fs';
+import * as path from 'path';
 import { parse } from 'csv-parse/sync';
 
 // Path to the CSV file
