@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { Header } from "./_components/Header";
 import { Sidebar } from "./_components/Sidebar";
 import dynamic from "next/dynamic";
@@ -10,8 +10,6 @@ export default function Home() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isDesktop, setIsDesktop] = useState(false);
   const [mapLayout, setMapLayout] = useState("default");
-  const headerRef = useRef<HTMLDivElement>(null);
-  const [mobileContentHeight, setMobileContentHeight] = useState<number | undefined>(undefined);
 
   useEffect(() => {
     // Set isDesktop based on window width
@@ -19,25 +17,6 @@ export default function Home() {
     checkDesktop();
     window.addEventListener('resize', checkDesktop);
     return () => window.removeEventListener('resize', checkDesktop);
-  }, []);
-
-  useEffect(() => {
-    function updateMobileContentHeight() {
-      const isMobile = window.innerWidth < 640;
-      if (isMobile && headerRef.current) {
-        const headerHeight = headerRef.current.offsetHeight;
-        setMobileContentHeight(window.innerHeight - headerHeight);
-      } else {
-        setMobileContentHeight(undefined);
-      }
-    }
-    updateMobileContentHeight();
-    window.addEventListener('resize', updateMobileContentHeight);
-    window.addEventListener('orientationchange', updateMobileContentHeight);
-    return () => {
-      window.removeEventListener('resize', updateMobileContentHeight);
-      window.removeEventListener('orientationchange', updateMobileContentHeight);
-    };
   }, []);
 
   // Sidebar is open if desktop or manually opened on mobile
