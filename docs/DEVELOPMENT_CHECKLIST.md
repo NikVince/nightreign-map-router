@@ -36,22 +36,23 @@
   - [x] Responsive layout: objectives pane overlays on mobile, 25/75 split on desktop, map canvas 100% width on mobile
   - [x] Make the Konva canvas dynamically resize to fill the orange border exactly, with no padding or gaps
   - [x] Remove the white border from the canvas so only the orange border is visible
-- [ ] Implement zoom controls (mouse wheel)
-- [ ] Implement pan controls (drag to move map)
+- [x] Implement zoom controls (mouse wheel)
+- [x] Implement pan controls (drag to move map)
 - [ ] Maintain state for scale and position
 - [ ] Create coordinate system mapping (game → screen)
 - [ ] Ensure accurate placement of landmarks and circles
-- [ ] Add mouse/touch interaction handling
+- [x] Add mouse/touch interaction handling
   - [ ] Implement click/tap handlers for selecting landmarks
   - [ ] Add hover/cursor feedback for interactive elements
 
 ### Mock Data Integration
-- [ ] Create sample pattern data (5-10 patterns)
-- [ ] Integrate mock MapPattern and Landmark data
-- [ ] Render landmarks as icons on the map using mock data
+- [x] Create sample pattern data (5-10 patterns)
+- [x] Integrate mock MapPattern and Landmark data
+- [x] Render landmarks as icons on the map using mock data
+- [x] Pattern data import pipeline (CSV-to-JSON, validation, DB import/seed) — see PATTERN_DATA_PIPELINE.md
 
 ### Landmark Rendering & Interaction
-- [ ] Implement landmark rendering with placeholder icons
+- [x] Implement landmark rendering with placeholder icons
 - [ ] Add tooltips or popovers on hover/click with landmark info
 - [ ] Add landmark selection functionality (highlight, show details)
 - [ ] Show selected landmark details in sidebar or modal
@@ -72,8 +73,8 @@
 - [ ] Establish asset naming conventions
 
 ### Critical Asset Extraction
-- [ ] Extract base map textures
-- [ ] Extract landmark icons
+- [x] Extract base map textures
+- [x] Extract landmark icons
 - [ ] Extract Nightlord portraits
 - [ ] Extract UI elements
 - [ ] Extract circle overlay textures

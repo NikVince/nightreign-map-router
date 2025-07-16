@@ -96,12 +96,14 @@ const getPatternBySeed = t.procedure
 ---
 
 ## 6. Implementation Checklist
-- [ ] Design and migrate the `patterns` table in the database
-- [ ] Write a CSV-to-JSON conversion script
-- [ ] Write a DB import/seed script
+- [x] Design and migrate the `patterns` table in the database
+- [x] Write a CSV-to-JSON conversion script
+- [x] Write a DB import/seed script
 - [ ] Implement the tRPC endpoint for pattern lookup
 - [ ] Test with sample queries and team compositions
 - [ ] Document the import/update process for future DLCs
+
+> All pattern data is now fully imported and ready for API/tRPC endpoint development.
 
 ---
 
