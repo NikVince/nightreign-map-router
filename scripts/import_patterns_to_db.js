@@ -1,10 +1,10 @@
-// import_patterns_to_db.ts
+// import_patterns_to_db.js
 // Script to import patterns.json into the Pattern table using Prisma
-// Usage: ts-node scripts/import_patterns_to_db.ts
+// Usage: node scripts/import_patterns_to_db.js
 
-import fs from 'fs';
-import path from 'path';
-import { PrismaClient } from '@prisma/client';
+const fs = require('fs');
+const path = require('path');
+const { PrismaClient } = require('@prisma/client');
 
 const prisma = new PrismaClient();
 
