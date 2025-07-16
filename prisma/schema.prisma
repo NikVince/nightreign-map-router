@@ -204,3 +204,14 @@ model MapPatternLandmark {
   @@unique([mapPatternId, landmarkId])
   @@index([landmarkId])
 }
+
+// --- Added for pattern data pipeline ---
+model Pattern {
+  id           String   @id @default(uuid())
+  seed         String   @unique
+  nightlord    String
+  patternIndex Int
+  pois         Json
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
