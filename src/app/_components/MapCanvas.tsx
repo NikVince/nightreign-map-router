@@ -100,9 +100,7 @@ export const POI_ICON_SIZES: Record<string, { width?: number; height?: number }>
 // ---------------------------------
 
 // Add type for POI data
-interface POICoordinates {
-  [poiType: string]: [number, number][];
-}
+type POICoordinates = Record<string, [number, number][]>;
 
 // POI type to icon filename mapping
 const POI_TYPE_ICON_MAP: Record<string, string> = {
