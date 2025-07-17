@@ -468,6 +468,7 @@ const MapCanvas: React.FC<{ mapLayout: string }> = ({ mapLayout }) => {
         {/* Landmark Layer */}
         <Layer listening={false}>
           {/* Arrange icons in a circle around the map center for easy comparison */}
+          {/**
           {poiImages.map((img, i) => {
             if (!img || mapWidth === 0 || mapHeight === 0) return null;
             const iconName = POI_ICONS[i];
@@ -505,6 +506,7 @@ const MapCanvas: React.FC<{ mapLayout: string }> = ({ mapLayout }) => {
               />
             );
           })}
+          */}
         </Layer>
       </Stage>
     </div>
