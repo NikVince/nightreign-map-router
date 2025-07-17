@@ -104,6 +104,24 @@ interface POICoordinates {
   [poiType: string]: [number, number][];
 }
 
+// POI type to icon filename mapping
+const POI_TYPE_ICON_MAP: Record<string, string> = {
+  // Direct matches
+  "castle": "Castle.png",
+  "Buried_Treasures": "Buried_Treasure.png",
+  "Tunnel_Entrances": "Tunnel_Entrance.png",
+  "Spiritstreams": "Spiritstream.png",
+  "Spectral_Hawk_Trees": "Spectral_Hawk_Tree.png",
+  "Smithing_Tables": "Ruins.png", // No direct icon, use Ruins
+  "Sites_of_grace": "Site_of_Grace.png",
+  "Scarabs": "Scarab.png",
+  "Minor_Locations": "Township.png", // No direct icon, use Township
+  "Merchants": "Main_Encampment.png", // No direct icon, use Main_Encampment
+  "Major_Locations": "Great_Church.png", // No direct icon, use Great_Church
+  "Field_Bosses": "Field_Boss.png",
+  "Evergaols": "Evergaol.png",
+};
+
 const MapCanvas: React.FC<{ mapLayout: string }> = ({ mapLayout }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<KonvaStageType>(null);
