@@ -526,16 +526,23 @@ const MapCanvas: React.FC<{ mapLayout: string }> = ({ mapLayout }) => {
               displayWidth = size.width;
               displayHeight = size.height;
             }
-            return coords.map(([x, y], idx) => (
-              <KonvaImage
-                key={`${poiType}_${idx}`}
-                image={img}
-                x={x - displayWidth / 2}
-                y={y - displayHeight / 2}
-                width={displayWidth}
-                height={displayHeight}
-              />
-            ));
+            // --- SCALE COORDINATES TO MAP SIZE (account for left margin and active width) ---
+            const leftBound = 507;
+            const activeWidth = 1690;
+            return coords.map(([x, y], idx) => {
+              const scaledX = ((x - leftBound) / activeWidth) * mapWidth;
+              const scaledY = (y / 1690) * mapHeight;
+              return (
+                <KonvaImage
+                  key={`${poiType}_${idx}`}
+                  image={img}
+                  x={scaledX - displayWidth / 2}
+                  y={scaledY - displayHeight / 2}
+                  width={displayWidth}
+                  height={displayHeight}
+                />
+              );
+            });
           })}
         </Layer>
       </Stage>
