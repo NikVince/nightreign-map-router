@@ -504,15 +504,16 @@ const MapCanvas: React.FC<{ mapLayout: string }> = ({ mapLayout }) => {
         </Layer>
         {/* Landmark Layer */}
         <Layer listening={false}>
-          {/* Arrange icons in a circle around the map center for easy comparison */}
-          {/**
-          {poiImages.map((img, i) => {
-            if (!img || mapWidth === 0 || mapHeight === 0) return null;
-            const iconName = POI_ICONS[i];
-            // --- RESIZE ICONS HERE ---
-            // To resize an icon, add an entry to POI_ICON_SIZES above.
-            const safeIconName = iconName ?? "";
-            const size: { width?: number; height?: number } = POI_ICON_SIZES[safeIconName] || {};
+          {/* Render real POIs from loaded JSON data */}
+          {poiData && Object.entries(poiData).map(([poiType, coords]) => {
+            const iconFile = POI_TYPE_ICON_MAP[poiType];
+            if (!iconFile) return null;
+            // Find the loaded image for this icon
+            const iconIndex = POI_ICONS.indexOf(iconFile);
+            const img = poiImages[iconIndex];
+            if (!img) return null;
+            // Get icon size
+            const size = POI_ICON_SIZES[iconFile] || {};
             let displayWidth = img.width;
             let displayHeight = img.height;
             if (size.width && !size.height) {
@@ -525,25 +526,17 @@ const MapCanvas: React.FC<{ mapLayout: string }> = ({ mapLayout }) => {
               displayWidth = size.width;
               displayHeight = size.height;
             }
-            // ------------------------- 
-            const angle = (2 * Math.PI * i) / poiImages.length;
-            const radius = Math.min(mapWidth, mapHeight) / 4;
-            const centerX = mapWidth / 2;
-            const centerY = mapHeight / 2;
-            const x = centerX + radius * Math.cos(angle) - displayWidth / 2;
-            const y = centerY + radius * Math.sin(angle) - displayHeight / 2;
-            return (
+            return coords.map(([x, y], idx) => (
               <KonvaImage
-                key={iconName}
+                key={`${poiType}_${idx}`}
                 image={img}
-                x={x}
-                y={y}
+                x={x - displayWidth / 2}
+                y={y - displayHeight / 2}
                 width={displayWidth}
                 height={displayHeight}
               />
-            );
+            ));
           })}
-          */}
         </Layer>
       </Stage>
     </div>
