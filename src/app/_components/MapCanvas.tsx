@@ -99,6 +99,11 @@ export const POI_ICON_SIZES: Record<string, { width?: number; height?: number }>
 };
 // ---------------------------------
 
+// Add type for POI data
+interface POICoordinates {
+  [poiType: string]: [number, number][];
+}
+
 const MapCanvas: React.FC<{ mapLayout: string }> = ({ mapLayout }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<KonvaStageType>(null);
@@ -423,6 +428,20 @@ const MapCanvas: React.FC<{ mapLayout: string }> = ({ mapLayout }) => {
     scarabImg,
     ruinsImg,
   ];
+
+  // State for loaded POI coordinates
+  const [poiData, setPoiData] = useState<POICoordinates | null>(null);
+
+  // Load POI coordinates from JSON on mount
+  useEffect(() => {
+    fetch("/assets/maps/coordinates/default_map_layout.json")
+      .then((res) => res.json())
+      .then((data: POICoordinates) => setPoiData(data))
+      .catch((err) => {
+        console.error("Failed to load POI coordinates JSON", err);
+        setPoiData(null);
+      });
+  }, []);
 
   return (
     <div ref={containerRef} className="w-full h-full flex-1">
