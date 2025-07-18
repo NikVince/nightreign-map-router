@@ -39,3 +39,26 @@
 ## File Organization
 
 > **Note:** All asset metadata and references are stored in Supabase (PostgreSQL) for consistency and easy access by the application backend.
+
+## Coordinate Extraction Script Usage (Robust, Future-Proof)
+
+The script `extract_svg_coordinates.py` extracts all (x, y) coordinate pairs from the `d` attribute of the first `<path>` element in each SVG file. It is robust to all SVG path commands and will work for any standard SVG path data.
+
+**Directory Structure:**
+- All coordinate JSON files (`*_map_layout.json`) must be placed in `public/assets/maps/coordinates/`.
+- For each map layout, place the relevant SVGs in a single directory (e.g., `public/assets/maps/coordinates/the_mountaintop_coordinate_data/`).
+- The default layout's JSON file should be named `default_map_layout.json` and placed in the same directory as the others.
+
+**How to update or rerun extraction:**
+1. Edit or replace any SVGs for the layout you want to update (e.g., to add, remove, or move icons).
+2. Run the script with the correct SVG directory and output path. For example:
+   ```sh
+   python extract_svg_coordinates.py public/assets/maps/coordinates/the_mountaintop_coordinate_data public/assets/maps/coordinates/the_mountaintop_map_layout.json
+   ```
+3. The script will overwrite the old JSON file with the new coordinates. No need to delete the old file manually.
+4. Reload the app to see the updated icons.
+
+**Notes:**
+- If a POI type is missing or has no coordinates in a layout, it will be skipped in the output JSON. This is expected and will not break the app.
+- The script only processes the first `<path>` element in each SVG. If you need to support multiple paths per POI type, update the script accordingly.
+- Keep the directory structure consistent for all layouts to avoid confusion.

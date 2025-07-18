@@ -64,3 +64,16 @@
 - As coordinate data becomes available, update the seed script and database records.
 - Consider building a simple admin UI or map editor to assign and adjust coordinates visually.
 - Keep this document up to date with any new conventions or tools. 
+
+---
+
+## Automated SVG Coordinate Extraction (Recommended Workflow)
+- Use the `extract_svg_coordinates.py` script to extract POI coordinates from SVG files for any map layout.
+- Place all SVGs for a given layout in a single directory (e.g., `public/assets/maps/coordinates/the_mountaintop_coordinate_data/`).
+- Run the script with the SVG directory and output JSON path:
+  ```sh
+  python extract_svg_coordinates.py <SVG_DIR> <OUTPUT_JSON>
+  ```
+- Place the resulting JSON file in `public/assets/maps/coordinates/` with the naming convention `<layout>_map_layout.json` (e.g., `the_mountaintop_map_layout.json`).
+- To update coordinates, simply edit the SVGs and rerun the script. The app will automatically use the new data.
+- See `docs/ASSET_EXTRACTION.md` for detailed instructions and examples. 

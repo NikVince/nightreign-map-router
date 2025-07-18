@@ -85,4 +85,9 @@ const scaledY = (y / 1690) * mapHeight;
 
 ---
 
-**This method guarantees pixel-perfect, responsive POI overlays for any map layout.** 
+**This method guarantees pixel-perfect, responsive POI overlays for any map layout.**
+
+---
+
+## See Also
+- For robust, up-to-date instructions on extracting and updating POI coordinates from SVGs, see `docs/ASSET_EXTRACTION.md` and the automated workflow in `docs/POI_COORDINATE_ASSIGNMENT.md`. 
