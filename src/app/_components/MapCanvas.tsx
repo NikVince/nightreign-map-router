@@ -1,7 +1,7 @@
 "use client";
 import React, { useRef, useEffect, useState } from "react";
 import { Stage, Layer } from "react-konva";
-import { Image as KonvaImage } from "react-konva";
+import { Image as KonvaImage, Text as KonvaText } from "react-konva";
 import type { Stage as KonvaStageType } from "konva/lib/Stage";
 import type { KonvaEventObject } from "konva/lib/Node";
 import Konva from "konva";
@@ -131,6 +131,7 @@ const MapCanvas: React.FC<{ mapLayout: string }> = ({ mapLayout }) => {
   const [isDragging, setIsDragging] = useState(false);
   const [lastPointerPos, setLastPointerPos] = useState<{ x: number; y: number } | null>(null);
   const [showIcons, setShowIcons] = useState(true); // Debug toggle for icons layer
+  const [showNumbers, setShowNumbers] = useState(false); // Toggle for POI number overlay
 
   // Add refs for scale and position
   const stageScaleRef = useRef(stageScale);
@@ -501,6 +502,16 @@ const MapCanvas: React.FC<{ mapLayout: string }> = ({ mapLayout }) => {
           />
           Show icons layer
         </label>
+        <br />
+        <label style={{ color: '#fff', fontSize: 14 }}>
+          <input
+            type="checkbox"
+            checked={showNumbers}
+            onChange={e => setShowNumbers(e.target.checked)}
+            style={{ marginRight: 6 }}
+          />
+          Show POI numbers
+        </label>
       </div>
       <Stage
         ref={stageRef}
@@ -542,48 +553,86 @@ const MapCanvas: React.FC<{ mapLayout: string }> = ({ mapLayout }) => {
             )}
         </Layer>
         {/* Landmark Layer */}
-        {showIcons && (
+        {(showIcons || showNumbers) && (
           <Layer listening={false}>
-            {/* Render real POIs from loaded JSON data */}
-            {poiData && Object.entries(poiData).map(([poiType, coords]) => {
-              const iconFile = POI_TYPE_ICON_MAP[poiType];
-              if (!iconFile) return null;
-              // Find the loaded image for this icon
-              const iconIndex = POI_ICONS.indexOf(iconFile);
-              const img = poiImages[iconIndex];
-              if (!img) return null;
-              // Get icon size
-              const size = POI_ICON_SIZES[iconFile] || {};
-              let displayWidth = img.width;
-              let displayHeight = img.height;
-              if (size.width && !size.height) {
-                displayWidth = size.width;
-                displayHeight = (img.height / img.width) * size.width;
-              } else if (!size.width && size.height) {
-                displayHeight = size.height;
-                displayWidth = (img.width / img.height) * size.height;
-              } else if (size.width && size.height) {
-                displayWidth = size.width;
-                displayHeight = size.height;
-              }
-              // --- SCALE COORDINATES TO MAP SIZE (account for left margin and active width) ---
-              const leftBound = 507;
-              const activeWidth = 1690;
-              return coords.map(([x, y], idx) => {
-                const scaledX = ((x - leftBound) / activeWidth) * mapWidth;
-                const scaledY = (y / 1690) * mapHeight;
-                return (
-                  <KonvaImage
-                    key={`${poiType}_${idx}`}
-                    image={img}
-                    x={scaledX - displayWidth / 2}
-                    y={scaledY - displayHeight / 2}
-                    width={displayWidth}
-                    height={displayHeight}
-                  />
-                );
+            {/* Render every POI with a unique number, regardless of type or icon */}
+            {(() => {
+              if (!poiData) return null;
+              let globalIdx = 1;
+              const elements: React.ReactNode[] = [];
+              Object.entries(poiData).forEach(([poiType, coords]) => {
+                // Try to get icon, but render number regardless
+                const iconFile = POI_TYPE_ICON_MAP[poiType];
+                const iconIndex = iconFile ? POI_ICONS.indexOf(iconFile) : -1;
+                const img = iconIndex >= 0 ? poiImages[iconIndex] : undefined;
+                // Get icon size or default
+                const size = iconFile ? (POI_ICON_SIZES[iconFile] || {}) : {};
+                let displayWidth = img?.width || 32;
+                let displayHeight = img?.height || 32;
+                if (size.width && !size.height) {
+                  displayWidth = size.width;
+                  displayHeight = img ? (img.height / img.width) * size.width : size.width;
+                } else if (!size.width && size.height) {
+                  displayHeight = size.height;
+                  displayWidth = img ? (img.width / img.height) * size.height : size.height;
+                } else if (size.width && size.height) {
+                  displayWidth = size.width;
+                  displayHeight = size.height;
+                }
+                // --- SCALE COORDINATES TO MAP SIZE (account for left margin and active width) ---
+                const leftBound = 507;
+                const activeWidth = 1690;
+                coords.forEach(([x, y]) => {
+                  const scaledX = ((x - leftBound) / activeWidth) * mapWidth;
+                  const scaledY = (y / 1690) * mapHeight;
+                  elements.push(
+                    <React.Fragment key={`${poiType}_${globalIdx}`}>
+                      {showIcons && img && (
+                        <KonvaImage
+                          image={img}
+                          x={scaledX - displayWidth / 2}
+                          y={scaledY - displayHeight / 2}
+                          width={displayWidth}
+                          height={displayHeight}
+                        />
+                      )}
+                      {showNumbers && (
+                        <>
+                          {/* White rectangle background for the number */}
+                          <KonvaImage
+                            image={undefined}
+                            x={scaledX - 16}
+                            y={scaledY - 16}
+                            width={32}
+                            height={32}
+                            fill="#fff"
+                            stroke="#000"
+                            strokeWidth={1}
+                            cornerRadius={8}
+                            listening={false}
+                          />
+                          <KonvaText
+                            text={String(globalIdx)}
+                            x={scaledX - 16}
+                            y={scaledY - 16}
+                            fontSize={22}
+                            fontFamily="Arial"
+                            fill="#000"
+                            align="center"
+                            width={32}
+                            height={32}
+                            listening={false}
+                            verticalAlign="middle"
+                          />
+                        </>
+                      )}
+                    </React.Fragment>
+                  );
+                  globalIdx++;
+                });
               });
-            })}
+              return elements;
+            })()}
           </Layer>
         )}
       </Stage>
