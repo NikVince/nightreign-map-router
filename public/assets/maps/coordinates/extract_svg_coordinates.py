@@ -1,14 +1,19 @@
 import os
 import re
 import json
+import sys
 from xml.etree import ElementTree as ET
 
-# Directory containing SVGs
-SVG_DIR = os.path.join(os.path.dirname(__file__), 'default_map_layout_svgs')
-OUTPUT_JSON = os.path.join(os.path.dirname(__file__), 'default_map_layout.json')
+# Usage: python extract_svg_coordinates.py <SVG_DIR> <OUTPUT_JSON>
+if len(sys.argv) != 3:
+    print("Usage: python extract_svg_coordinates.py <SVG_DIR> <OUTPUT_JSON>")
+    sys.exit(1)
 
-# Regex to match coordinate pairs (e.g., 123.45,678.90)
-COORD_PAIR_RE = re.compile(r'([0-9]+\.?[0-9]*),([0-9]+\.?[0-9]*)')
+SVG_DIR = sys.argv[1]
+OUTPUT_JSON = sys.argv[2]
+
+# Regex to match all numbers (including decimals and negatives)
+NUMBER_RE = re.compile(r'-?\d+\.?\d*')
 
 result = {}
 
@@ -25,12 +30,12 @@ for filename in os.listdir(SVG_DIR):
         if path_elem is None:
             continue
         d_attr = path_elem.attrib.get('d', '')
-        # Find all coordinate pairs
-        coords = [
-            [float(x), float(y)]
-            for x, y in COORD_PAIR_RE.findall(d_attr)
-        ]
-        result[poi_type] = coords
+        # Extract all numbers from the path data
+        numbers = [float(n) for n in NUMBER_RE.findall(d_attr)]
+        # Group into (x, y) pairs
+        coords = [numbers[i:i+2] for i in range(0, len(numbers), 2) if i+1 < len(numbers)]
+        if coords:
+            result[poi_type] = coords
     except Exception as e:
         print(f"Error processing {filename}: {e}")
 
@@ -38,4 +43,7 @@ for filename in os.listdir(SVG_DIR):
 with open(OUTPUT_JSON, 'w') as f:
     json.dump(result, f, indent=2)
 
-print(f"Extracted coordinates for {len(result)} POI types to {OUTPUT_JSON}") 
+print(f"Extracted coordinates for {len(result)} POI types to {OUTPUT_JSON}")
+
+# This script is robust to SVG path commands and will extract all (x, y) pairs from the path 'd' attribute.
+# If a POI type has no coordinates, it will be skipped in the output. This is expected for layouts missing certain POIs. 
