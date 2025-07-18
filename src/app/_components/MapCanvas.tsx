@@ -130,6 +130,7 @@ const MapCanvas: React.FC<{ mapLayout: string }> = ({ mapLayout }) => {
   const [stagePos, setStagePos] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
   const [lastPointerPos, setLastPointerPos] = useState<{ x: number; y: number } | null>(null);
+  const [showIcons, setShowIcons] = useState(true); // Debug toggle for icons layer
 
   // Add refs for scale and position
   const stageScaleRef = useRef(stageScale);
@@ -460,7 +461,19 @@ const MapCanvas: React.FC<{ mapLayout: string }> = ({ mapLayout }) => {
   }, []);
 
   return (
-    <div ref={containerRef} className="w-full h-full flex-1">
+    <div ref={containerRef} className="w-full h-full flex-1" style={{ position: 'relative' }}>
+      {/* Debug toggle for icons layer */}
+      <div style={{ position: 'absolute', top: 8, left: 8, zIndex: 20, background: 'rgba(0,0,0,0.7)', padding: '4px 8px', borderRadius: 4 }}>
+        <label style={{ color: '#fff', fontSize: 14 }}>
+          <input
+            type="checkbox"
+            checked={showIcons}
+            onChange={e => setShowIcons(e.target.checked)}
+            style={{ marginRight: 6 }}
+          />
+          Show icons layer
+        </label>
+      </div>
       <Stage
         ref={stageRef}
         width={dimensions.width}
@@ -501,48 +514,50 @@ const MapCanvas: React.FC<{ mapLayout: string }> = ({ mapLayout }) => {
             )}
         </Layer>
         {/* Landmark Layer */}
-        <Layer listening={false}>
-          {/* Render real POIs from loaded JSON data */}
-          {poiData && Object.entries(poiData).map(([poiType, coords]) => {
-            const iconFile = POI_TYPE_ICON_MAP[poiType];
-            if (!iconFile) return null;
-            // Find the loaded image for this icon
-            const iconIndex = POI_ICONS.indexOf(iconFile);
-            const img = poiImages[iconIndex];
-            if (!img) return null;
-            // Get icon size
-            const size = POI_ICON_SIZES[iconFile] || {};
-            let displayWidth = img.width;
-            let displayHeight = img.height;
-            if (size.width && !size.height) {
-              displayWidth = size.width;
-              displayHeight = (img.height / img.width) * size.width;
-            } else if (!size.width && size.height) {
-              displayHeight = size.height;
-              displayWidth = (img.width / img.height) * size.height;
-            } else if (size.width && size.height) {
-              displayWidth = size.width;
-              displayHeight = size.height;
-            }
-            // --- SCALE COORDINATES TO MAP SIZE (account for left margin and active width) ---
-            const leftBound = 507;
-            const activeWidth = 1690;
-            return coords.map(([x, y], idx) => {
-              const scaledX = ((x - leftBound) / activeWidth) * mapWidth;
-              const scaledY = (y / 1690) * mapHeight;
-              return (
-                <KonvaImage
-                  key={`${poiType}_${idx}`}
-                  image={img}
-                  x={scaledX - displayWidth / 2}
-                  y={scaledY - displayHeight / 2}
-                  width={displayWidth}
-                  height={displayHeight}
-                />
-              );
-            });
-          })}
-        </Layer>
+        {showIcons && (
+          <Layer listening={false}>
+            {/* Render real POIs from loaded JSON data */}
+            {poiData && Object.entries(poiData).map(([poiType, coords]) => {
+              const iconFile = POI_TYPE_ICON_MAP[poiType];
+              if (!iconFile) return null;
+              // Find the loaded image for this icon
+              const iconIndex = POI_ICONS.indexOf(iconFile);
+              const img = poiImages[iconIndex];
+              if (!img) return null;
+              // Get icon size
+              const size = POI_ICON_SIZES[iconFile] || {};
+              let displayWidth = img.width;
+              let displayHeight = img.height;
+              if (size.width && !size.height) {
+                displayWidth = size.width;
+                displayHeight = (img.height / img.width) * size.width;
+              } else if (!size.width && size.height) {
+                displayHeight = size.height;
+                displayWidth = (img.width / img.height) * size.height;
+              } else if (size.width && size.height) {
+                displayWidth = size.width;
+                displayHeight = size.height;
+              }
+              // --- SCALE COORDINATES TO MAP SIZE (account for left margin and active width) ---
+              const leftBound = 507;
+              const activeWidth = 1690;
+              return coords.map(([x, y], idx) => {
+                const scaledX = ((x - leftBound) / activeWidth) * mapWidth;
+                const scaledY = (y / 1690) * mapHeight;
+                return (
+                  <KonvaImage
+                    key={`${poiType}_${idx}`}
+                    image={img}
+                    x={scaledX - displayWidth / 2}
+                    y={scaledY - displayHeight / 2}
+                    width={displayWidth}
+                    height={displayHeight}
+                  />
+                );
+              });
+            })}
+          </Layer>
+        )}
       </Stage>
     </div>
   );
