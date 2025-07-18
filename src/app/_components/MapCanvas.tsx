@@ -449,16 +449,44 @@ const MapCanvas: React.FC<{ mapLayout: string }> = ({ mapLayout }) => {
   // State for loaded POI coordinates
   const [poiData, setPoiData] = useState<POICoordinates | null>(null);
 
-  // Load POI coordinates from JSON on mount
+  // Helper to get coordinate file path based on mapLayout
+  function getCoordinateJsonPath(layout: string) {
+    switch (layout) {
+      case "noklateo_shifted":
+        return "/assets/maps/coordinates/noklateo_map_layout.json";
+      case "the_crater_shifted":
+        return "/assets/maps/coordinates/the_crater_map_layout.json";
+      case "the_mountaintop_shifted":
+        return "/assets/maps/coordinates/the_mountaintop_map_layout.json";
+      case "the_rotten_woods_shifted":
+        return "/assets/maps/coordinates/the_rotten_woods_map_layout.json";
+      case "default":
+      default:
+        return "/assets/maps/coordinates/default_map_layout.json";
+    }
+  }
+
+  // Load POI coordinates from JSON whenever mapLayout changes
   useEffect(() => {
-    fetch("/assets/maps/coordinates/default_map_layout.json")
-      .then((res) => res.json())
+    const jsonPath = getCoordinateJsonPath(mapLayout);
+    fetch(jsonPath)
+      .then((res) => {
+        if (!res.ok) throw new Error("File not found");
+        return res.json();
+      })
       .then((data: POICoordinates) => setPoiData(data))
       .catch((err) => {
-        console.error("Failed to load POI coordinates JSON", err);
-        setPoiData(null);
+        // Fallback to default if file not found
+        if (mapLayout !== "default") {
+          fetch("/assets/maps/coordinates/default_map_layout.json")
+            .then((res) => res.json())
+            .then((data: POICoordinates) => setPoiData(data))
+            .catch(() => setPoiData(null));
+        } else {
+          setPoiData(null);
+        }
       });
-  }, []);
+  }, [mapLayout]);
 
   return (
     <div ref={containerRef} className="w-full h-full flex-1" style={{ position: 'relative' }}>
@@ -563,4 +591,4 @@ const MapCanvas: React.FC<{ mapLayout: string }> = ({ mapLayout }) => {
   );
 };
 
-export default MapCanvas; 
+export default MapCanvas;
