@@ -77,3 +77,24 @@
 - Place the resulting JSON file in `public/assets/maps/coordinates/` with the naming convention `<layout>_map_layout.json` (e.g., `the_mountaintop_map_layout.json`).
 - To update coordinates, simply edit the SVGs and rerun the script. The app will automatically use the new data.
 - See `docs/ASSET_EXTRACTION.md` for detailed instructions and examples. 
+
+---
+
+## POI Categories with Multiple Variants
+
+Some POI categories are further divided into major and minor locations, each with their own subtypes. This distinction helps with icon selection, map labeling, and future data management.
+
+### Minor Locations
+Minor locations are generally smaller or less significant points of interest. Current minor location subtypes include:
+- Sorcerer's Rise
+- Churches
+- Townships
+
+### Major Locations
+Major locations are larger, more significant, or central points of interest. Current major location subtypes include:
+- Great Church
+- Fort
+- Main Encampment
+- Ruins
+
+> **Note:** These categories and subtypes may expand as more POIs are added or as the map layouts evolve. Always refer to this section for the latest classification. 
