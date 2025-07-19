@@ -7,6 +7,12 @@ import type { KonvaEventObject } from "konva/lib/Node";
 import Konva from "konva";
 import useImage from "use-image";
 
+// Add this type definition for our new data structure
+interface PoiWithId {
+  id: number;
+  coordinates: [number, number];
+}
+
 function getTileGridUrls(mapLayout: string) {
   // 6x6 grid for L0 (surface) tiles
   const rows = 6;
@@ -131,7 +137,7 @@ const MapCanvas: React.FC<{ mapLayout: string }> = ({ mapLayout }) => {
   const [isDragging, setIsDragging] = useState(false);
   const [lastPointerPos, setLastPointerPos] = useState<{ x: number; y: number } | null>(null);
   const [showIcons, setShowIcons] = useState(true); // Debug toggle for icons layer
-  const [showNumbers, setShowNumbers] = useState(false); // Toggle for POI number overlay
+  const [showNumbers, setShowNumbers] = useState(true); // Start with numbers shown
 
   // Add refs for scale and position
   const stageScaleRef = useRef(stageScale);
@@ -449,6 +455,7 @@ const MapCanvas: React.FC<{ mapLayout: string }> = ({ mapLayout }) => {
 
   // State for loaded POI coordinates
   const [poiData, setPoiData] = useState<POICoordinates | null>(null);
+  const [poiMasterList, setPoiMasterList] = useState<PoiWithId[]>([]);
 
   // Helper to get coordinate file path based on mapLayout
   function getCoordinateJsonPath(layout: string) {
@@ -466,6 +473,14 @@ const MapCanvas: React.FC<{ mapLayout: string }> = ({ mapLayout }) => {
         return "/assets/maps/coordinates/default_map_layout.json";
     }
   }
+
+  // Load the master POI list with unique IDs
+  useEffect(() => {
+    fetch("/assets/maps/poi_coordinates_with_ids.json")
+      .then((res) => res.json())
+      .then((data: PoiWithId[]) => setPoiMasterList(data))
+      .catch(() => setPoiMasterList([]));
+  }, []);
 
   // Load POI coordinates from JSON whenever mapLayout changes
   useEffect(() => {
@@ -557,16 +572,17 @@ const MapCanvas: React.FC<{ mapLayout: string }> = ({ mapLayout }) => {
           <Layer listening={false}>
             {/* Render every POI with a unique number, regardless of type or icon */}
             {(() => {
-              if (!poiData) return null;
-              let globalIdx = 1;
+              if (!poiData || poiMasterList.length === 0) return null;
+
               const elements: React.ReactNode[] = [];
+              const renderedCoords = new Set<string>();
+
               Object.entries(poiData).forEach(([poiType, coords]) => {
-                // Try to get icon, but render number regardless
                 const iconFile = POI_TYPE_ICON_MAP[poiType];
                 const iconIndex = iconFile ? POI_ICONS.indexOf(iconFile) : -1;
                 const img = iconIndex >= 0 ? poiImages[iconIndex] : undefined;
-                // Get icon size or default
-                const size = iconFile ? (POI_ICON_SIZES[iconFile] || {}) : {};
+                const size = iconFile ? POI_ICON_SIZES[iconFile] || {} : {};
+                
                 let displayWidth = img?.width || 32;
                 let displayHeight = img?.height || 32;
                 if (size.width && !size.height) {
@@ -579,14 +595,26 @@ const MapCanvas: React.FC<{ mapLayout: string }> = ({ mapLayout }) => {
                   displayWidth = size.width;
                   displayHeight = size.height;
                 }
-                // --- SCALE COORDINATES TO MAP SIZE (account for left margin and active width) ---
+
                 const leftBound = 507;
                 const activeWidth = 1690;
+
                 coords.forEach(([x, y]) => {
+                  const coordKey = `${x},${y}`;
+                  if (renderedCoords.has(coordKey)) return;
+                  renderedCoords.add(coordKey);
+
+                  const poiInfo = poiMasterList.find(
+                    p => p.coordinates[0] === x && p.coordinates[1] === y
+                  );
+
+                  if (!poiInfo) return;
+
                   const scaledX = ((x - leftBound) / activeWidth) * mapWidth;
                   const scaledY = (y / 1690) * mapHeight;
+
                   elements.push(
-                    <React.Fragment key={`${poiType}_${globalIdx}`}>
+                    <React.Fragment key={poiInfo.id}>
                       {showIcons && img && (
                         <KonvaImage
                           image={img}
@@ -598,7 +626,6 @@ const MapCanvas: React.FC<{ mapLayout: string }> = ({ mapLayout }) => {
                       )}
                       {showNumbers && (
                         <>
-                          {/* White rectangle background for the number */}
                           <KonvaImage
                             image={undefined}
                             x={scaledX - 16}
@@ -612,7 +639,7 @@ const MapCanvas: React.FC<{ mapLayout: string }> = ({ mapLayout }) => {
                             listening={false}
                           />
                           <KonvaText
-                            text={String(globalIdx)}
+                            text={String(poiInfo.id)}
                             x={scaledX - 16}
                             y={scaledY - 16}
                             fontSize={22}
@@ -628,7 +655,6 @@ const MapCanvas: React.FC<{ mapLayout: string }> = ({ mapLayout }) => {
                       )}
                     </React.Fragment>
                   );
-                  globalIdx++;
                 });
               });
               return elements;
