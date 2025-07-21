@@ -1,5 +1,17 @@
-import type { Boss } from "../types/core";
-import { BossCategory } from "../types/core";
+export enum BossCategory {
+  Nightlord = "Nightlord",
+  Night = "Night",
+  Field = "Field",
+  Evergaol = "Evergaol",
+  Event = "Event",
+  Remembrance = "Remembrance",
+}
+
+export interface Boss {
+  id: string;
+  name: string;
+  category: BossCategory;
+}
 
 export const NIGHTLORD_BOSSES: Boss[] = [
   { id: "gladius", name: "Gladius, Beast of Night", category: BossCategory.Nightlord },

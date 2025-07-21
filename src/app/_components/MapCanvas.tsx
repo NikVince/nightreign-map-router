@@ -491,7 +491,7 @@ const MapCanvas: React.FC<{ mapLayout: string }> = ({ mapLayout }) => {
         return res.json();
       })
       .then((data: POICoordinates) => setPoiData(data))
-      .catch((err) => {
+      .catch((_err) => {
         // Fallback to default if file not found
         if (mapLayout !== "default") {
           fetch("/assets/maps/coordinates/default_map_layout.json")
@@ -503,6 +503,76 @@ const MapCanvas: React.FC<{ mapLayout: string }> = ({ mapLayout }) => {
         }
       });
   }, [mapLayout]);
+
+  // DERIVED STATE: Create a clean, unique list of POIs to render for the current map layout.
+  // This is the core fix: we process all coordinates first, handle duplicates,
+  // find their master IDs, and then pass a clean list to the rendering logic.
+  const poisToRender = React.useMemo(() => {
+    if (!poiData || poiMasterList.length === 0) {
+      return [];
+    }
+
+    const uniquePois = new Map<string, { id: number; x: number; y: number; poiType: string }>();
+    const epsilon = 0.01;
+
+    Object.entries(poiData).forEach(([poiType, coords]) => {
+      coords.forEach(([x, y]) => {
+        // Find the canonical POI info from the master list using a tolerance check
+        const poiInfo = poiMasterList.find(
+          p => Math.abs(p.coordinates[0] - x) < epsilon && Math.abs(p.coordinates[1] - y) < epsilon
+        );
+
+        if (poiInfo) {
+          const coordKey = `${poiInfo.coordinates[0]},${poiInfo.coordinates[1]}`;
+          // If we haven't seen this canonical coordinate yet, add it to our list to be rendered.
+          if (!uniquePois.has(coordKey)) {
+            uniquePois.set(coordKey, {
+              id: poiInfo.id,
+              x: poiInfo.coordinates[0],
+              y: poiInfo.coordinates[1],
+              poiType: poiType, // Store the type to determine the icon later
+            });
+          }
+        }
+      });
+    });
+
+    return Array.from(uniquePois.values());
+  }, [poiData, poiMasterList]);
+
+  useEffect(() => {
+    console.log("--- POI DATA DEBUG ---");
+    console.log("Current mapLayout:", mapLayout);
+    if (poiData && poiMasterList.length > 0) {
+      console.log("poiMasterList loaded:", poiMasterList.length, "entries. First 5:", poiMasterList.slice(0, 5));
+      console.log("poiData loaded for layout:", Object.keys(poiData).length, "categories");
+
+      const firstCategory = Object.keys(poiData)[0];
+      const firstCoordsArray = firstCategory ? poiData[firstCategory] : undefined;
+      
+      if (firstCoordsArray && firstCoordsArray.length > 0) {
+        const firstCoord = firstCoordsArray[0];
+        if(firstCoord){
+          console.log(`Testing lookup for first coordinate in layout: [${firstCoord[0]}, ${firstCoord[1]}]`);
+          
+          const epsilon = 0.01;
+          const foundPoi = poiMasterList.find(
+            p => Math.abs(p.coordinates[0] - firstCoord[0]) < epsilon && Math.abs(p.coordinates[1] - firstCoord[1]) < epsilon
+          );
+
+          if (foundPoi) {
+            console.log("LOOKUP SUCCESS:", foundPoi);
+          } else {
+            console.log("LOOKUP FAILED for", firstCoord);
+            console.log("This means the coordinate from the layout file does not have a close match in poi_coordinates_with_ids.json");
+          }
+        }
+      }
+    } else {
+      console.log("Data not fully loaded yet (poiData or poiMasterList is missing).");
+    }
+    console.log("--- END POI DATA DEBUG ---");
+  }, [poiData, poiMasterList, mapLayout]);
 
   return (
     <div ref={containerRef} className="w-full h-full flex-1" style={{ position: 'relative' }}>
@@ -570,95 +640,82 @@ const MapCanvas: React.FC<{ mapLayout: string }> = ({ mapLayout }) => {
         {/* Landmark Layer */}
         {(showIcons || showNumbers) && (
           <Layer listening={false}>
-            {/* Render every POI with a unique number, regardless of type or icon */}
-            {(() => {
-              if (!poiData || poiMasterList.length === 0) return null;
+            {/* Render every POI from our clean, processed list */}
+            {poisToRender.map((poi) => {
+              const { id, x, y, poiType } = poi;
 
-              const elements: React.ReactNode[] = [];
-              const renderedCoords = new Set<string>();
+              // Determine icon based on the poiType we stored
+              const iconFile = POI_TYPE_ICON_MAP[poiType] || POI_TYPE_ICON_MAP.Default;
+              if (!iconFile) return null;
 
-              Object.entries(poiData).forEach(([poiType, coords]) => {
-                const iconFile = POI_TYPE_ICON_MAP[poiType];
-                const iconIndex = iconFile ? POI_ICONS.indexOf(iconFile) : -1;
-                const img = iconIndex >= 0 ? poiImages[iconIndex] : undefined;
-                const size = iconFile ? POI_ICON_SIZES[iconFile] || {} : {};
-                
-                let displayWidth = img?.width || 32;
-                let displayHeight = img?.height || 32;
-                if (size.width && !size.height) {
-                  displayWidth = size.width;
-                  displayHeight = img ? (img.height / img.width) * size.width : size.width;
-                } else if (!size.width && size.height) {
-                  displayHeight = size.height;
-                  displayWidth = img ? (img.width / img.height) * size.height : size.height;
-                } else if (size.width && size.height) {
-                  displayWidth = size.width;
-                  displayHeight = size.height;
-                }
+              const iconIndex = POI_ICONS.indexOf(iconFile);
+              const img = iconIndex >= 0 ? poiImages[iconIndex] : poiImages[0];
+              if (!img) return null;
 
-                const leftBound = 507;
-                const activeWidth = 1690;
+              const size = POI_ICON_SIZES[iconFile] ?? {};
+              
+              let displayWidth = img.width || 32;
+              let displayHeight = img.height || 32;
+              if (size.width && !size.height) {
+                displayWidth = size.width;
+                displayHeight = img ? (img.height / img.width) * size.width : size.width;
+              } else if (!size.width && size.height) {
+                displayHeight = size.height;
+                displayWidth = img ? (img.width / img.height) * size.height : size.height;
+              } else if (size.width && size.height) {
+                displayWidth = size.width;
+                displayHeight = size.height;
+              }
 
-                coords.forEach(([x, y]) => {
-                  const coordKey = `${x},${y}`;
-                  if (renderedCoords.has(coordKey)) return;
-                  renderedCoords.add(coordKey);
+              const leftBound = 507;
+              const activeWidth = 1690;
 
-                  const poiInfo = poiMasterList.find(
-                    p => p.coordinates[0] === x && p.coordinates[1] === y
-                  );
+              const scaledX = ((x - leftBound) / activeWidth) * mapWidth;
+              const scaledY = (y / 1690) * mapHeight;
 
-                  if (!poiInfo) return;
-
-                  const scaledX = ((x - leftBound) / activeWidth) * mapWidth;
-                  const scaledY = (y / 1690) * mapHeight;
-
-                  elements.push(
-                    <React.Fragment key={poiInfo.id}>
-                      {showIcons && img && (
-                        <KonvaImage
-                          image={img}
-                          x={scaledX - displayWidth / 2}
-                          y={scaledY - displayHeight / 2}
-                          width={displayWidth}
-                          height={displayHeight}
-                        />
-                      )}
-                      {showNumbers && (
-                        <>
-                          <KonvaImage
-                            image={undefined}
-                            x={scaledX - 16}
-                            y={scaledY - 16}
-                            width={32}
-                            height={32}
-                            fill="#fff"
-                            stroke="#000"
-                            strokeWidth={1}
-                            cornerRadius={8}
-                            listening={false}
-                          />
-                          <KonvaText
-                            text={String(poiInfo.id)}
-                            x={scaledX - 16}
-                            y={scaledY - 16}
-                            fontSize={22}
-                            fontFamily="Arial"
-                            fill="#000"
-                            align="center"
-                            width={32}
-                            height={32}
-                            listening={false}
-                            verticalAlign="middle"
-                          />
-                        </>
-                      )}
-                    </React.Fragment>
-                  );
-                });
-              });
-              return elements;
-            })()}
+              return (
+                <React.Fragment key={id}>
+                  {showIcons && img && (
+                    <KonvaImage
+                      image={img}
+                      x={scaledX - displayWidth / 2}
+                      y={scaledY - displayHeight / 2}
+                      width={displayWidth}
+                      height={displayHeight}
+                    />
+                  )}
+                  {showNumbers && (
+                    <>
+                      <KonvaImage
+                        image={undefined}
+                        x={scaledX - 16}
+                        y={scaledY - 16}
+                        width={32}
+                        height={32}
+                        fill="#fff"
+                        stroke="#000"
+                        strokeWidth={1}
+                        cornerRadius={8}
+                        listening={false}
+                      />
+                      <KonvaText
+                        text={String(id)}
+                        x={scaledX - 16}
+                        y={scaledY - 16}
+                        fontSize={22}
+                        fontFamily="Arial"
+                        fill="#000"
+                        align="center"
+                        width={32}
+                        height={32}
+                        listening={false}
+                        verticalAlign="middle"
+                      />
+                    </>
+                  )}
+                </React.Fragment>
+              );
+            })}
           </Layer>
         )}
       </Stage>
