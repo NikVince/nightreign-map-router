@@ -1,4 +1,52 @@
 module.exports.poiNameCoordinateMap = {
+  // --- Sites of Grace ---
+  "Site of Grace 1": { x: 1063.82, y: 1136.18 }, // POI 10
+  "Site of Grace 2": { x: 1017.82, y: 1197.82 }, // POI 11
+  "Site of Grace 3": { x: 861.82, y: 1032.55 }, // POI 12
+
+  // --- Scarabs ---
+  "Scarab 1": { x: 1300.73, y: 1171.09 }, // POI 8
+  "Scarab 2": { x: 1204.73, y: 1160 }, // POI 9
+  "Scarab 3": { x: 1063.82, y: 1136.18 }, // POI 10
+  "Scarab 4": { x: 1017.82, y: 1197.82 }, // POI 11
+  "Scarab 5": { x: 861.82, y: 1032.55 }, // POI 12
+  "Scarab 6": { x: 910, y: 955.45 }, // POI 13
+  "Scarab 7": { x: 1190, y: 854.55 }, // POI 14
+  "Scarab 8": { x: 1194.36, y: 714.73 }, // POI 15
+  "Scarab 9": { x: 1296, y: 709.82 }, // POI 16
+  "Scarab 10": { x: 1034.25, y: 630.5 }, // POI 17
+  "Scarab 11": { x: 1779.5, y: 441 }, // POI 18
+  "Scarab 12": { x: 1530.75, y: 825.25 }, // POI 19
+  "Scarab 13": { x: 1510.75, y: 933 }, // POI 20
+  "Scarab 14": { x: 1916.25, y: 1094.25 }, // POI 21
+  "Scarab 15": { x: 1643.5, y: 1221.75 }, // POI 22
+
+  // --- Castle ---
+  "Castle": { x: 1291.88, y: 915.88 }, // POI 23
+
+  // --- Major Bases ---
+  "Major Base South Lake": { x: 1183.64, y: 1322 }, // POI 93
+  "Major Base Groveside": { x: 979.75, y: 1104.25 }, // POI 94
+  "Major Base Gatefront": { x: 1043.64, y: 931.09 }, // POI 96
+  "Major Base Stormhill North of Gate": { x: 984, y: 742.5 }, // POI 95
+  "Major Base Alexander Spot": { x: 1209.75, y: 508.25 }, // POI 98
+  "Major Base Northwest Stormhill": { x: 891.75, y: 465 }, // POI 97
+  "Major Base Northeast Stormhill": { x: 1190.25, y: 296 }, // POI 99
+
+  // --- Major Bases with repeated POI 10 ---
+  // These all currently map to POI 10 (x: 1063.82, y: 1136.18)
+  // This is likely a bug and needs investigation.
+  "Major Base South Mistwood": { x: 1063.82, y: 1136.18 }, // POI 10 (repeated)
+  "Major Base Waypoint Ruins": { x: 1063.82, y: 1136.18 }, // POI 10 (repeated)
+  "Major Base Minor Erdtree": { x: 1063.82, y: 1136.18 }, // POI 10 (repeated)
+  "Major Base West Mistwood": { x: 1063.82, y: 1136.18 }, // POI 10 (repeated)
+  "Major Base Northwest Mistwood": { x: 1063.82, y: 1136.18 }, // POI 10 (repeated)
+  "Major Base Artist's Shack": { x: 1063.82, y: 1136.18 }, // POI 10 (repeated)
+  "Major Base Northeast Mistwood": { x: 1063.82, y: 1136.18 }, // POI 10 (repeated)
+  "Major Base Summonwater Approach": { x: 1063.82, y: 1136.18 }, // POI 10 (repeated)
+  "Major Base Summonwater": { x: 1063.82, y: 1136.18 }, // POI 10 (repeated)
+
+  // --- Template POIs (unmapped) ---
   "POI 1": { x: 1613.25, y: 1243.25 },
   "POI 2": { x: 1345.25, y: 1168 },
   "POI 3": { x: 1064.25, y: 706 },

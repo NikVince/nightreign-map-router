@@ -656,65 +656,65 @@ const MapCanvas: React.FC<{ mapLayout: string }> = ({ mapLayout }) => {
               
               let displayWidth = img.width || 32;
               let displayHeight = img.height || 32;
-              if (size.width && !size.height) {
-                displayWidth = size.width;
-                displayHeight = img ? (img.height / img.width) * size.width : size.width;
-              } else if (!size.width && size.height) {
-                displayHeight = size.height;
-                displayWidth = img ? (img.width / img.height) * size.height : size.height;
-              } else if (size.width && size.height) {
-                displayWidth = size.width;
-                displayHeight = size.height;
-              }
+                if (size.width && !size.height) {
+                  displayWidth = size.width;
+                  displayHeight = img ? (img.height / img.width) * size.width : size.width;
+                } else if (!size.width && size.height) {
+                  displayHeight = size.height;
+                  displayWidth = img ? (img.width / img.height) * size.height : size.height;
+                } else if (size.width && size.height) {
+                  displayWidth = size.width;
+                  displayHeight = size.height;
+                }
 
-              const leftBound = 507;
-              const activeWidth = 1690;
+                const leftBound = 507;
+                const activeWidth = 1690;
 
-              const scaledX = ((x - leftBound) / activeWidth) * mapWidth;
-              const scaledY = (y / 1690) * mapHeight;
+                  const scaledX = ((x - leftBound) / activeWidth) * mapWidth;
+                  const scaledY = (y / 1690) * mapHeight;
 
               return (
                 <React.Fragment key={id}>
-                  {showIcons && img && (
-                    <KonvaImage
-                      image={img}
-                      x={scaledX - displayWidth / 2}
-                      y={scaledY - displayHeight / 2}
-                      width={displayWidth}
-                      height={displayHeight}
-                    />
-                  )}
-                  {showNumbers && (
-                    <>
-                      <KonvaImage
-                        image={undefined}
-                        x={scaledX - 16}
-                        y={scaledY - 16}
-                        width={32}
-                        height={32}
-                        fill="#fff"
-                        stroke="#000"
-                        strokeWidth={1}
-                        cornerRadius={8}
-                        listening={false}
-                      />
-                      <KonvaText
+                      {showIcons && img && (
+                        <KonvaImage
+                          image={img}
+                          x={scaledX - displayWidth / 2}
+                          y={scaledY - displayHeight / 2}
+                          width={displayWidth}
+                          height={displayHeight}
+                        />
+                      )}
+                      {showNumbers && (
+                        <>
+                          <KonvaImage
+                            image={undefined}
+                            x={scaledX - 16}
+                            y={scaledY - 16}
+                            width={32}
+                            height={32}
+                            fill="#fff"
+                            stroke="#000"
+                            strokeWidth={1}
+                            cornerRadius={8}
+                            listening={false}
+                          />
+                          <KonvaText
                         text={String(id)}
-                        x={scaledX - 16}
-                        y={scaledY - 16}
-                        fontSize={22}
-                        fontFamily="Arial"
-                        fill="#000"
-                        align="center"
-                        width={32}
-                        height={32}
-                        listening={false}
-                        verticalAlign="middle"
-                      />
-                    </>
-                  )}
-                </React.Fragment>
-              );
+                            x={scaledX - 16}
+                            y={scaledY - 16}
+                            fontSize={22}
+                            fontFamily="Arial"
+                            fill="#000"
+                            align="center"
+                            width={32}
+                            height={32}
+                            listening={false}
+                            verticalAlign="middle"
+                          />
+                        </>
+                      )}
+                    </React.Fragment>
+                  );
             })}
           </Layer>
         )}
