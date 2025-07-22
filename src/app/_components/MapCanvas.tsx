@@ -688,9 +688,9 @@ const MapCanvas: React.FC<{ mapLayout: string }> = ({ mapLayout }) => {
                         <>
                           <KonvaImage
                             image={undefined}
-                            x={scaledX - 16}
+                            x={scaledX - 24}
                             y={scaledY - 16}
-                            width={32}
+                            width={48}
                             height={32}
                             fill="#fff"
                             stroke="#000"
@@ -700,13 +700,13 @@ const MapCanvas: React.FC<{ mapLayout: string }> = ({ mapLayout }) => {
                           />
                           <KonvaText
                         text={String(id)}
-                            x={scaledX - 16}
+                            x={scaledX - 24}
                             y={scaledY - 16}
-                            fontSize={22}
+                            fontSize={18}
                             fontFamily="Arial"
                             fill="#000"
                             align="center"
-                            width={32}
+                            width={48}
                             height={32}
                             listening={false}
                             verticalAlign="middle"
