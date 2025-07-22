@@ -692,7 +692,7 @@ const MapCanvas: React.FC<{ mapLayout: string }> = ({ mapLayout }) => {
                             y={scaledY - 16}
                             width={48}
                             height={32}
-                            fill="#fff"
+                            fill="rgba(255,255,255,0.7)"
                             stroke="#000"
                             strokeWidth={1}
                             cornerRadius={8}
