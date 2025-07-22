@@ -246,4 +246,37 @@ module.exports.poiNameCoordinateMap = {
   "Rotted Woods Northwest": { x: 99999, y: 99999 }, // PLACEHOLDER - COORDINATES MISSING
   "Rotted Woods Northeast": { x: 1808, y: 1018 }, // POI 152
   "Rotted Woods Far Northeast": { x: 88888, y: 88888 }, // PLACEHOLDER - COORDINATES MISSING
+
+  // --- Noklateo Shifted Earth Fixed Bosses ---
+  "Noklateo Royal Carian Knight": { x: 1086, y: 895.33 }, // POI 123
+  "Noklateo Flying Dragon": { x: 1338.67, y: 1294.67 }, // POI 124
+  "Noklateo Black Knife Assassin 1": { x: 1045.33, y: 1323.33 }, // POI 125
+  "Noklateo Headless Troll": { x: 1046, y: 1277.33 }, // POI 126
+  "Noklateo Dragonkin Soldier": { x: 1021.33, y: 1182 }, // POI 127
+  "Noklateo Royal Revenant": { x: 916.67, y: 1176.67 }, // POI 128
+  "Noklateo Black Knife Assassin 2": { x: 861.33, y: 1125.33 }, // POI 129
+  "Noklateo Astel": { x: 858, y: 1344.67 }, // POI 130
+
+  // --- The Crater Shifting Earth Shifted POIs ---
+  "Crater Church": { x: 1198, y: 625.33 }, // POI 131
+  // Field Bosses
+  "Crater Red Wolf": { x: 1119.5, y: 512.5 }, // POI 132
+  "Crater Demi-Human Queen 1": { x: 1205, y: 444 }, // POI 133
+  "Crater Fire Prelates": { x: 1372.5, y: 427.5 }, // POI 134
+  "Crater Demi-Human Queen 2": { x: 1536.5, y: 537.5 }, // POI 135
+  "Crater Magma Wyrm": { x: 1482.5, y: 713.5 }, // POI 136
+  "Crater Fallingstar Beast": { x: 1375.5, y: 733 }, // POI 137
+  "Crater Valiant Gargoyle": { x: 1183, y: 736 }, // POI 138
+
+  // --- The Mountaintop Fixed POIs ---
+  "Mountaintop Major Base": { x: 33333, y: 33333 }, // POI 149 PLACEHOLDER TO SEARCH IN CSV
+  // Field Bosses
+  "Mountaintop Flying Dragon": { x: 1031, y: 600.5 }, // POI 140
+  "Mountaintop Ice Dragon 1": { x: 907.5, y: 604 }, // POI 141
+  "Mountaintop Ice Dragon 2": { x: 836.5, y: 426 }, // POI 142
+  "Mountaintop Demi-Human Swordmaster 1": { x: 927.5, y: 359 }, // POI 143
+  "Mountaintop Giant Crows": { x: 1079, y: 329 }, // POI 144
+  "Mountaintop Ice Dragon 3": { x: 1175.5, y: 338 }, // POI 145
+  "Mountaintop Demi-Human Swordmaster 2": { x: 1265.5, y: 333 }, // POI 146
+  "Mountaintop Ice Dragon 4": { x: 1125.5, y: 482 }, // POI 147
 }; 
