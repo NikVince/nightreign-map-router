@@ -1,7 +1,7 @@
 "use client";
 import React, { useRef, useEffect, useState } from "react";
 import { Stage, Layer } from "react-konva";
-import { Image as KonvaImage, Text as KonvaText } from "react-konva";
+import { Image as KonvaImage, Text as KonvaText, Line as KonvaLine } from "react-konva";
 import type { Stage as KonvaStageType } from "konva/lib/Stage";
 import type { KonvaEventObject } from "konva/lib/Node";
 import Konva from "konva";
@@ -679,6 +679,33 @@ const MapCanvas: React.FC<{ mapLayout: string, iconToggles: IconToggles }> = ({ 
                 ) : null;
               })
             )}
+        </Layer>
+        {/* Debug/Test Path Layer: Draw a red line between POI 183 and 103 */}
+        <Layer listening={false}>
+          {(() => {
+            // Find POI 183 and 103 in the master list
+            const poiA = poiMasterList.find(p => p.id === 183);
+            const poiB = poiMasterList.find(p => p.id === 103);
+            if (!poiA || !poiB) return null;
+            // Coordinate conversion (same as icon rendering)
+            const leftBound = 507;
+            const activeWidth = 1690;
+            const scaledXA = ((poiA.coordinates[0] - leftBound) / activeWidth) * mapWidth;
+            const scaledYA = (poiA.coordinates[1] / 1690) * mapHeight;
+            const scaledXB = ((poiB.coordinates[0] - leftBound) / activeWidth) * mapWidth;
+            const scaledYB = (poiB.coordinates[1] / 1690) * mapHeight;
+            return (
+              <KonvaLine
+                points={[scaledXA, scaledYA, scaledXB, scaledYB]}
+                stroke="red"
+                strokeWidth={4}
+                lineCap="round"
+                lineJoin="round"
+                dashEnabled={false}
+                opacity={0.9}
+              />
+            );
+          })()}
         </Layer>
         {/* Landmark Layer */}
         {(showIcons || showNumbers) && (
