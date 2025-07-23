@@ -6,6 +6,7 @@ import type { Stage as KonvaStageType } from "konva/lib/Stage";
 import type { KonvaEventObject } from "konva/lib/Node";
 import Konva from "konva";
 import useImage from "use-image";
+import type { IconToggles } from "./MainPanel";
 
 // Add this type definition for our new data structure
 interface PoiWithId {
@@ -142,7 +143,7 @@ const POI_TYPE_ICON_MAP: Record<string, string> = {
   "Scale_Bearing_Merchant_Locations": "Scale_Bearing_Merchant.png",
 };
 
-const MapCanvas: React.FC<{ mapLayout: string, iconToggles: any }> = ({ mapLayout, iconToggles }) => {
+const MapCanvas: React.FC<{ mapLayout: string, iconToggles: IconToggles }> = ({ mapLayout, iconToggles }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<KonvaStageType>(null);
   const [dimensions, setDimensions] = useState({ width: 300, height: 300 });
