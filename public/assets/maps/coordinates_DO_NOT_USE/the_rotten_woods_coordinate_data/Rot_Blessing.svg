@@ -5,7 +5,9 @@
 <svg xmlns="http://www.w3.org/2000/svg"
      width="40.3472in" height="23.4722in"
      viewBox="0 0 2905 1690">
-  <path id="Castle"
+  <path id="Rot_Blessing"
         fill="none" stroke="black" stroke-width="1"
-        d="" />
+        d="M 1608.00,1326.75
+           C 1608.00,1326.75 1895.00,1028.00 1895.00,1028.00
+             1895.00,1028.00 1463.75,1118.00 1463.75,1118.00" />
 </svg>

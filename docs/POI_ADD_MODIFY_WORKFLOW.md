@@ -15,12 +15,12 @@ This document explains the precise process for adding new Points of Interest (PO
 ## 2. Extract Coordinates from SVGs
 - Use the provided script to extract coordinates from the SVGs:
   ```sh
-  python public/assets/maps/coordinates/extract_svg_coordinates.py <SVG_DIR> <OUTPUT_JSON>
+  python3 public/assets/maps/coordinates/extract_svg_coordinates.py public/assets/maps/coordinates/default_coordinate_data/ public/assets/maps/coordinates/default_map_layout.json
+  python3 public/assets/maps/coordinates/extract_svg_coordinates.py public/assets/maps/coordinates/noklateo_coordinate_data/ public/assets/maps/coordinates/noklateo_map_layout.json
+  python3 public/assets/maps/coordinates/extract_svg_coordinates.py public/assets/maps/coordinates/the_crater_coordinate_data/ public/assets/maps/coordinates/the_crater_map_layout.json
+  python3 public/assets/maps/coordinates/extract_svg_coordinates.py public/assets/maps/coordinates/the_mountaintop_coordinate_data/ public/assets/maps/coordinates/the_mountaintop_map_layout.json
+  python3 public/assets/maps/coordinates/extract_svg_coordinates.py public/assets/maps/coordinates/the_rotten_woods_coordinate_data/ public/assets/maps/coordinates/the_rotten_woods_map_layout.json
   ```
-  - Example:
-    ```sh
-    python public/assets/maps/coordinates/extract_svg_coordinates.py public/assets/maps/coordinates/the_mountaintop_coordinate_data/ public/assets/maps/coordinates/the_mountaintop_map_layout.json
-    ```
 - This will generate or update the relevant layout JSON (e.g., `the_mountaintop_map_layout.json`) with the new coordinates.
 
 ## 3. Regenerate the Master POI List
@@ -47,11 +47,23 @@ This document explains the precise process for adding new Points of Interest (PO
 
 ---
 
-## Key Points
-- **Never edit `poi_coordinates_with_ids.json` directly.** Always regenerate it using the script after updating layout JSONs.
-- **Numbers are locked:** New POIs will get the next available number; existing numbers will never change.
-- **SVG → JSON → Master List → Database → Map:** This is the canonical data flow.
+## 7. Add or Modify POI Icons
+- Place your new icon PNG files in the `public/POI_icons/` directory.
+- Open `src/app/_components/MapCanvas.tsx` and do the following:
+  1. **Add the icon filename** to the `POI_ICONS` array.
+  2. **Add a size entry** for your icon in the `POI_ICON_SIZES` object (optional, for custom sizing).
+  3. **Add a mapping** from your POI type (as used in the coordinate JSONs) to the icon filename in the `POI_TYPE_ICON_MAP` object.
+  4. **Add a useImage call** for your icon (e.g., `const myIconImg = useImage("/POI_icons/My_Icon.png")[0];`).
+  5. **Add your icon image** to the `poiImages` array in the same order as `POI_ICONS`.
+- Example for a new POI type `Event_Locations` with icon `Event.png`:
+  - Add to `POI_ICONS`: `"Event.png",`
+  - Add to `POI_ICON_SIZES`: `"Event.png": { width: 64 },`
+  - Add to `POI_TYPE_ICON_MAP`: `"Event_Locations": "Event.png",`
+  - Add to image loading: `const eventImg = useImage("/POI_icons/Event.png")[0];`
+  - Add to `poiImages`: `eventImg,`
+- Save and rebuild the project to see your new icons on the map.
 
 ---
 
-**For questions or updates, refer to this document and the scripts in `public/assets/maps/coordinates/` and `scripts/`.** 
+## Key Points
+- **Never edit `

@@ -79,6 +79,10 @@ const POI_ICONS = [
   "Site_of_Grace.png",
   "Scarab.png",
   "Ruins.png",
+  // --- New icons ---
+  "Event.png",
+  "Night_Location.png",
+  "Scale_Bearing_Merchant.png",
 ];
 
 // --- MANUAL ICON SIZE CONTROL ---
@@ -102,6 +106,10 @@ export const POI_ICON_SIZES: Record<string, { width?: number; height?: number }>
   "Site_of_Grace.png": { width: 48 },
   "Scarab.png": { width: 48 },
   "Ruins.png": { width: 128 },
+  // --- New sizes ---
+  "Event.png": { width: 64 },
+  "Night_Location.png": { width: 64 },
+  "Scale_Bearing_Merchant.png": { width: 64 },
 };
 // ---------------------------------
 
@@ -128,6 +136,10 @@ const POI_TYPE_ICON_MAP: Record<string, string> = {
   // --- Custom mission objective icons ---
   "Mountaintops_Buff": "Mission_Objective.png",
   "Rot_Blessing": "Mission_Objective.png",
+  // --- New mappings ---
+  "Event_Locations": "Event.png",
+  "Circle_Locations": "Night_Location.png",
+  "Scale_Bearing_Merchant_Locations": "Scale_Bearing_Merchant.png",
 };
 
 const MapCanvas: React.FC<{ mapLayout: string }> = ({ mapLayout }) => {
@@ -435,6 +447,9 @@ const MapCanvas: React.FC<{ mapLayout: string }> = ({ mapLayout }) => {
   const siteOfGraceImg = useImage("/POI_icons/Site_of_Grace.png")[0];
   const scarabImg = useImage("/POI_icons/Scarab.png")[0];
   const ruinsImg = useImage("/POI_icons/Ruins.png")[0];
+  const eventImg = useImage("/POI_icons/Event.png")[0];
+  const nightLocationImg = useImage("/POI_icons/Night_Location.png")[0];
+  const scaleBearingMerchantImg = useImage("/POI_icons/Scale_Bearing_Merchant.png")[0];
 
   // Assemble in the same order as POI_ICONS
   const poiImages = [
@@ -455,6 +470,9 @@ const MapCanvas: React.FC<{ mapLayout: string }> = ({ mapLayout }) => {
     siteOfGraceImg,
     scarabImg,
     ruinsImg,
+    eventImg,
+    nightLocationImg,
+    scaleBearingMerchantImg,
   ];
 
   // State for loaded POI coordinates

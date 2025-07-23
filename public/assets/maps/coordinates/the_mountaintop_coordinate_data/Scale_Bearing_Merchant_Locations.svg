@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN"
+              "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
+
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="40.3472in" height="23.4722in"
+     viewBox="0 0 2905 1690">
+  <path id="Scale_Bearing_Merchant_Locations"
+        fill="none" stroke="black" stroke-width="1"
+        d="M 1170.00,1115.33
+           C 1170.00,1115.33 1204.67,738.33 1204.67,738.33
+             1204.67,738.33 1825.67,455.00 1825.67,455.00
+             1825.67,455.00 1415.00,1310.67 1415.00,1310.67
+             1415.00,1310.67 1365.33,401.33 1365.33,401.33
+             1365.33,401.33 1384.67,991.33 1384.67,991.33
+             1384.67,991.33 1003.33,1194.67 1003.33,1194.67" />
+</svg>
