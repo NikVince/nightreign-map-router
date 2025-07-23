@@ -124,6 +124,9 @@ const POI_TYPE_ICON_MAP: Record<string, string> = {
   "Major_Locations": "Great_Church.png", // No direct icon, use Great_Church
   "Field_Bosses": "Field_Boss.png",
   "Evergaols": "Evergaol.png",
+  // --- Custom mission objective icons ---
+  "Mountaintops_Buff": "Mission_Objective.png",
+  "Rot_Blessing": "Mission_Objective.png",
 };
 
 const MapCanvas: React.FC<{ mapLayout: string }> = ({ mapLayout }) => {
