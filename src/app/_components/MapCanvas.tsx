@@ -142,7 +142,7 @@ const POI_TYPE_ICON_MAP: Record<string, string> = {
   "Scale_Bearing_Merchant_Locations": "Scale_Bearing_Merchant.png",
 };
 
-const MapCanvas: React.FC<{ mapLayout: string }> = ({ mapLayout }) => {
+const MapCanvas: React.FC<{ mapLayout: string, iconToggles: any }> = ({ mapLayout, iconToggles }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<KonvaStageType>(null);
   const [dimensions, setDimensions] = useState({ width: 300, height: 300 });
@@ -561,8 +561,26 @@ const MapCanvas: React.FC<{ mapLayout: string }> = ({ mapLayout }) => {
 
     // Filter out POIs with id 24, 25, and 26 so they do not appear on the map.
     // IMPORTANT: These should also be ignored by the route algorithm when implemented.
-    return Array.from(uniquePois.values()).filter(poi => ![24, 25, 26].includes(poi.id));
-  }, [poiData, poiMasterList]);
+    let filtered = Array.from(uniquePois.values()).filter(poi => ![24, 25, 26].includes(poi.id));
+
+    // Filter by icon category toggles
+    const categoryMap = {
+      sitesOfGrace: "Sites_of_grace",
+      spiritStreams: "Spiritstreams",
+      spiritHawkTrees: "Spectral_Hawk_Trees",
+      scarabs: "Scarabs",
+      buriedTreasures: "Buried_Treasures",
+    };
+    filtered = filtered.filter(poi => {
+      if (poi.poiType === categoryMap.sitesOfGrace && !iconToggles.sitesOfGrace) return false;
+      if (poi.poiType === categoryMap.spiritStreams && !iconToggles.spiritStreams) return false;
+      if (poi.poiType === categoryMap.spiritHawkTrees && !iconToggles.spiritHawkTrees) return false;
+      if (poi.poiType === categoryMap.scarabs && !iconToggles.scarabs) return false;
+      if (poi.poiType === categoryMap.buriedTreasures && !iconToggles.buriedTreasures) return false;
+      return true;
+    });
+    return filtered;
+  }, [poiData, poiMasterList, iconToggles]);
 
   useEffect(() => {
     console.log("--- POI DATA DEBUG ---");

@@ -5,6 +5,14 @@ export type SidebarProps = {
   onClose?: () => void;
   mapLayout: string;
   onMapLayoutChange: (layout: string) => void;
+  iconToggles: {
+    sitesOfGrace: boolean;
+    spiritStreams: boolean;
+    spiritHawkTrees: boolean;
+    scarabs: boolean;
+    buriedTreasures: boolean;
+  };
+  onToggleChange: (key: keyof SidebarProps['iconToggles']) => void;
 };
 
 const MAP_LAYOUT_OPTIONS = [
@@ -15,7 +23,7 @@ const MAP_LAYOUT_OPTIONS = [
   { value: "noklateo_shifted", label: "Noklateo (Shifted)" },
 ];
 
-export function Sidebar({ isOpen, onClose, mapLayout, onMapLayoutChange }: SidebarProps) {
+export function Sidebar({ isOpen, onClose, mapLayout, onMapLayoutChange, iconToggles, onToggleChange }: SidebarProps) {
   if (!isOpen) return null;
   return (
     <aside className="elden-panel flex flex-col h-full flex-1 p-6 bg-[var(--elden-background)]" style={{ fontFamily: "var(--elden-ui-font)" }}>
@@ -39,6 +47,32 @@ export function Sidebar({ isOpen, onClose, mapLayout, onMapLayoutChange }: Sideb
             <option key={opt.value} value={opt.value}>{opt.label}</option>
           ))}
         </select>
+      </div>
+      {/* Icon category toggles */}
+      <div className="mb-4">
+        <label className="block text-sm mb-1 opacity-80">Show Icon Categories:</label>
+        <div className="flex flex-col gap-1 pl-2">
+          <label className="flex items-center gap-2">
+            <input type="checkbox" checked={iconToggles.sitesOfGrace} onChange={() => onToggleChange('sitesOfGrace')} />
+            Sites of grace
+          </label>
+          <label className="flex items-center gap-2">
+            <input type="checkbox" checked={iconToggles.spiritStreams} onChange={() => onToggleChange('spiritStreams')} />
+            Spirit streams
+          </label>
+          <label className="flex items-center gap-2">
+            <input type="checkbox" checked={iconToggles.spiritHawkTrees} onChange={() => onToggleChange('spiritHawkTrees')} />
+            Spirit hawk trees
+          </label>
+          <label className="flex items-center gap-2">
+            <input type="checkbox" checked={iconToggles.scarabs} onChange={() => onToggleChange('scarabs')} />
+            Scarabs
+          </label>
+          <label className="flex items-center gap-2">
+            <input type="checkbox" checked={iconToggles.buriedTreasures} onChange={() => onToggleChange('buriedTreasures')} />
+            Buried treasures
+          </label>
+        </div>
       </div>
       <ul className="flex flex-col gap-3">
         {/* Checklist items will go here */}

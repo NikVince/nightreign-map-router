@@ -11,6 +11,19 @@ export default function Home() {
   const [isDesktop, setIsDesktop] = useState(false);
   const [mapLayout, setMapLayout] = useState("default");
 
+  // Icon category toggles
+  const [iconToggles, setIconToggles] = useState({
+    sitesOfGrace: true,
+    spiritStreams: true,
+    spiritHawkTrees: true,
+    scarabs: true,
+    buriedTreasures: true,
+  });
+
+  const handleToggleChange = (key: keyof typeof iconToggles) => {
+    setIconToggles(toggles => ({ ...toggles, [key]: !toggles[key] }));
+  };
+
   useEffect(() => {
     // Set isDesktop based on window width
     const checkDesktop = () => setIsDesktop(window.innerWidth >= 640);
@@ -45,19 +58,26 @@ export default function Home() {
           <>
             {/* Objectives pane, no border */}
             <div className="h-full w-1/4 min-w-[220px] max-w-[400px] flex flex-col">
-              <Sidebar isOpen={showSidebar} onClose={() => setSidebarOpen(false)} mapLayout={mapLayout} onMapLayoutChange={setMapLayout} />
+              <Sidebar
+                isOpen={showSidebar}
+                onClose={() => setSidebarOpen(false)}
+                mapLayout={mapLayout}
+                onMapLayoutChange={setMapLayout}
+                iconToggles={iconToggles}
+                onToggleChange={handleToggleChange}
+              />
             </div>
             {/* 8px gap between objectives and map */}
             <div style={{ width: 8 }} />
             {/* Map panel, no border */}
             <div className="h-full flex-1 flex flex-col w-full sm:w-3/4 min-h-0">
-              <MainPanel mapLayout={mapLayout} />
+              <MainPanel mapLayout={mapLayout} iconToggles={iconToggles} />
             </div>
           </>
         ) : (
           // Mobile: map canvas fills width, objectives overlays as before
           <div className="h-full flex-1 flex flex-col w-full min-h-0">
-            <MainPanel mapLayout={mapLayout} />
+            <MainPanel mapLayout={mapLayout} iconToggles={iconToggles} />
             {sidebarOpen && (
               <>
                 {/* Overlay for closing */}
@@ -72,7 +92,14 @@ export default function Home() {
                     backdropFilter: 'blur(8px)',
                   }}
                 >
-                  <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} mapLayout={mapLayout} onMapLayoutChange={setMapLayout} />
+                  <Sidebar
+                    isOpen={sidebarOpen}
+                    onClose={() => setSidebarOpen(false)}
+                    mapLayout={mapLayout}
+                    onMapLayoutChange={setMapLayout}
+                    iconToggles={iconToggles}
+                    onToggleChange={handleToggleChange}
+                  />
                 </div>
               </>
             )}
