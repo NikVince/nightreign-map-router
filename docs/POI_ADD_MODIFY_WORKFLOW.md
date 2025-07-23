@@ -10,6 +10,8 @@ This document explains the precise process for adding new Points of Interest (PO
   - `public/assets/maps/coordinates/the_rotten_woods_coordinate_data/`
 - Each SVG should represent a POI type and contain the correct path data for the POI's location(s).
 
+> **Note:** If the same POI is meant to appear in multiple layouts, ensure the coordinates are exactly identical in all relevant SVGs. For example, Minor_Locations POI (IDs 157, 160, 161, 163) were deduplicated by standardizing their coordinates to [1873, 992] in all layouts except Rotten Woods. This ensures global POI numbering and icon placement remain consistent.
+
 ## 2. Extract Coordinates from SVGs
 - Use the provided script to extract coordinates from the SVGs:
   ```sh

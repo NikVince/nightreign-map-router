@@ -53,11 +53,14 @@ async function main() {
   for (const record of records) {
     const patternIndex = record[''] ?? '0';
     const nightlord = record['Nightlord'] ?? 'Gladius';
+    // Skip if required fields are missing or invalid
+    if (!nightlord || nightlord.trim() === '' || isNaN(parseInt(patternIndex, 10))) {
+      console.warn(`Skipping invalid pattern row:`, record);
+      continue;
+    }
     const patternId = `${nightlord}-${patternIndex}`;
-
     const shiftingEarthEvent = record['Shifting Earth'];
     const shiftingEarthEventValue = Object.values(ShiftingEarthEventType).includes(shiftingEarthEvent) ? shiftingEarthEvent : undefined;
-
     await prisma.mapPattern.create({
       data: {
         id: patternId,

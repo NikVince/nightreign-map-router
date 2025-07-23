@@ -20,22 +20,25 @@ result = {}
 for filename in os.listdir(SVG_DIR):
     if not filename.lower().endswith('.svg'):
         continue
-    poi_type = os.path.splitext(filename)[0]
     svg_path = os.path.join(SVG_DIR, filename)
     try:
         tree = ET.parse(svg_path)
         root = tree.getroot()
-        # Find the first <path> element
-        path_elem = root.find('.//{http://www.w3.org/2000/svg}path')
-        if path_elem is None:
-            continue
+        # Find all <path> elements
+        for path_elem in root.findall('.//{http://www.w3.org/2000/svg}path'):
+            poi_type = path_elem.attrib.get('id')
+            if not poi_type:
+                # Fallback to filename if no id is present
+                poi_type = os.path.splitext(filename)[0]
         d_attr = path_elem.attrib.get('d', '')
         # Extract all numbers from the path data
         numbers = [float(n) for n in NUMBER_RE.findall(d_attr)]
         # Group into (x, y) pairs
         coords = [numbers[i:i+2] for i in range(0, len(numbers), 2) if i+1 < len(numbers)]
         if coords:
-            result[poi_type] = coords
+                if poi_type not in result:
+                    result[poi_type] = []
+                result[poi_type].extend(coords)
     except Exception as e:
         print(f"Error processing {filename}: {e}")
 
@@ -45,5 +48,5 @@ with open(OUTPUT_JSON, 'w') as f:
 
 print(f"Extracted coordinates for {len(result)} POI types to {OUTPUT_JSON}")
 
-# This script is robust to SVG path commands and will extract all (x, y) pairs from the path 'd' attribute.
-# If a POI type has no coordinates, it will be skipped in the output. This is expected for layouts missing certain POIs. 
+# This script now extracts all <path> elements and groups by path id, allowing multiple POIs per SVG.
+# Numbering is still handled by the generate_poi_ids.cjs script, which will not override existing numbers. 
