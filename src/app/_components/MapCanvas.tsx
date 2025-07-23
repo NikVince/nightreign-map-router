@@ -111,7 +111,8 @@ type POICoordinates = Record<string, [number, number][]>;
 // POI type to icon filename mapping
 const POI_TYPE_ICON_MAP: Record<string, string> = {
   // Direct matches
-  "castle": "Castle.png",
+  "castle": "Field_Boss.png", // Placeholder icon for Castle
+  "Castle": "Field_Boss.png", // Robustness for case
   "Buried_Treasures": "Buried_Treasure.png",
   "Tunnel_Entrances": "Tunnel_Entrance.png",
   "Spiritstreams": "Spiritstream.png",
