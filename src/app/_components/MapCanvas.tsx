@@ -90,26 +90,26 @@ const POI_ICONS = [
 // If an icon is not listed, it will use its natural size.
 export const POI_ICON_SIZES: Record<string, { width?: number; height?: number }> = {
   "Mission_Objective.png": { width: 64 },
-  "Main_Encampment.png": { width: 96 },
+  "Main_Encampment.png": { width: 64 },
   "Great_Church.png": { width: 96 },
   "Fort.png": { width: 128 },
-  "Field_Boss.png": { width: 64 },
-  "Evergaol.png": { width: 64 },
+  "Field_Boss.png": { width: 48 },
+  "Evergaol.png": { width: 48 },
   "Church.png": { width: 64 },
   "Castle.png": { width: 128 },
-  "Buried_Treasure.png": { width: 64 },
-  "Tunnel_Entrance.png": { width: 64 },
-  "Township.png": { width: 128 },
-  "Spiritstream.png": { width: 48 },
+  "Buried_Treasure.png": { width: 48 },
+  "Tunnel_Entrance.png": { width: 48 },
+  "Township.png": { width: 96 },
+  "Spiritstream.png": { width: 32 },
   "Spectral_Hawk_Tree.png": { width: 48 },
   "Sorcerer's_Rise.png": { width: 48 },
   "Site_of_Grace.png": { width: 48 },
-  "Scarab.png": { width: 48 },
-  "Ruins.png": { width: 128 },
+  "Scarab.png": { width: 32 },
+  "Ruins.png": { width: 96 },
   // --- New sizes ---
   "Event.png": { width: 64 },
-  "Night_Location.png": { width: 64 },
-  "Scale_Bearing_Merchant.png": { width: 64 },
+  "Night_Location.png": { width: 96 },
+  "Scale_Bearing_Merchant.png": { width: 48 },
 };
 // ---------------------------------
 
@@ -559,7 +559,9 @@ const MapCanvas: React.FC<{ mapLayout: string }> = ({ mapLayout }) => {
       });
     });
 
-    return Array.from(uniquePois.values());
+    // Filter out POIs with id 24, 25, and 26 so they do not appear on the map.
+    // IMPORTANT: These should also be ignored by the route algorithm when implemented.
+    return Array.from(uniquePois.values()).filter(poi => ![24, 25, 26].includes(poi.id));
   }, [poiData, poiMasterList]);
 
   useEffect(() => {
