@@ -81,13 +81,13 @@ module.exports.poiNameCoordinateMap = {
   "Field Boss Northwest of Summonwater": { x: 1600.67, y: 365.33 }, // POI 91
 
   // --- Template POIs (unmapped) ---
-  "POI 1": { x: 1613.25, y: 1243.25 },
-  "POI 2": { x: 1345.25, y: 1168 },
-  "POI 3": { x: 1064.25, y: 706 },
-  "POI 4": { x: 1294.25, y: 545.25 },
-  "POI 5": { x: 1341.5, y: 513.5 },
-  "POI 6": { x: 1545.25, y: 585.25 },
-  "POI 7": { x: 1545.5, y: 585.25 },
+  "POI 1": { x: 1613.25, y: 1243.25 }, // Fixed Tunnel entrance
+  "POI 2": { x: 1345.25, y: 1168 }, // Fixed Tunnel entrance
+  "POI 3": { x: 1064.25, y: 706 }, // Fixed Tunnel entrance
+  "POI 4": { x: 1294.25, y: 545.25 }, // Fixed Tunnel entrance
+  "POI 5": { x: 1341.5, y: 513.5 }, // Fixed Tunnel entrance
+  "POI 6": { x: 1545.25, y: 585.25 }, // Fixed Tunnel entrance
+  "POI 7": { x: 1545.5, y: 585.25 }, // Overlapping with POI 6. Please check this out later.
   "POI 8": { x: 1300.73, y: 1171.09 },
   "POI 9": { x: 1204.73, y: 1160 },
   "POI 10": { x: 1063.82, y: 1136.18 },
@@ -104,10 +104,10 @@ module.exports.poiNameCoordinateMap = {
   "POI 21": { x: 1916.25, y: 1094.25 },
   "POI 22": { x: 1643.5, y: 1221.75 },
   "POI 23": { x: 1291.88, y: 915.88 },
-  "POI 24": { x: 1228.38, y: 925 },
-  "POI 25": { x: 1386.5, y: 878 },
-  "POI 26": { x: 1368.18, y: 863.64 },
-  "POI 27": { x: 980.91, y: 458.36 },
+  "POI 24": { x: 1228.38, y: 925 }, // Hidden and not used
+  "POI 25": { x: 1386.5, y: 878 }, // Hidden and not used
+  "POI 26": { x: 1368.18, y: 863.64 }, // Hidden and not used
+  "POI 27": { x: 980.91, y: 458.36 }, // Northwest Corner (Scale-Bearing Merchant)
   "POI 28": { x: 1465.67, y: 1379.67 },
   "POI 29": { x: 1431, y: 1081 },
   "POI 30": { x: 1284, y: 1187 },
