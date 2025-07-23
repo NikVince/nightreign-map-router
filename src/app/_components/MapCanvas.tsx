@@ -153,7 +153,7 @@ const MapCanvas: React.FC<{ mapLayout: string, iconToggles: any }> = ({ mapLayou
   const [isDragging, setIsDragging] = useState(false);
   const [lastPointerPos, setLastPointerPos] = useState<{ x: number; y: number } | null>(null);
   const [showIcons, setShowIcons] = useState(true); // Debug toggle for icons layer
-  const [showNumbers, setShowNumbers] = useState(true); // Start with numbers shown
+  const [showNumbers, setShowNumbers] = useState(false); // Start with numbers hidden by default
 
   // Add refs for scale and position
   const stageScaleRef = useRef(stageScale);

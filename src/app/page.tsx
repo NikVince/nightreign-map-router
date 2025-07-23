@@ -13,11 +13,11 @@ export default function Home() {
 
   // Icon category toggles
   const [iconToggles, setIconToggles] = useState({
-    sitesOfGrace: true,
-    spiritStreams: true,
-    spiritHawkTrees: true,
-    scarabs: true,
-    buriedTreasures: true,
+    sitesOfGrace: false,
+    spiritStreams: false,
+    spiritHawkTrees: false,
+    scarabs: false,
+    buriedTreasures: false,
   });
 
   const handleToggleChange = (key: keyof typeof iconToggles) => {
