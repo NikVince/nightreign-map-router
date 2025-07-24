@@ -1,0 +1,31 @@
+{
+  "seed": "277",
+  "nightlord": "Caligo",
+  "patternIndex": 278,
+  "pois": [
+    {
+      "poiKey": "Major Base",
+      "label": "Great Church - Guardian Golem",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Minor Base",
+      "label": "Sorcerer's Rise - Above Door",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Evergaol",
+      "label": "Beastly Brigade",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Field Boss",
+      "label": "Elder Lion",
+      "poiId": null,
+      "coordinates": null
+    }
+  ]
+}

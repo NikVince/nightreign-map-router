@@ -1,0 +1,31 @@
+{
+  "seed": "35",
+  "nightlord": "Gladius",
+  "patternIndex": 36,
+  "pois": [
+    {
+      "poiKey": "Major Base",
+      "label": "Great Church - Oracle Envoys",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Minor Base",
+      "label": "Sorcerer's Rise - Windy Trees",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Evergaol",
+      "label": "Grave Warden Duelist",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Field Boss",
+      "label": "Golden Hippopotamus",
+      "poiId": null,
+      "coordinates": null
+    }
+  ]
+}

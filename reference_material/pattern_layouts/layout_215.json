@@ -1,0 +1,46 @@
+{
+  "seed": "213",
+  "nightlord": "Fulghor",
+  "patternIndex": 214,
+  "pois": [
+    {
+      "poiKey": "Castle",
+      "label": "Trolls",
+      "poiId": 23,
+      "coordinates": [
+        1291.88,
+        915.88
+      ]
+    },
+    {
+      "poiKey": "Major Base",
+      "label": "Fort - Crystalians",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Minor Base",
+      "label": "Small Camp - Guilty",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Evergaol",
+      "label": "Banished Knights",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Arena Boss",
+      "label": "Leonine Misbegotten",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Field Boss",
+      "label": "Erdtree Avatar",
+      "poiId": null,
+      "coordinates": null
+    }
+  ]
+}

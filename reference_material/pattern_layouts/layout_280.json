@@ -1,0 +1,31 @@
+{
+  "seed": "278",
+  "nightlord": "Caligo",
+  "patternIndex": 279,
+  "pois": [
+    {
+      "poiKey": "Major Base",
+      "label": "Ruins - Wormface",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Minor Base",
+      "label": "Small Camp - Misbegotten",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Evergaol",
+      "label": "Dragonkin Soldier",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Field Boss",
+      "label": "Golden Hippopotamus",
+      "poiId": null,
+      "coordinates": null
+    }
+  ]
+}

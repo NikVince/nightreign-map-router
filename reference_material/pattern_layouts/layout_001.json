@@ -1,0 +1,64 @@
+{
+  "seed": "",
+  "nightlord": "",
+  "patternIndex": 0,
+  "pois": [
+    {
+      "poiKey": "Castle",
+      "label": "Castle",
+      "poiId": 23,
+      "coordinates": [
+        1291.88,
+        915.88
+      ]
+    },
+    {
+      "poiKey": "Major Base",
+      "label": "Summonwater",
+      "poiId": 101,
+      "coordinates": [
+        1705,
+        355.25
+      ]
+    },
+    {
+      "poiKey": "Minor Base",
+      "label": "Northeast of Saintsbridge",
+      "poiId": 26,
+      "coordinates": [
+        1368.18,
+        863.64
+      ]
+    },
+    {
+      "poiKey": "Evergaol",
+      "label": "Northeast Tunnel Entrance",
+      "poiId": 84,
+      "coordinates": [
+        1271.67,
+        1191
+      ]
+    },
+    {
+      "poiKey": "Arena Boss",
+      "label": "Castle Basement",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Field Boss",
+      "label": "Northwest of Summonwater",
+      "poiId": 91,
+      "coordinates": [
+        1600.67,
+        365.33
+      ]
+    },
+    {
+      "poiKey": "Rotted Woods",
+      "label": "Far Northeast",
+      "poiId": null,
+      "coordinates": null
+    }
+  ]
+}

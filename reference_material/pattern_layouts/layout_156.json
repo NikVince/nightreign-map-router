@@ -1,0 +1,58 @@
+{
+  "seed": "154",
+  "nightlord": "Maris",
+  "patternIndex": 155,
+  "pois": [
+    {
+      "poiKey": "Castle",
+      "label": "Crucible Knights",
+      "poiId": 23,
+      "coordinates": [
+        1291.88,
+        915.88
+      ]
+    },
+    {
+      "poiKey": "Major Base",
+      "label": "Fort - Abductor Virgin",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Minor Base",
+      "label": "Sorcerer's Rise - Fake Building",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Evergaol",
+      "label": "Banished Knights",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Arena Boss",
+      "label": "Ancient Hero of Zamor",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Field Boss",
+      "label": "Grafted Scion",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Rotted Woods",
+      "label": "Bell Bearing Hunter",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Rot Blessing",
+      "label": "Southwest",
+      "poiId": null,
+      "coordinates": null
+    }
+  ]
+}

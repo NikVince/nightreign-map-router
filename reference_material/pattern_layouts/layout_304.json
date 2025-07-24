@@ -1,0 +1,46 @@
+{
+  "seed": "302",
+  "nightlord": "Heolstor",
+  "patternIndex": 303,
+  "pois": [
+    {
+      "poiKey": "Castle",
+      "label": "Trolls",
+      "poiId": 23,
+      "coordinates": [
+        1291.88,
+        915.88
+      ]
+    },
+    {
+      "poiKey": "Major Base",
+      "label": "Fort - Abductor Virgin",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Minor Base",
+      "label": "Small Camp - Soldiers",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Evergaol",
+      "label": "Nox Warriors",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Arena Boss",
+      "label": "Bell Bearing Hunter",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Field Boss",
+      "label": "Miranda Blossom",
+      "poiId": null,
+      "coordinates": null
+    }
+  ]
+}

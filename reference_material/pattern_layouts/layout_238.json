@@ -1,0 +1,31 @@
+{
+  "seed": "236",
+  "nightlord": "Fulghor",
+  "patternIndex": 237,
+  "pois": [
+    {
+      "poiKey": "Major Base",
+      "label": "Fort - Crystalians",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Minor Base",
+      "label": "Church - Normal",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Evergaol",
+      "label": "Crucible Knight with Spear",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Field Boss",
+      "label": "Night's Cavalry",
+      "poiId": null,
+      "coordinates": null
+    }
+  ]
+}

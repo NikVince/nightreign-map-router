@@ -1,0 +1,46 @@
+{
+  "seed": "280",
+  "nightlord": "Heolstor",
+  "patternIndex": 281,
+  "pois": [
+    {
+      "poiKey": "Castle",
+      "label": "Banished Knights",
+      "poiId": 23,
+      "coordinates": [
+        1291.88,
+        915.88
+      ]
+    },
+    {
+      "poiKey": "Major Base",
+      "label": "Ruins - Albinaurics",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Minor Base",
+      "label": "Church - Normal",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Evergaol",
+      "label": "Banished Knights",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Arena Boss",
+      "label": "Black Knife Assassin",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Field Boss",
+      "label": "Grafted Scion",
+      "poiId": null,
+      "coordinates": null
+    }
+  ]
+}

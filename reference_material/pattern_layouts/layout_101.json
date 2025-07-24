@@ -1,0 +1,46 @@
+{
+  "seed": "99",
+  "nightlord": "Gnoster",
+  "patternIndex": 100,
+  "pois": [
+    {
+      "poiKey": "Castle",
+      "label": "Crucible Knights",
+      "poiId": 23,
+      "coordinates": [
+        1291.88,
+        915.88
+      ]
+    },
+    {
+      "poiKey": "Major Base",
+      "label": "Great Church - Fire Monk",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Minor Base",
+      "label": "Sorcerer's Rise - Missing Statue",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Evergaol",
+      "label": "Beastmen of Farum Azula",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Arena Boss",
+      "label": "Red Wolf",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Field Boss",
+      "label": "Miranda Blossom",
+      "poiId": null,
+      "coordinates": null
+    }
+  ]
+}

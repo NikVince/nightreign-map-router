@@ -1,0 +1,58 @@
+{
+  "seed": "72",
+  "nightlord": "Adel",
+  "patternIndex": 73,
+  "pois": [
+    {
+      "poiKey": "Castle",
+      "label": "Crucible Knights",
+      "poiId": 23,
+      "coordinates": [
+        1291.88,
+        915.88
+      ]
+    },
+    {
+      "poiKey": "Major Base",
+      "label": "Fort - Guardian Golem",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Minor Base",
+      "label": "Church - Normal",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Evergaol",
+      "label": "Grave Warden Duelist",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Arena Boss",
+      "label": "Leonine Misbegotten",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Field Boss",
+      "label": "Tree Sentinel",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Rotted Woods",
+      "label": "Putrid Ancestral Followers",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Rot Blessing",
+      "label": "West",
+      "poiId": null,
+      "coordinates": null
+    }
+  ]
+}

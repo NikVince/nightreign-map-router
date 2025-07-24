@@ -1,0 +1,46 @@
+{
+  "seed": "222",
+  "nightlord": "Fulghor",
+  "patternIndex": 223,
+  "pois": [
+    {
+      "poiKey": "Castle",
+      "label": "Crucible Knights",
+      "poiId": 23,
+      "coordinates": [
+        1291.88,
+        915.88
+      ]
+    },
+    {
+      "poiKey": "Major Base",
+      "label": "Camp - Leonine Misbegotten",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Minor Base",
+      "label": "Small Camp - Guilty",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Evergaol",
+      "label": "Crystalians",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Arena Boss",
+      "label": "Red Wolf",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Field Boss",
+      "label": "Elder Lion",
+      "poiId": null,
+      "coordinates": null
+    }
+  ]
+}

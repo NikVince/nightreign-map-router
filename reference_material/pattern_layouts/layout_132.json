@@ -1,0 +1,46 @@
+{
+  "seed": "130",
+  "nightlord": "Maris",
+  "patternIndex": 131,
+  "pois": [
+    {
+      "poiKey": "Castle",
+      "label": "Trolls",
+      "poiId": 23,
+      "coordinates": [
+        1291.88,
+        915.88
+      ]
+    },
+    {
+      "poiKey": "Major Base",
+      "label": "Camp - Royal Army Knights",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Minor Base",
+      "label": "Church - Normal",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Evergaol",
+      "label": "Godskin Duo",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Arena Boss",
+      "label": "Black Knife Assassin",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Field Boss",
+      "label": "Bell Bearing Hunter",
+      "poiId": null,
+      "coordinates": null
+    }
+  ]
+}

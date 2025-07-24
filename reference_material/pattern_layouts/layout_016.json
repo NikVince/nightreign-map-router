@@ -1,0 +1,46 @@
+{
+  "seed": "14",
+  "nightlord": "Gladius",
+  "patternIndex": 15,
+  "pois": [
+    {
+      "poiKey": "Castle",
+      "label": "Trolls",
+      "poiId": 23,
+      "coordinates": [
+        1291.88,
+        915.88
+      ]
+    },
+    {
+      "poiKey": "Major Base",
+      "label": "Ruins - Perfumer",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Minor Base",
+      "label": "Sorcerer's Rise - Unlit Candle",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Evergaol",
+      "label": "Crystalians",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Arena Boss",
+      "label": "Red Wolf",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Field Boss",
+      "label": "Grafted Scion",
+      "poiId": null,
+      "coordinates": null
+    }
+  ]
+}

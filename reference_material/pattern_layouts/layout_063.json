@@ -1,0 +1,46 @@
+{
+  "seed": "61",
+  "nightlord": "Adel",
+  "patternIndex": 62,
+  "pois": [
+    {
+      "poiKey": "Castle",
+      "label": "Trolls",
+      "poiId": 23,
+      "coordinates": [
+        1291.88,
+        915.88
+      ]
+    },
+    {
+      "poiKey": "Major Base",
+      "label": "Great Church - Mausoleum Knight",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Minor Base",
+      "label": "Small Camp - Misbegotten",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Evergaol",
+      "label": "Godskin Apostle",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Arena Boss",
+      "label": "Black Knife Assassin",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Field Boss",
+      "label": "Red Wolf",
+      "poiId": null,
+      "coordinates": null
+    }
+  ]
+}

@@ -1,0 +1,46 @@
+{
+  "seed": "98",
+  "nightlord": "Gnoster",
+  "patternIndex": 99,
+  "pois": [
+    {
+      "poiKey": "Castle",
+      "label": "Crucible Knights",
+      "poiId": 23,
+      "coordinates": [
+        1291.88,
+        915.88
+      ]
+    },
+    {
+      "poiKey": "Major Base",
+      "label": "Camp - Redmane Knights",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Minor Base",
+      "label": "Small Camp - Guilty",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Evergaol",
+      "label": "Godskin Apostle",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Arena Boss",
+      "label": "Bell Bearing Hunter",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Field Boss",
+      "label": "Tree Sentinel",
+      "poiId": null,
+      "coordinates": null
+    }
+  ]
+}

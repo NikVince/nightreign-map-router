@@ -1,0 +1,58 @@
+{
+  "seed": "31",
+  "nightlord": "Gladius",
+  "patternIndex": 32,
+  "pois": [
+    {
+      "poiKey": "Castle",
+      "label": "Crucible Knights",
+      "poiId": 23,
+      "coordinates": [
+        1291.88,
+        915.88
+      ]
+    },
+    {
+      "poiKey": "Major Base",
+      "label": "Ruins - Beastmen of Farum Azula",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Minor Base",
+      "label": "Sorcerer's Rise - Fleeing Stump",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Evergaol",
+      "label": "Godskin Noble",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Arena Boss",
+      "label": "Leonine Misbegotten",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Field Boss",
+      "label": "Golden Hippopotamus",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Rotted Woods",
+      "label": "Putrid Ancestral Followers",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Rot Blessing",
+      "label": "Northeast",
+      "poiId": null,
+      "coordinates": null
+    }
+  ]
+}

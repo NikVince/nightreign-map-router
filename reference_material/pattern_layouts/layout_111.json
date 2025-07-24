@@ -1,0 +1,28 @@
+{
+  "seed": "109",
+  "nightlord": "Gnoster",
+  "patternIndex": 110,
+  "pois": [
+    {
+      "poiKey": "Castle",
+      "label": "Trolls",
+      "poiId": 23,
+      "coordinates": [
+        1291.88,
+        915.88
+      ]
+    },
+    {
+      "poiKey": "Major Base",
+      "label": "Camp - Royal Army Knights",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Arena Boss",
+      "label": "Grafted Scion",
+      "poiId": null,
+      "coordinates": null
+    }
+  ]
+}

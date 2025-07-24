@@ -1,0 +1,28 @@
+{
+  "seed": "147",
+  "nightlord": "Maris",
+  "patternIndex": 148,
+  "pois": [
+    {
+      "poiKey": "Castle",
+      "label": "Trolls",
+      "poiId": 23,
+      "coordinates": [
+        1291.88,
+        915.88
+      ]
+    },
+    {
+      "poiKey": "Major Base",
+      "label": "Camp - Redmane Knights",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Arena Boss",
+      "label": "Ancient Hero of Zamor",
+      "poiId": null,
+      "coordinates": null
+    }
+  ]
+}

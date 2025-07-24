@@ -1,0 +1,31 @@
+{
+  "seed": "38",
+  "nightlord": "Gladius",
+  "patternIndex": 39,
+  "pois": [
+    {
+      "poiKey": "Major Base",
+      "label": "Camp - Leonine Misbegotten",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Minor Base",
+      "label": "Small Camp - Dogs",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Evergaol",
+      "label": "Crucible Knight with Spear",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Field Boss",
+      "label": "Black Knife Assassin",
+      "poiId": null,
+      "coordinates": null
+    }
+  ]
+}

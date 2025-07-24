@@ -1,0 +1,31 @@
+{
+  "seed": "159",
+  "nightlord": "Maris",
+  "patternIndex": 160,
+  "pois": [
+    {
+      "poiKey": "Major Base",
+      "label": "Ruins - Runebear",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Minor Base",
+      "label": "Church - Normal",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Evergaol",
+      "label": "Death Rite Bird",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Field Boss",
+      "label": "Elder Lion",
+      "poiId": null,
+      "coordinates": null
+    }
+  ]
+}

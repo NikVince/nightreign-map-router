@@ -1,0 +1,58 @@
+{
+  "seed": "273",
+  "nightlord": "Caligo",
+  "patternIndex": 274,
+  "pois": [
+    {
+      "poiKey": "Castle",
+      "label": "Banished Knights",
+      "poiId": 23,
+      "coordinates": [
+        1291.88,
+        915.88
+      ]
+    },
+    {
+      "poiKey": "Major Base",
+      "label": "Great Church - Mausoleum Knight",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Minor Base",
+      "label": "Church - Normal",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Evergaol",
+      "label": "Banished Knights",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Arena Boss",
+      "label": "Bell Bearing Hunter",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Field Boss",
+      "label": "Ancient Hero of Zamor",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Rotted Woods",
+      "label": "Death Rite Bird",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Rot Blessing",
+      "label": "Southwest",
+      "poiId": null,
+      "coordinates": null
+    }
+  ]
+}

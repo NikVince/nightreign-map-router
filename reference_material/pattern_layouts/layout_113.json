@@ -1,0 +1,58 @@
+{
+  "seed": "111",
+  "nightlord": "Gnoster",
+  "patternIndex": 112,
+  "pois": [
+    {
+      "poiKey": "Castle",
+      "label": "Trolls",
+      "poiId": 23,
+      "coordinates": [
+        1291.88,
+        915.88
+      ]
+    },
+    {
+      "poiKey": "Major Base",
+      "label": "Ruins - Runebear",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Minor Base",
+      "label": "Church - Normal",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Evergaol",
+      "label": "Dragonkin Soldier",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Arena Boss",
+      "label": "Leonine Misbegotten",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Field Boss",
+      "label": "Grafted Scion",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Rotted Woods",
+      "label": "Bell Bearing Hunter",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Rot Blessing",
+      "label": "Southwest",
+      "poiId": null,
+      "coordinates": null
+    }
+  ]
+}

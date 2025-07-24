@@ -1,0 +1,46 @@
+{
+  "seed": "3",
+  "nightlord": "Gladius",
+  "patternIndex": 4,
+  "pois": [
+    {
+      "poiKey": "Castle",
+      "label": "Banished Knights",
+      "poiId": 23,
+      "coordinates": [
+        1291.88,
+        915.88
+      ]
+    },
+    {
+      "poiKey": "Major Base",
+      "label": "Ruins - Depraved Perfumer",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Minor Base",
+      "label": "Small Camp - Guilty",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Evergaol",
+      "label": "Godskin Apostle",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Arena Boss",
+      "label": "Red Wolf",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Field Boss",
+      "label": "Tree Sentinel",
+      "poiId": null,
+      "coordinates": null
+    }
+  ]
+}

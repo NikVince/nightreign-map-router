@@ -1,0 +1,31 @@
+{
+  "seed": "197",
+  "nightlord": "Libra",
+  "patternIndex": 198,
+  "pois": [
+    {
+      "poiKey": "Major Base",
+      "label": "Ruins - Perfumer",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Minor Base",
+      "label": "Sorcerer's Rise - Above Door",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Evergaol",
+      "label": "Godskin Noble",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Field Boss",
+      "label": "Ancient Hero of Zamor",
+      "poiId": null,
+      "coordinates": null
+    }
+  ]
+}

@@ -1,0 +1,46 @@
+{
+  "seed": "143",
+  "nightlord": "Maris",
+  "patternIndex": 144,
+  "pois": [
+    {
+      "poiKey": "Castle",
+      "label": "Banished Knights",
+      "poiId": 23,
+      "coordinates": [
+        1291.88,
+        915.88
+      ]
+    },
+    {
+      "poiKey": "Major Base",
+      "label": "Fort - Lordsworn Captain",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Minor Base",
+      "label": "Church - Normal",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Evergaol",
+      "label": "Nox Warriors",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Arena Boss",
+      "label": "Bell Bearing Hunter",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Field Boss",
+      "label": "Leonine Misbegotten",
+      "poiId": null,
+      "coordinates": null
+    }
+  ]
+}

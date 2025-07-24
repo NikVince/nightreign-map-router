@@ -1,0 +1,31 @@
+{
+  "seed": "157",
+  "nightlord": "Maris",
+  "patternIndex": 158,
+  "pois": [
+    {
+      "poiKey": "Major Base",
+      "label": "Great Church - Mausoleum Knight",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Minor Base",
+      "label": "Church - Normal",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Evergaol",
+      "label": "Beastmen of Farum Azula",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Field Boss",
+      "label": "Demi-Human Queen",
+      "poiId": null,
+      "coordinates": null
+    }
+  ]
+}

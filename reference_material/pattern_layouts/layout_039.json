@@ -1,0 +1,31 @@
+{
+  "seed": "37",
+  "nightlord": "Gladius",
+  "patternIndex": 38,
+  "pois": [
+    {
+      "poiKey": "Major Base",
+      "label": "Camp - Frenzied Flame Troll",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Minor Base",
+      "label": "Small Camp - Misbegotten",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Evergaol",
+      "label": "Ancient Dragon",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Field Boss",
+      "label": "Flying Dragon",
+      "poiId": null,
+      "coordinates": null
+    }
+  ]
+}

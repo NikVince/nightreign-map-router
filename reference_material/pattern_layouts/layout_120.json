@@ -1,0 +1,31 @@
+{
+  "seed": "118",
+  "nightlord": "Gnoster",
+  "patternIndex": 119,
+  "pois": [
+    {
+      "poiKey": "Major Base",
+      "label": "Ruins - Albinauric Archers",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Minor Base",
+      "label": "Church - Normal",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Evergaol",
+      "label": "Godskin Noble",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Field Boss",
+      "label": "Leonine Misbegotten",
+      "poiId": null,
+      "coordinates": null
+    }
+  ]
+}

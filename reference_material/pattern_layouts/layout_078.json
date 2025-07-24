@@ -1,0 +1,31 @@
+{
+  "seed": "76",
+  "nightlord": "Adel",
+  "patternIndex": 77,
+  "pois": [
+    {
+      "poiKey": "Major Base",
+      "label": "Camp - Redmane Knights",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Minor Base",
+      "label": "Small Camp - Shack",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Evergaol",
+      "label": "Beastly Brigade",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Field Boss",
+      "label": "Golden Hippopotamus",
+      "poiId": null,
+      "coordinates": null
+    }
+  ]
+}

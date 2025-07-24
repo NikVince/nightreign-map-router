@@ -1,0 +1,31 @@
+{
+  "seed": "237",
+  "nightlord": "Fulghor",
+  "patternIndex": 238,
+  "pois": [
+    {
+      "poiKey": "Major Base",
+      "label": "Camp - Elder Lion",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Minor Base",
+      "label": "Church - Normal",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Evergaol",
+      "label": "Nox Warriors",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Field Boss",
+      "label": "Draconic Tree Sentinel",
+      "poiId": null,
+      "coordinates": null
+    }
+  ]
+}

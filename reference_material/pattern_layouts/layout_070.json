@@ -1,0 +1,28 @@
+{
+  "seed": "68",
+  "nightlord": "Adel",
+  "patternIndex": 69,
+  "pois": [
+    {
+      "poiKey": "Castle",
+      "label": "Trolls",
+      "poiId": 23,
+      "coordinates": [
+        1291.88,
+        915.88
+      ]
+    },
+    {
+      "poiKey": "Major Base",
+      "label": "Camp - Banished Knights",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Arena Boss",
+      "label": "Royal Revenant",
+      "poiId": null,
+      "coordinates": null
+    }
+  ]
+}

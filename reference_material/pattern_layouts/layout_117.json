@@ -1,0 +1,31 @@
+{
+  "seed": "115",
+  "nightlord": "Gnoster",
+  "patternIndex": 116,
+  "pois": [
+    {
+      "poiKey": "Major Base",
+      "label": "Camp - Banished Knights",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Minor Base",
+      "label": "Church - Normal",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Evergaol",
+      "label": "Stoneskin Lords",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Field Boss",
+      "label": "Grafted Scion",
+      "poiId": null,
+      "coordinates": null
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "seed": "239",
+  "nightlord": "Fulghor",
+  "patternIndex": 240,
+  "pois": [
+    {
+      "poiKey": "Major Base",
+      "label": "Ruins - Beastmen of Farum Azula",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Minor Base",
+      "label": "Church - Normal",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Evergaol",
+      "label": "Crucible Knight with Spear",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Field Boss",
+      "label": "Elder Lion",
+      "poiId": null,
+      "coordinates": null
+    }
+  ]
+}

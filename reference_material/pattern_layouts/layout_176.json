@@ -1,0 +1,46 @@
+{
+  "seed": "174",
+  "nightlord": "Libra",
+  "patternIndex": 175,
+  "pois": [
+    {
+      "poiKey": "Castle",
+      "label": "Crucible Knights",
+      "poiId": 23,
+      "coordinates": [
+        1291.88,
+        915.88
+      ]
+    },
+    {
+      "poiKey": "Major Base",
+      "label": "Map Event - Summonwater",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Minor Base",
+      "label": "Difficult Sorcerer's Rise - Fake Building, Pool Reflection, Second Floor",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Evergaol",
+      "label": "Crucible Knight with Spear",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Arena Boss",
+      "label": "Bell Bearing Hunter",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Field Boss",
+      "label": "Draconic Tree Sentinel",
+      "poiId": null,
+      "coordinates": null
+    }
+  ]
+}

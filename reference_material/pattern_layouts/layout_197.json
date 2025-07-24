@@ -1,0 +1,31 @@
+{
+  "seed": "195",
+  "nightlord": "Libra",
+  "patternIndex": 196,
+  "pois": [
+    {
+      "poiKey": "Major Base",
+      "label": "Fort - Guardian Golem",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Minor Base",
+      "label": "Sorcerer's Rise - Fake Building",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Evergaol",
+      "label": "Crucible Knight with Sword",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Field Boss",
+      "label": "Elder Lion",
+      "poiId": null,
+      "coordinates": null
+    }
+  ]
+}

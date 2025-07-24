@@ -1,0 +1,31 @@
+{
+  "seed": "279",
+  "nightlord": "Caligo",
+  "patternIndex": 280,
+  "pois": [
+    {
+      "poiKey": "Major Base",
+      "label": "Ruins - Beastmen of Farum Azula",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Minor Base",
+      "label": "Small Camp - Demi-Humans",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Evergaol",
+      "label": "Nox Warriors",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Field Boss",
+      "label": "Demi-Human Queen",
+      "poiId": null,
+      "coordinates": null
+    }
+  ]
+}

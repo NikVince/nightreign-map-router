@@ -1,0 +1,31 @@
+{
+  "seed": "119",
+  "nightlord": "Gnoster",
+  "patternIndex": 120,
+  "pois": [
+    {
+      "poiKey": "Major Base",
+      "label": "Great Church - Fire Monk",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Minor Base",
+      "label": "Church - Normal",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Evergaol",
+      "label": "Bloodhound Knight",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Field Boss",
+      "label": "Ulcerated Tree Spirit",
+      "poiId": null,
+      "coordinates": null
+    }
+  ]
+}

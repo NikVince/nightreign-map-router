@@ -1,0 +1,31 @@
+{
+  "seed": "199",
+  "nightlord": "Libra",
+  "patternIndex": 200,
+  "pois": [
+    {
+      "poiKey": "Major Base",
+      "label": "Ruins - Runebear",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Minor Base",
+      "label": "Church - Normal",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Evergaol",
+      "label": "Omen",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Field Boss",
+      "label": "Bell Bearing Hunter",
+      "poiId": null,
+      "coordinates": null
+    }
+  ]
+}

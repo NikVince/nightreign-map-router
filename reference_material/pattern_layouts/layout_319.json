@@ -1,0 +1,31 @@
+{
+  "seed": "317",
+  "nightlord": "Heolstor",
+  "patternIndex": 318,
+  "pois": [
+    {
+      "poiKey": "Major Base",
+      "label": "Fort - Guardian Golem",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Minor Base",
+      "label": "Church - Normal",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Evergaol",
+      "label": "Crystalians",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Field Boss",
+      "label": "Night's Cavalry",
+      "poiId": null,
+      "coordinates": null
+    }
+  ]
+}

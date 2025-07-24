@@ -1,0 +1,31 @@
+{
+  "seed": "196",
+  "nightlord": "Libra",
+  "patternIndex": 197,
+  "pois": [
+    {
+      "poiKey": "Major Base",
+      "label": "Ruins - Sanguine Noble",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Minor Base",
+      "label": "Small Camp - Guilty",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Evergaol",
+      "label": "Crucible Knight with Sword",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Field Boss",
+      "label": "Elder Lion",
+      "poiId": null,
+      "coordinates": null
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "seed": "36",
+  "nightlord": "Gladius",
+  "patternIndex": 37,
+  "pois": [
+    {
+      "poiKey": "Major Base",
+      "label": "Camp - Leonine Misbegotten",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Minor Base",
+      "label": "Small Camp - Rats and Demi-Humans",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Evergaol",
+      "label": "Godskin Apostle",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Field Boss",
+      "label": "Ulcerated Tree Spirit",
+      "poiId": null,
+      "coordinates": null
+    }
+  ]
+}

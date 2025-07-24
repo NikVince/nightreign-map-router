@@ -1,0 +1,31 @@
+{
+  "seed": "158",
+  "nightlord": "Maris",
+  "patternIndex": 159,
+  "pois": [
+    {
+      "poiKey": "Major Base",
+      "label": "Camp - Royal Army Knights",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Minor Base",
+      "label": "Church - Rats",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Evergaol",
+      "label": "Godskin Apostle",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Field Boss",
+      "label": "Night's Cavalry",
+      "poiId": null,
+      "coordinates": null
+    }
+  ]
+}

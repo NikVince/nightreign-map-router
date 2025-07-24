@@ -1,0 +1,31 @@
+{
+  "seed": "315",
+  "nightlord": "Heolstor",
+  "patternIndex": 316,
+  "pois": [
+    {
+      "poiKey": "Major Base",
+      "label": "Camp - Leonine Misbegotten",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Minor Base",
+      "label": "Church - Normal",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Evergaol",
+      "label": "Crucible Knight with Sword",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Field Boss",
+      "label": "Red Wolf",
+      "poiId": null,
+      "coordinates": null
+    }
+  ]
+}

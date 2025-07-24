@@ -1,0 +1,31 @@
+{
+  "seed": "77",
+  "nightlord": "Adel",
+  "patternIndex": 78,
+  "pois": [
+    {
+      "poiKey": "Major Base",
+      "label": "Ruins - Depraved Perfumer",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Minor Base",
+      "label": "Church - Normal",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Evergaol",
+      "label": "Crystalians",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Field Boss",
+      "label": "Erdtree Avatar",
+      "poiId": null,
+      "coordinates": null
+    }
+  ]
+}

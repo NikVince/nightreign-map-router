@@ -1,0 +1,31 @@
+{
+  "seed": "75",
+  "nightlord": "Adel",
+  "patternIndex": 76,
+  "pois": [
+    {
+      "poiKey": "Major Base",
+      "label": "Fort - Lordsworn Captain",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Minor Base",
+      "label": "Church - Rats",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Evergaol",
+      "label": "Crucible Knight with Spear",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Field Boss",
+      "label": "Demi-Human Queen",
+      "poiId": null,
+      "coordinates": null
+    }
+  ]
+}

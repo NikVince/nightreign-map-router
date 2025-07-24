@@ -1,0 +1,31 @@
+{
+  "seed": "39",
+  "nightlord": "Gladius",
+  "patternIndex": 40,
+  "pois": [
+    {
+      "poiKey": "Major Base",
+      "label": "Camp - Royal Army Knights",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Minor Base",
+      "label": "Small Camp - Misbegotten",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Evergaol",
+      "label": "Banished Knights",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Field Boss",
+      "label": "Black Knife Assassin",
+      "poiId": null,
+      "coordinates": null
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "seed": "275",
+  "nightlord": "Caligo",
+  "patternIndex": 276,
+  "pois": [
+    {
+      "poiKey": "Major Base",
+      "label": "Ruins - Wormface",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Minor Base",
+      "label": "Small Camp - Soldiers",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Evergaol",
+      "label": "Crucible Knight with Spear",
+      "poiId": null,
+      "coordinates": null
+    },
+    {
+      "poiKey": "Field Boss",
+      "label": "Ulcerated Tree Spirit",
+      "poiId": null,
+      "coordinates": null
+    }
+  ]
+}
