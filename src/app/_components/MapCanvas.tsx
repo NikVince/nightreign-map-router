@@ -681,6 +681,7 @@ const MapCanvas: React.FC<{ mapLayout: string, iconToggles: IconToggles }> = ({ 
             )}
         </Layer>
         {/* Debug/Test Path Layer: Draw a red line between POI 183 and 103 */}
+        {/*
         <Layer listening={false}>
           {(() => {
             // Find POI 183 and 103 in the master list
@@ -707,6 +708,7 @@ const MapCanvas: React.FC<{ mapLayout: string, iconToggles: IconToggles }> = ({ 
             );
           })()}
         </Layer>
+        */}
         {/* Landmark Layer */}
         {(showIcons || showNumbers) && (
           <Layer listening={false}>
