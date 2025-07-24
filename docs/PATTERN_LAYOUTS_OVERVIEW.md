@@ -27,9 +27,11 @@ This document describes the architecture and workflow for generating, storing, a
 ## Generation Workflow
 
 1. **Source Data**: All POI and layout data is maintained in the CSV file.
-2. **Generation Script**: A robust, reusable script reads the CSV and generates 320 JSON files (one per layout/seed) in `reference_material/pattern_layouts/`.
+2. **Generation Script**: A robust, reusable script (`scripts/generate_pattern_layouts_ignore.cjs`) reads the CSV and generates 320 JSON files (one per layout/seed) in `reference_material/pattern_layouts/`.
+    - The script is Node.js-only and excluded from type-checking/linting for compatibility.
     - The script should be idempotent and safe to rerun after any data changes.
     - It should support partial or full regeneration as needed.
+    - Run it with: `node scripts/generate_pattern_layouts_ignore.cjs`
 3. **Webapp Usage**: When a user selects a seed (1–320), the webapp fetches the corresponding JSON file and displays the precomputed layout.
 
 ---
