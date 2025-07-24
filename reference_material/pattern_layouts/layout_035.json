@@ -1,58 +1,233 @@
 {
-  "seed": "33",
-  "nightlord": "Gladius",
-  "patternIndex": 34,
-  "pois": [
-    {
-      "poiKey": "Castle",
-      "label": "Banished Knights",
-      "poiId": 23,
-      "coordinates": [
-        1291.88,
-        915.88
-      ]
-    },
-    {
-      "poiKey": "Major Base",
-      "label": "Ruins - Battlemages",
-      "poiId": null,
-      "coordinates": null
-    },
-    {
-      "poiKey": "Minor Base",
-      "label": "Church - Normal",
-      "poiId": null,
-      "coordinates": null
-    },
-    {
-      "poiKey": "Evergaol",
-      "label": "Godskin Noble",
-      "poiId": null,
-      "coordinates": null
-    },
-    {
-      "poiKey": "Arena Boss",
-      "label": "Red Wolf",
-      "poiId": null,
-      "coordinates": null
-    },
-    {
-      "poiKey": "Field Boss",
-      "label": "Leonine Misbegotten",
-      "poiId": null,
-      "coordinates": null
-    },
-    {
-      "poiKey": "Rotted Woods",
-      "label": "Ulcerated Tree Spirit",
-      "poiId": null,
-      "coordinates": null
-    },
-    {
-      "poiKey": "Rot Blessing",
-      "label": "Southwest",
-      "poiId": null,
-      "coordinates": null
-    }
-  ]
+  "Layout Number": "34",
+  "Nightlord": "Gladius",
+  "Shifting Earth": "Rotted Woods",
+  "Spawn Point": "Stormhill South of Gate",
+  "Special Event": "empty",
+  "Night 1 Boss": "Bell Bearing Hunter",
+  "Night 2 Boss": "Tree Sentinel and Royal Cavalrymen",
+  "Extra Night Boss": "empty",
+  "Night 1 Circle": "West Stormhill Graveyard",
+  "Night 2 Circle": "Southeast Rotted Woods",
+  "Castle - Castle": {
+    "location": "Castle",
+    "value": "Banished Knights"
+  },
+  "Major Base - South Lake": {
+    "location": "South Lake",
+    "value": "Great Church - Mausoleum Knight"
+  },
+  "Major Base - Groveside": {
+    "location": "Groveside",
+    "value": "Camp - Elder Lion"
+  },
+  "Major Base - Gatefront": {
+    "location": "Gatefront",
+    "value": "Fort - Abductor Virgin"
+  },
+  "Major Base - Stormhill North of Gate": {
+    "location": "Stormhill North of Gate",
+    "value": "Ruins - Albinaurics"
+  },
+  "Major Base - Alexander Spot": {
+    "location": "Alexander Spot",
+    "value": "Great Church - Guardian Golem"
+  },
+  "Major Base - Northwest Stormhill": {
+    "location": "Northwest Stormhill",
+    "value": "Great Church - Mausoleum Knight"
+  },
+  "Major Base - Northeast Stormhill": {
+    "location": "Northeast Stormhill",
+    "value": "Fort - Abductor Virgin"
+  },
+  "Major Base - South Mistwood": {
+    "location": "South Mistwood",
+    "value": "empty"
+  },
+  "Major Base - Waypoint Ruins": {
+    "location": "Waypoint Ruins",
+    "value": "empty"
+  },
+  "Major Base - Minor Erdtree": {
+    "location": "Minor Erdtree",
+    "value": "empty"
+  },
+  "Major Base - West Mistwood": {
+    "location": "West Mistwood",
+    "value": "empty"
+  },
+  "Major Base - Northwest Mistwood": {
+    "location": "Northwest Mistwood",
+    "value": "Fort - Crystalians"
+  },
+  "Major Base - Artist's Shack": {
+    "location": "Artist's Shack",
+    "value": "Ruins - Beastmen of Farum Azula"
+  },
+  "Major Base - Northeast Mistwood": {
+    "location": "Northeast Mistwood",
+    "value": "Camp - Frenzied Flame Troll"
+  },
+  "Major Base - Summonwater Approach": {
+    "location": "Summonwater Approach",
+    "value": "Ruins - Beastmen of Farum Azula"
+  },
+  "Major Base - Summonwater": {
+    "location": "Summonwater",
+    "value": "Camp - Elder Lion"
+  },
+  "Minor Base - Far Southwest": {
+    "location": "Far Southwest",
+    "value": "Sorcerer's Rise - Fleeing Stump"
+  },
+  "Minor Base - Lake": {
+    "location": "Lake",
+    "value": "Small Camp - Dogs"
+  },
+  "Minor Base - Stormhill South of Gate": {
+    "location": "Stormhill South of Gate",
+    "value": "Small Camp - Caravans and Nobles"
+  },
+  "Minor Base - Above Stormhill Tunnel Entrance": {
+    "location": "Above Stormhill Tunnel Entrance",
+    "value": "Sorcerer's Rise - Unlit Candle"
+  },
+  "Minor Base - West of Warmaster's Shack": {
+    "location": "West of Warmaster's Shack",
+    "value": "Church - Normal"
+  },
+  "Minor Base - Southeast of Lake": {
+    "location": "Southeast of Lake",
+    "value": "empty"
+  },
+  "Minor Base - East of Cavalry Bridge": {
+    "location": "East of Cavalry Bridge",
+    "value": "empty"
+  },
+  "Minor Base - Minor Erdtree": {
+    "location": "Minor Erdtree",
+    "value": "empty"
+  },
+  "Minor Base - Below Summonwater Hawk": {
+    "location": "Below Summonwater Hawk",
+    "value": "Church - Normal"
+  },
+  "Minor Base - Third Church": {
+    "location": "Third Church",
+    "value": "Township - Township"
+  },
+  "Minor Base - Northeast of Saintsbridge": {
+    "location": "Northeast of Saintsbridge",
+    "value": "Church - Normal"
+  },
+  "Evergaol - Northwest of Lake": {
+    "location": "Northwest of Lake",
+    "value": "Godskin Apostle"
+  },
+  "Evergaol - Murkwater Terminus": {
+    "location": "Murkwater Terminus",
+    "value": "Grave Warden Duelist"
+  },
+  "Evergaol - Stormhill": {
+    "location": "Stormhill",
+    "value": "Beastmen of Farum Azula"
+  },
+  "Evergaol - Highroad": {
+    "location": "Highroad",
+    "value": "Dragonkin Soldier"
+  },
+  "Evergaol - East of Lake": {
+    "location": "East of Lake",
+    "value": "empty"
+  },
+  "Evergaol - Mistwood": {
+    "location": "Mistwood",
+    "value": "Crystalians"
+  },
+  "Evergaol - Northeast Tunnel Entrance": {
+    "location": "Northeast Tunnel Entrance",
+    "value": "Banished Knights"
+  },
+  "Arena Boss - Castle Basement": {
+    "location": "Castle Basement",
+    "value": "Ancient Hero of Zamor"
+  },
+  "Field Boss - Castle Rooftop": {
+    "location": "Castle Rooftop",
+    "value": "Death Rite Bird"
+  },
+  "Field Boss - Far Southwest of Lake": {
+    "location": "Far Southwest of Lake",
+    "value": "Golden Hippopotamus"
+  },
+  "Field Boss - Lake": {
+    "location": "Lake",
+    "value": "Miranda Blossom"
+  },
+  "Field Boss - North of Stormhill Tunnel Entrance": {
+    "location": "North of Stormhill Tunnel Entrance",
+    "value": "Black Knife Assassin"
+  },
+  "Field Boss - North of Murkwater Terminus": {
+    "location": "North of Murkwater Terminus",
+    "value": "Magma Wyrm"
+  },
+  "Field Boss - Stormhill Spectral Hawk": {
+    "location": "Stormhill Spectral Hawk",
+    "value": "Grafted Scion"
+  },
+  "Field Boss - Northwest Stormhill Cliffside": {
+    "location": "Northwest Stormhill Cliffside",
+    "value": "Flying Dragon"
+  },
+  "Field Boss - Mistwood Spectral Hawk": {
+    "location": "Mistwood Spectral Hawk",
+    "value": "empty"
+  },
+  "Field Boss - North Mistwood": {
+    "location": "North Mistwood",
+    "value": "empty"
+  },
+  "Field Boss - East of Murkwater Terminus": {
+    "location": "East of Murkwater Terminus",
+    "value": "Royal Revenant"
+  },
+  "Field Boss - Northwest of Summonwater": {
+    "location": "Northwest of Summonwater",
+    "value": "Red Wolf"
+  },
+  "Rotted Woods - Southwest": {
+    "location": "Southwest",
+    "value": "Putrid Ancestral Followers"
+  },
+  "Rotted Woods - Southeast": {
+    "location": "Southeast",
+    "value": "Ulcerated Tree Spirit"
+  },
+  "Rotted Woods - Center West": {
+    "location": "Center West",
+    "value": "Erdtree Avatar"
+  },
+  "Rotted Woods - Center East": {
+    "location": "Center East",
+    "value": "Royal Carian Knight"
+  },
+  "Rotted Woods - Far Northwest": {
+    "location": "Far Northwest",
+    "value": "Black Blade Kindred"
+  },
+  "Rotted Woods - Northwest": {
+    "location": "Northwest",
+    "value": "Ancestor Spirit"
+  },
+  "Rotted Woods - Northeast": {
+    "location": "Northeast",
+    "value": "Putrid Ancestral Followers"
+  },
+  "Rotted Woods - Far Northeast": {
+    "location": "Far Northeast",
+    "value": "Draconic Tree Sentinel"
+  },
+  "Rot Blessing": "West"
 }
