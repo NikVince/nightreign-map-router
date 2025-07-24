@@ -1,5 +1,5 @@
 {
-  "Layout Number": "72",
+  "Layout Number": "73",
   "Nightlord": "Adel",
   "Shifting Earth": "Rotted Woods",
   "Spawn Point": "Stormhill South of Gate",
@@ -229,5 +229,7 @@
     "location": "Far Northeast",
     "value": "Putrid Ancestral Followers"
   },
-  "Rot Blessing": "West"
+  "Rot Blessing": "West",
+  "Frenzy Tower": "empty",
+  "Scale-Bearing Merchant": "empty"
 }

@@ -1,5 +1,5 @@
 {
-  "Layout Number": "235",
+  "Layout Number": "236",
   "Nightlord": "Fulghor",
   "Shifting Earth": "Noklateo",
   "Spawn Point": "East of Cavalry Bridge",
@@ -229,5 +229,7 @@
     "location": "Far Northeast",
     "value": "empty"
   },
-  "Rot Blessing": "empty"
+  "Rot Blessing": "empty",
+  "Frenzy Tower": "empty",
+  "Scale-Bearing Merchant": "empty"
 }

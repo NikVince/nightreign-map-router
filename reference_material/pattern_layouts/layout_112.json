@@ -1,5 +1,5 @@
 {
-  "Layout Number": "111",
+  "Layout Number": "112",
   "Nightlord": "Gnoster",
   "Shifting Earth": "Rotted Woods",
   "Spawn Point": "Far Southwest",
@@ -229,5 +229,7 @@
     "location": "Far Northeast",
     "value": "Bell Bearing Hunter"
   },
-  "Rot Blessing": "Southwest"
+  "Rot Blessing": "Southwest",
+  "Frenzy Tower": "empty",
+  "Scale-Bearing Merchant": "South of Castle"
 }

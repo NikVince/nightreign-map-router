@@ -1,5 +1,5 @@
 {
-  "Layout Number": "15",
+  "Layout Number": "16",
   "Nightlord": "Gladius",
   "Shifting Earth": "Default",
   "Spawn Point": "Northeast of Saintsbridge",
@@ -229,5 +229,7 @@
     "location": "Far Northeast",
     "value": "empty"
   },
-  "Rot Blessing": "empty"
+  "Rot Blessing": "empty",
+  "Frenzy Tower": "empty",
+  "Scale-Bearing Merchant": "empty"
 }

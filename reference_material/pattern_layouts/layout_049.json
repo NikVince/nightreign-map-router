@@ -1,5 +1,5 @@
 {
-  "Layout Number": "48",
+  "Layout Number": "49",
   "Nightlord": "Adel",
   "Shifting Earth": "Default",
   "Spawn Point": "Above Stormhill Tunnel Entrance",
@@ -229,5 +229,7 @@
     "location": "Far Northeast",
     "value": "empty"
   },
-  "Rot Blessing": "empty"
+  "Rot Blessing": "empty",
+  "Frenzy Tower": "empty",
+  "Scale-Bearing Merchant": "empty"
 }

@@ -1,5 +1,5 @@
 {
-  "Layout Number": "45",
+  "Layout Number": "46",
   "Nightlord": "Adel",
   "Shifting Earth": "Default",
   "Spawn Point": "Southeast of Lake",
@@ -229,5 +229,7 @@
     "location": "Far Northeast",
     "value": "empty"
   },
-  "Rot Blessing": "empty"
+  "Rot Blessing": "empty",
+  "Frenzy Tower": "empty",
+  "Scale-Bearing Merchant": "empty"
 }

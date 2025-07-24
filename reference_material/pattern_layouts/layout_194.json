@@ -1,5 +1,5 @@
 {
-  "Layout Number": "193",
+  "Layout Number": "194",
   "Nightlord": "Libra",
   "Shifting Earth": "Rotted Woods",
   "Spawn Point": "West of Warmaster's Shack",
@@ -229,5 +229,7 @@
     "location": "Far Northeast",
     "value": "Putrid Ancestral Followers"
   },
-  "Rot Blessing": "Northeast"
+  "Rot Blessing": "Northeast",
+  "Frenzy Tower": "empty",
+  "Scale-Bearing Merchant": "empty"
 }

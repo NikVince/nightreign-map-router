@@ -1,5 +1,5 @@
 {
-  "Layout Number": "112",
+  "Layout Number": "113",
   "Nightlord": "Gnoster",
   "Shifting Earth": "Rotted Woods",
   "Spawn Point": "Northeast of Saintsbridge",
@@ -229,5 +229,7 @@
     "location": "Far Northeast",
     "value": "Putrid Ancestral Followers"
   },
-  "Rot Blessing": "Southwest"
+  "Rot Blessing": "Southwest",
+  "Frenzy Tower": "empty",
+  "Scale-Bearing Merchant": "empty"
 }

@@ -1,5 +1,5 @@
 {
-  "Layout Number": "270",
+  "Layout Number": "271",
   "Nightlord": "Caligo",
   "Shifting Earth": "Rotted Woods",
   "Spawn Point": "Above Stormhill Tunnel Entrance",
@@ -229,5 +229,7 @@
     "location": "Far Northeast",
     "value": "Tree Sentinel"
   },
-  "Rot Blessing": "West"
+  "Rot Blessing": "West",
+  "Frenzy Tower": "empty",
+  "Scale-Bearing Merchant": "empty"
 }

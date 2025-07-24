@@ -1,5 +1,5 @@
 {
-  "Layout Number": "32",
+  "Layout Number": "33",
   "Nightlord": "Gladius",
   "Shifting Earth": "Rotted Woods",
   "Spawn Point": "Below Summonwater Hawk",
@@ -229,5 +229,7 @@
     "location": "Far Northeast",
     "value": "Putrid Ancestral Followers"
   },
-  "Rot Blessing": "West"
+  "Rot Blessing": "West",
+  "Frenzy Tower": "empty",
+  "Scale-Bearing Merchant": "empty"
 }

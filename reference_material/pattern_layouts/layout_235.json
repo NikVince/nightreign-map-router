@@ -1,5 +1,5 @@
 {
-  "Layout Number": "234",
+  "Layout Number": "235",
   "Nightlord": "Fulghor",
   "Shifting Earth": "Rotted Woods",
   "Spawn Point": "Stormhill South of Gate",
@@ -229,5 +229,7 @@
     "location": "Far Northeast",
     "value": "Erdtree Avatar"
   },
-  "Rot Blessing": "Southwest"
+  "Rot Blessing": "Southwest",
+  "Frenzy Tower": "empty",
+  "Scale-Bearing Merchant": "empty"
 }

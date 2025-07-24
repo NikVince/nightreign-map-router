@@ -1,5 +1,5 @@
 {
-  "Layout Number": "226",
+  "Layout Number": "227",
   "Nightlord": "Fulghor",
   "Shifting Earth": "Crater",
   "Spawn Point": "West of Warmaster's Shack",
@@ -229,5 +229,7 @@
     "location": "Far Northeast",
     "value": "empty"
   },
-  "Rot Blessing": "empty"
+  "Rot Blessing": "empty",
+  "Frenzy Tower": "empty",
+  "Scale-Bearing Merchant": "empty"
 }

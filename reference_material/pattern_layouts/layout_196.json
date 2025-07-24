@@ -1,5 +1,5 @@
 {
-  "Layout Number": "195",
+  "Layout Number": "196",
   "Nightlord": "Libra",
   "Shifting Earth": "Noklateo",
   "Spawn Point": "Below Summonwater Hawk",
@@ -229,5 +229,7 @@
     "location": "Far Northeast",
     "value": "empty"
   },
-  "Rot Blessing": "empty"
+  "Rot Blessing": "empty",
+  "Frenzy Tower": "North",
+  "Scale-Bearing Merchant": "empty"
 }

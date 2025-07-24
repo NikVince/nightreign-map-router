@@ -1,5 +1,5 @@
 {
-  "Layout Number": "124",
+  "Layout Number": "125",
   "Nightlord": "Maris",
   "Shifting Earth": "Default",
   "Spawn Point": "Minor Erdtree",
@@ -229,5 +229,7 @@
     "location": "Far Northeast",
     "value": "empty"
   },
-  "Rot Blessing": "empty"
+  "Rot Blessing": "empty",
+  "Frenzy Tower": "empty",
+  "Scale-Bearing Merchant": "empty"
 }

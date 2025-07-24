@@ -1,5 +1,5 @@
 {
-  "Layout Number": "109",
+  "Layout Number": "110",
   "Nightlord": "Gnoster",
   "Shifting Earth": "Crater",
   "Spawn Point": "Stormhill South of Gate",
@@ -229,5 +229,7 @@
     "location": "Far Northeast",
     "value": "empty"
   },
-  "Rot Blessing": "empty"
+  "Rot Blessing": "empty",
+  "Frenzy Tower": "South",
+  "Scale-Bearing Merchant": "empty"
 }

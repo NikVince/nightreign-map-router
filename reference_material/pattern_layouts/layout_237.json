@@ -1,5 +1,5 @@
 {
-  "Layout Number": "236",
+  "Layout Number": "237",
   "Nightlord": "Fulghor",
   "Shifting Earth": "Noklateo",
   "Spawn Point": "West of Warmaster's Shack",
@@ -229,5 +229,7 @@
     "location": "Far Northeast",
     "value": "empty"
   },
-  "Rot Blessing": "empty"
+  "Rot Blessing": "empty",
+  "Frenzy Tower": "empty",
+  "Scale-Bearing Merchant": "East of Saintsbridge"
 }

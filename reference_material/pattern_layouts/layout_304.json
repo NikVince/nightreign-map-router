@@ -1,5 +1,5 @@
 {
-  "Layout Number": "303",
+  "Layout Number": "304",
   "Nightlord": "Heolstor",
   "Shifting Earth": "Mountaintop",
   "Spawn Point": "Southeast of Lake",
@@ -229,5 +229,7 @@
     "location": "Far Northeast",
     "value": "empty"
   },
-  "Rot Blessing": "empty"
+  "Rot Blessing": "empty",
+  "Frenzy Tower": "empty",
+  "Scale-Bearing Merchant": "empty"
 }

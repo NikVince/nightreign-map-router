@@ -1,5 +1,5 @@
 {
-  "Layout Number": "71",
+  "Layout Number": "72",
   "Nightlord": "Adel",
   "Shifting Earth": "Rotted Woods",
   "Spawn Point": "Below Summonwater Hawk",
@@ -229,5 +229,7 @@
     "location": "Far Northeast",
     "value": "Bell Bearing Hunter"
   },
-  "Rot Blessing": "Northeast"
+  "Rot Blessing": "Northeast",
+  "Frenzy Tower": "empty",
+  "Scale-Bearing Merchant": "empty"
 }

@@ -1,5 +1,5 @@
 {
-  "Layout Number": "317",
+  "Layout Number": "318",
   "Nightlord": "Heolstor",
   "Shifting Earth": "Noklateo",
   "Spawn Point": "Below Summonwater Hawk",
@@ -229,5 +229,7 @@
     "location": "Far Northeast",
     "value": "empty"
   },
-  "Rot Blessing": "empty"
+  "Rot Blessing": "empty",
+  "Frenzy Tower": "empty",
+  "Scale-Bearing Merchant": "Ruins North of Castle"
 }

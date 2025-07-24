@@ -1,5 +1,5 @@
 {
-  "Layout Number": "150",
+  "Layout Number": "151",
   "Nightlord": "Maris",
   "Shifting Earth": "Rotted Woods",
   "Spawn Point": "Far Southwest",
@@ -229,5 +229,7 @@
     "location": "Far Northeast",
     "value": "Draconic Tree Sentinel"
   },
-  "Rot Blessing": "Southwest"
+  "Rot Blessing": "Southwest",
+  "Frenzy Tower": "empty",
+  "Scale-Bearing Merchant": "empty"
 }

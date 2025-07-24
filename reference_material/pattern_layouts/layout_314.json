@@ -1,5 +1,5 @@
 {
-  "Layout Number": "313",
+  "Layout Number": "314",
   "Nightlord": "Heolstor",
   "Shifting Earth": "Rotted Woods",
   "Spawn Point": "Northeast of Saintsbridge",
@@ -229,5 +229,7 @@
     "location": "Far Northeast",
     "value": "Putrid Ancestral Followers"
   },
-  "Rot Blessing": "Northeast"
+  "Rot Blessing": "Northeast",
+  "Frenzy Tower": "empty",
+  "Scale-Bearing Merchant": "empty"
 }

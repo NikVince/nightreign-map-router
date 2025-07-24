@@ -1,5 +1,5 @@
 {
-  "Layout Number": "192",
+  "Layout Number": "193",
   "Nightlord": "Libra",
   "Shifting Earth": "Rotted Woods",
   "Spawn Point": "Northeast of Saintsbridge",
@@ -229,5 +229,7 @@
     "location": "Far Northeast",
     "value": "Tree Sentinel"
   },
-  "Rot Blessing": "Northeast"
+  "Rot Blessing": "Northeast",
+  "Frenzy Tower": "empty",
+  "Scale-Bearing Merchant": "empty"
 }

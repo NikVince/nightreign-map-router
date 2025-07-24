@@ -1,5 +1,5 @@
 {
-  "Layout Number": "220",
+  "Layout Number": "221",
   "Nightlord": "Fulghor",
   "Shifting Earth": "Mountaintop",
   "Spawn Point": "Northeast of Saintsbridge",
@@ -229,5 +229,7 @@
     "location": "Far Northeast",
     "value": "empty"
   },
-  "Rot Blessing": "empty"
+  "Rot Blessing": "empty",
+  "Frenzy Tower": "empty",
+  "Scale-Bearing Merchant": "South of Castle"
 }

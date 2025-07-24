@@ -1,5 +1,5 @@
 {
-  "Layout Number": "253",
+  "Layout Number": "254",
   "Nightlord": "Caligo",
   "Shifting Earth": "Default",
   "Spawn Point": "Stormhill South of Gate",
@@ -229,5 +229,7 @@
     "location": "Far Northeast",
     "value": "empty"
   },
-  "Rot Blessing": "empty"
+  "Rot Blessing": "empty",
+  "Frenzy Tower": "empty",
+  "Scale-Bearing Merchant": "empty"
 }

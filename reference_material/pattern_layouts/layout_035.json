@@ -1,5 +1,5 @@
 {
-  "Layout Number": "34",
+  "Layout Number": "35",
   "Nightlord": "Gladius",
   "Shifting Earth": "Rotted Woods",
   "Spawn Point": "Stormhill South of Gate",
@@ -229,5 +229,7 @@
     "location": "Far Northeast",
     "value": "Draconic Tree Sentinel"
   },
-  "Rot Blessing": "West"
+  "Rot Blessing": "West",
+  "Frenzy Tower": "empty",
+  "Scale-Bearing Merchant": "Northwest Corner"
 }

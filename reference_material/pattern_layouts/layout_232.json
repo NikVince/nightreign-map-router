@@ -1,5 +1,5 @@
 {
-  "Layout Number": "231",
+  "Layout Number": "232",
   "Nightlord": "Fulghor",
   "Shifting Earth": "Rotted Woods",
   "Spawn Point": "Above Stormhill Tunnel Entrance",
@@ -229,5 +229,7 @@
     "location": "Far Northeast",
     "value": "Royal Carian Knight"
   },
-  "Rot Blessing": "Southwest"
+  "Rot Blessing": "Southwest",
+  "Frenzy Tower": "empty",
+  "Scale-Bearing Merchant": "empty"
 }

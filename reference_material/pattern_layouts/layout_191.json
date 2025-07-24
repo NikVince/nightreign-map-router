@@ -1,5 +1,5 @@
 {
-  "Layout Number": "190",
+  "Layout Number": "191",
   "Nightlord": "Libra",
   "Shifting Earth": "Rotted Woods",
   "Spawn Point": "Far Southwest",
@@ -229,5 +229,7 @@
     "location": "Far Northeast",
     "value": "Death Rite Bird"
   },
-  "Rot Blessing": "Southwest"
+  "Rot Blessing": "Southwest",
+  "Frenzy Tower": "empty",
+  "Scale-Bearing Merchant": "empty"
 }

@@ -1,5 +1,5 @@
 {
-  "Layout Number": "110",
+  "Layout Number": "111",
   "Nightlord": "Gnoster",
   "Shifting Earth": "Rotted Woods",
   "Spawn Point": "Far Southwest",
@@ -229,5 +229,7 @@
     "location": "Far Northeast",
     "value": "Magma Wyrm"
   },
-  "Rot Blessing": "Northeast"
+  "Rot Blessing": "Northeast",
+  "Frenzy Tower": "empty",
+  "Scale-Bearing Merchant": "empty"
 }

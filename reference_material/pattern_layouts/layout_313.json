@@ -1,5 +1,5 @@
 {
-  "Layout Number": "312",
+  "Layout Number": "313",
   "Nightlord": "Heolstor",
   "Shifting Earth": "Rotted Woods",
   "Spawn Point": "West of Warmaster's Shack",
@@ -229,5 +229,7 @@
     "location": "Far Northeast",
     "value": "Magma Wyrm"
   },
-  "Rot Blessing": "Southwest"
+  "Rot Blessing": "Southwest",
+  "Frenzy Tower": "empty",
+  "Scale-Bearing Merchant": "empty"
 }

@@ -1,5 +1,5 @@
 {
-  "Layout Number": "94",
+  "Layout Number": "95",
   "Nightlord": "Gnoster",
   "Shifting Earth": "Default",
   "Spawn Point": "Minor Erdtree",
@@ -229,5 +229,7 @@
     "location": "Far Northeast",
     "value": "empty"
   },
-  "Rot Blessing": "empty"
+  "Rot Blessing": "empty",
+  "Frenzy Tower": "empty",
+  "Scale-Bearing Merchant": "Southwest Corner"
 }

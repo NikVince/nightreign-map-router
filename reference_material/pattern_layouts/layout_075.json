@@ -1,5 +1,5 @@
 {
-  "Layout Number": "74",
+  "Layout Number": "75",
   "Nightlord": "Adel",
   "Shifting Earth": "Rotted Woods",
   "Spawn Point": "Stormhill South of Gate",
@@ -229,5 +229,7 @@
     "location": "Far Northeast",
     "value": "Magma Wyrm"
   },
-  "Rot Blessing": "West"
+  "Rot Blessing": "West",
+  "Frenzy Tower": "empty",
+  "Scale-Bearing Merchant": "East of Saintsbridge"
 }

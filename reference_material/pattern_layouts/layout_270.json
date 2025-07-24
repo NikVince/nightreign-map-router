@@ -1,5 +1,5 @@
 {
-  "Layout Number": "269",
+  "Layout Number": "270",
   "Nightlord": "Caligo",
   "Shifting Earth": "Crater",
   "Spawn Point": "West of Warmaster's Shack",
@@ -229,5 +229,7 @@
     "location": "Far Northeast",
     "value": "empty"
   },
-  "Rot Blessing": "empty"
+  "Rot Blessing": "empty",
+  "Frenzy Tower": "empty",
+  "Scale-Bearing Merchant": "South of Castle"
 }

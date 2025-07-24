@@ -1,5 +1,5 @@
 {
-  "Layout Number": "154",
+  "Layout Number": "155",
   "Nightlord": "Maris",
   "Shifting Earth": "Rotted Woods",
   "Spawn Point": "Stormhill South of Gate",
@@ -229,5 +229,7 @@
     "location": "Far Northeast",
     "value": "Bell Bearing Hunter"
   },
-  "Rot Blessing": "Southwest"
+  "Rot Blessing": "Southwest",
+  "Frenzy Tower": "empty",
+  "Scale-Bearing Merchant": "Northeast Corner"
 }

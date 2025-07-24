@@ -1,5 +1,5 @@
 {
-  "Layout Number": "189",
+  "Layout Number": "190",
   "Nightlord": "Libra",
   "Shifting Earth": "Crater",
   "Spawn Point": "Stormhill South of Gate",
@@ -229,5 +229,7 @@
     "location": "Far Northeast",
     "value": "empty"
   },
-  "Rot Blessing": "empty"
+  "Rot Blessing": "empty",
+  "Frenzy Tower": "empty",
+  "Scale-Bearing Merchant": "empty"
 }

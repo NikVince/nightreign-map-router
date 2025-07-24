@@ -1,5 +1,5 @@
 {
-  "Layout Number": "194",
+  "Layout Number": "195",
   "Nightlord": "Libra",
   "Shifting Earth": "Rotted Woods",
   "Spawn Point": "Below Summonwater Hawk",
@@ -229,5 +229,7 @@
     "location": "Far Northeast",
     "value": "Tree Sentinel"
   },
-  "Rot Blessing": "West"
+  "Rot Blessing": "West",
+  "Frenzy Tower": "empty",
+  "Scale-Bearing Merchant": "empty"
 }

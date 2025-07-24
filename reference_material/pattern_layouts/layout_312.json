@@ -1,5 +1,5 @@
 {
-  "Layout Number": "311",
+  "Layout Number": "312",
   "Nightlord": "Heolstor",
   "Shifting Earth": "Rotted Woods",
   "Spawn Point": "West of Warmaster's Shack",
@@ -229,5 +229,7 @@
     "location": "Far Northeast",
     "value": "Tree Sentinel"
   },
-  "Rot Blessing": "West"
+  "Rot Blessing": "West",
+  "Frenzy Tower": "empty",
+  "Scale-Bearing Merchant": "empty"
 }

@@ -1,5 +1,5 @@
 {
-  "Layout Number": "152",
+  "Layout Number": "153",
   "Nightlord": "Maris",
   "Shifting Earth": "Rotted Woods",
   "Spawn Point": "Far Southwest",
@@ -229,5 +229,7 @@
     "location": "Far Northeast",
     "value": "Ulcerated Tree Spirit"
   },
-  "Rot Blessing": "Northeast"
+  "Rot Blessing": "Northeast",
+  "Frenzy Tower": "empty",
+  "Scale-Bearing Merchant": "Southwest Corner"
 }

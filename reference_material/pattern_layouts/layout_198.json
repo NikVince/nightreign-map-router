@@ -1,5 +1,5 @@
 {
-  "Layout Number": "197",
+  "Layout Number": "198",
   "Nightlord": "Libra",
   "Shifting Earth": "Noklateo",
   "Spawn Point": "West of Warmaster's Shack",
@@ -229,5 +229,7 @@
     "location": "Far Northeast",
     "value": "empty"
   },
-  "Rot Blessing": "empty"
+  "Rot Blessing": "empty",
+  "Frenzy Tower": "empty",
+  "Scale-Bearing Merchant": "empty"
 }

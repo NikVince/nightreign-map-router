@@ -1,5 +1,5 @@
 {
-  "Layout Number": "33",
+  "Layout Number": "34",
   "Nightlord": "Gladius",
   "Shifting Earth": "Rotted Woods",
   "Spawn Point": "Below Summonwater Hawk",
@@ -229,5 +229,7 @@
     "location": "Far Northeast",
     "value": "Ulcerated Tree Spirit"
   },
-  "Rot Blessing": "Southwest"
+  "Rot Blessing": "Southwest",
+  "Frenzy Tower": "empty",
+  "Scale-Bearing Merchant": "empty"
 }

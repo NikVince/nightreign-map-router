@@ -1,5 +1,5 @@
 {
-  "Layout Number": "245",
+  "Layout Number": "246",
   "Nightlord": "Caligo",
   "Shifting Earth": "Default",
   "Spawn Point": "Far Southwest",
@@ -229,5 +229,7 @@
     "location": "Far Northeast",
     "value": "empty"
   },
-  "Rot Blessing": "empty"
+  "Rot Blessing": "empty",
+  "Frenzy Tower": "empty",
+  "Scale-Bearing Merchant": "empty"
 }

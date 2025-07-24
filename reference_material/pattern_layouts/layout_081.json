@@ -1,5 +1,5 @@
 {
-  "Layout Number": "80",
+  "Layout Number": "81",
   "Nightlord": "Gnoster",
   "Shifting Earth": "Default",
   "Spawn Point": "East of Cavalry Bridge",
@@ -229,5 +229,7 @@
     "location": "Far Northeast",
     "value": "empty"
   },
-  "Rot Blessing": "empty"
+  "Rot Blessing": "empty",
+  "Frenzy Tower": "empty",
+  "Scale-Bearing Merchant": "empty"
 }

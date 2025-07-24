@@ -1,5 +1,5 @@
 {
-  "Layout Number": "273",
+  "Layout Number": "274",
   "Nightlord": "Caligo",
   "Shifting Earth": "Rotted Woods",
   "Spawn Point": "Above Stormhill Tunnel Entrance",
@@ -229,5 +229,7 @@
     "location": "Far Northeast",
     "value": "Death Rite Bird"
   },
-  "Rot Blessing": "Southwest"
+  "Rot Blessing": "Southwest",
+  "Frenzy Tower": "empty",
+  "Scale-Bearing Merchant": "Southwest Corner"
 }

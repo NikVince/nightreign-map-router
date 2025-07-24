@@ -1,5 +1,5 @@
 {
-  "Layout Number": "97",
+  "Layout Number": "98",
   "Nightlord": "Gnoster",
   "Shifting Earth": "Default",
   "Spawn Point": "Below Summonwater Hawk",
@@ -229,5 +229,7 @@
     "location": "Far Northeast",
     "value": "empty"
   },
-  "Rot Blessing": "empty"
+  "Rot Blessing": "empty",
+  "Frenzy Tower": "empty",
+  "Scale-Bearing Merchant": "East of Saintsbridge"
 }

@@ -1,5 +1,5 @@
 {
-  "Layout Number": "148",
+  "Layout Number": "149",
   "Nightlord": "Maris",
   "Shifting Earth": "Crater",
   "Spawn Point": "Below Summonwater Hawk",
@@ -229,5 +229,7 @@
     "location": "Far Northeast",
     "value": "empty"
   },
-  "Rot Blessing": "empty"
+  "Rot Blessing": "empty",
+  "Frenzy Tower": "empty",
+  "Scale-Bearing Merchant": "empty"
 }

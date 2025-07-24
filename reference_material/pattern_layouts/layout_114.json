@@ -1,5 +1,5 @@
 {
-  "Layout Number": "113",
+  "Layout Number": "114",
   "Nightlord": "Gnoster",
   "Shifting Earth": "Rotted Woods",
   "Spawn Point": "Northeast of Saintsbridge",
@@ -229,5 +229,7 @@
     "location": "Far Northeast",
     "value": "Ancestor Spirit"
   },
-  "Rot Blessing": "West"
+  "Rot Blessing": "West",
+  "Frenzy Tower": "empty",
+  "Scale-Bearing Merchant": "empty"
 }

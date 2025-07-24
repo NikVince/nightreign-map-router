@@ -1,5 +1,5 @@
 {
-  "Layout Number": "70",
+  "Layout Number": "71",
   "Nightlord": "Adel",
   "Shifting Earth": "Rotted Woods",
   "Spawn Point": "Above Stormhill Tunnel Entrance",
@@ -229,5 +229,7 @@
     "location": "Far Northeast",
     "value": "Ancestor Spirit"
   },
-  "Rot Blessing": "Southwest"
+  "Rot Blessing": "Southwest",
+  "Frenzy Tower": "empty",
+  "Scale-Bearing Merchant": "empty"
 }

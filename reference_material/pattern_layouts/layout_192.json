@@ -1,5 +1,5 @@
 {
-  "Layout Number": "191",
+  "Layout Number": "192",
   "Nightlord": "Libra",
   "Shifting Earth": "Rotted Woods",
   "Spawn Point": "Far Southwest",
@@ -229,5 +229,7 @@
     "location": "Far Northeast",
     "value": "Draconic Tree Sentinel"
   },
-  "Rot Blessing": "West"
+  "Rot Blessing": "West",
+  "Frenzy Tower": "empty",
+  "Scale-Bearing Merchant": "empty"
 }

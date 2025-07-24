@@ -1,5 +1,5 @@
 {
-  "Layout Number": "130",
+  "Layout Number": "131",
   "Nightlord": "Maris",
   "Shifting Earth": "Default",
   "Spawn Point": "East of Cavalry Bridge",
@@ -229,5 +229,7 @@
     "location": "Far Northeast",
     "value": "empty"
   },
-  "Rot Blessing": "empty"
+  "Rot Blessing": "empty",
+  "Frenzy Tower": "empty",
+  "Scale-Bearing Merchant": "empty"
 }

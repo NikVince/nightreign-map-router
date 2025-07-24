@@ -1,5 +1,5 @@
 {
-  "Layout Number": "75",
+  "Layout Number": "76",
   "Nightlord": "Adel",
   "Shifting Earth": "Noklateo",
   "Spawn Point": "Northeast of Saintsbridge",
@@ -229,5 +229,7 @@
     "location": "Far Northeast",
     "value": "empty"
   },
-  "Rot Blessing": "empty"
+  "Rot Blessing": "empty",
+  "Frenzy Tower": "empty",
+  "Scale-Bearing Merchant": "empty"
 }

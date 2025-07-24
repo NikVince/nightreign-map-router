@@ -1,5 +1,5 @@
 {
-  "Layout Number": "316",
+  "Layout Number": "317",
   "Nightlord": "Heolstor",
   "Shifting Earth": "Noklateo",
   "Spawn Point": "Minor Erdtree",
@@ -229,5 +229,7 @@
     "location": "Far Northeast",
     "value": "empty"
   },
-  "Rot Blessing": "empty"
+  "Rot Blessing": "empty",
+  "Frenzy Tower": "empty",
+  "Scale-Bearing Merchant": "empty"
 }

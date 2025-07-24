@@ -1,5 +1,5 @@
 {
-  "Layout Number": "203",
+  "Layout Number": "204",
   "Nightlord": "Fulghor",
   "Shifting Earth": "Default",
   "Spawn Point": "Far Southwest",
@@ -229,5 +229,7 @@
     "location": "Far Northeast",
     "value": "empty"
   },
-  "Rot Blessing": "empty"
+  "Rot Blessing": "empty",
+  "Frenzy Tower": "empty",
+  "Scale-Bearing Merchant": "Northwest Corner"
 }

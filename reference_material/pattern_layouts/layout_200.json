@@ -1,5 +1,5 @@
 {
-  "Layout Number": "199",
+  "Layout Number": "200",
   "Nightlord": "Libra",
   "Shifting Earth": "Noklateo",
   "Spawn Point": "Above Stormhill Tunnel Entrance",
@@ -229,5 +229,7 @@
     "location": "Far Northeast",
     "value": "empty"
   },
-  "Rot Blessing": "empty"
+  "Rot Blessing": "empty",
+  "Frenzy Tower": "empty",
+  "Scale-Bearing Merchant": "empty"
 }
