@@ -84,6 +84,8 @@ const POI_ICONS = [
   "Event.png",
   "Night_Location.png",
   "Scale_Bearing_Merchant.png",
+  // --- Add spawn location icon ---
+  "Spawn_Location.png",
 ];
 
 // --- MANUAL ICON SIZE CONTROL ---
@@ -109,8 +111,10 @@ export const POI_ICON_SIZES: Record<string, { width?: number; height?: number }>
   "Ruins.png": { width: 96 },
   // --- New sizes ---
   "Event.png": { width: 64 },
-  "Night_Location.png": { width: 96 },
+  "Night_Location.png": { width: 64 },
   "Scale_Bearing_Merchant.png": { width: 48 },
+  // --- Add spawn location icon size ---
+  "Spawn_Location.png": { width: 64 },
 };
 // ---------------------------------
 
@@ -141,6 +145,8 @@ const POI_TYPE_ICON_MAP: Record<string, string> = {
   "Event_Locations": "Event.png",
   "Circle_Locations": "Night_Location.png",
   "Scale_Bearing_Merchant_Locations": "Scale_Bearing_Merchant.png",
+  // --- Add spawn location mapping ---
+  "Spawn_Locations": "Spawn_Location.png",
 };
 
 const MapCanvas: React.FC<{ mapLayout: string, iconToggles: IconToggles }> = ({ mapLayout, iconToggles }) => {
@@ -451,6 +457,8 @@ const MapCanvas: React.FC<{ mapLayout: string, iconToggles: IconToggles }> = ({ 
   const eventImg = useImage("/POI_icons/Event.png")[0];
   const nightLocationImg = useImage("/POI_icons/Night_Location.png")[0];
   const scaleBearingMerchantImg = useImage("/POI_icons/Scale_Bearing_Merchant.png")[0];
+  // --- Add spawn location image ---
+  const spawnLocationImg = useImage("/POI_icons/Spawn_Location.png")[0];
 
   // Assemble in the same order as POI_ICONS
   const poiImages = [
@@ -474,6 +482,8 @@ const MapCanvas: React.FC<{ mapLayout: string, iconToggles: IconToggles }> = ({ 
     eventImg,
     nightLocationImg,
     scaleBearingMerchantImg,
+    // --- Add spawn location image to array ---
+    spawnLocationImg,
   ];
 
   // State for loaded POI coordinates
