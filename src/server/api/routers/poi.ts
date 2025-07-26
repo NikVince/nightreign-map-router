@@ -1,6 +1,10 @@
 import { z } from "zod";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 import { LandmarkType } from "@prisma/client";
+import fs from "fs";
+import path from "path";
+import { getIconForPOIValue, shouldShowPOI } from "~/utils/poiIconMapping";
+import { getPOIIdForLocation } from "~/utils/poiLocationMapping";
 
 export const poiRouter = createTRPCRouter({
   // Get all map patterns (with minimal info)
@@ -38,5 +42,75 @@ export const poiRouter = createTRPCRouter({
     return ctx.db.landmark.findMany({
       where,
     });
+  }),
+
+  // NEW: Get layout data by layout number
+  getLayout: publicProcedure.input(z.object({ layoutNumber: z.number().min(1).max(320) })).query(async ({ input }) => {
+    try {
+      const layoutPath = path.join(process.cwd(), 'reference_material', 'pattern_layouts', `layout_${input.layoutNumber.toString().padStart(3, '0')}.json`);
+      const layoutData = JSON.parse(fs.readFileSync(layoutPath, 'utf8'));
+      return layoutData;
+    } catch (error) {
+      throw new Error(`Failed to load layout ${input.layoutNumber}: ${error}`);
+    }
+  }),
+
+  // NEW: Get dynamic POI data for a specific layout
+  getDynamicPOIs: publicProcedure.input(z.object({ 
+    layoutNumber: z.number().min(1).max(320),
+    mapLayout: z.string().optional().default("default")
+  })).query(async ({ input }) => {
+    try {
+      // Load layout data
+      const layoutPath = path.join(process.cwd(), 'reference_material', 'pattern_layouts', `layout_${input.layoutNumber.toString().padStart(3, '0')}.json`);
+      const layoutData = JSON.parse(fs.readFileSync(layoutPath, 'utf8'));
+      
+      // Load master POI coordinates
+      const masterPOIPath = path.join(process.cwd(), 'public', 'assets', 'maps', 'poi_coordinates_with_ids.json');
+      const masterPOIData = JSON.parse(fs.readFileSync(masterPOIPath, 'utf8'));
+      
+      // Load map-specific coordinates
+      const mapCoordinatePath = path.join(process.cwd(), 'public', 'assets', 'maps', 'coordinates', `${input.mapLayout}_map_layout.json`);
+      const mapCoordinateData = JSON.parse(fs.readFileSync(mapCoordinatePath, 'utf8'));
+      
+      // Process dynamic POIs based on layout data
+      const dynamicPOIs = [];
+      
+      // Extract dynamic POI entries from layout data
+      Object.entries(layoutData).forEach(([key, value]) => {
+        if (typeof value === 'object' && value !== null && 'location' in value && 'value' in value) {
+          const location = value.location;
+          const poiValue = value.value;
+          
+          // Skip empty POIs
+          if (!shouldShowPOI(poiValue)) return;
+          
+          // Find the coordinate for this location using the mapping system
+          const poiId = getPOIIdForLocation(location);
+          const masterPOI = poiId ? masterPOIData.find((poi: any) => poi.id === poiId) : null;
+          
+          if (masterPOI) {
+            const icon = getIconForPOIValue(poiValue);
+            dynamicPOIs.push({
+              id: masterPOI.id,
+              coordinates: masterPOI.coordinates,
+              location: location,
+              value: poiValue,
+              icon: icon,
+              type: key.split(' - ')[0], // Extract type (e.g., "Major Base", "Minor Base", etc.)
+            });
+          }
+        }
+      });
+      
+      return {
+        layoutNumber: input.layoutNumber,
+        shiftingEarth: layoutData["Shifting Earth"] || "Default",
+        dynamicPOIs,
+        layoutData
+      };
+    } catch (error) {
+      throw new Error(`Failed to load dynamic POIs for layout ${input.layoutNumber}: ${error}`);
+    }
   }),
 }); 

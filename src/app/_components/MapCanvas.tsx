@@ -7,11 +7,22 @@ import type { KonvaEventObject } from "konva/lib/Node";
 import Konva from "konva";
 import useImage from "use-image";
 import type { IconToggles } from "./MainPanel";
+import { api } from "~/trpc/react";
 
 // Add this type definition for our new data structure
 interface PoiWithId {
   id: number;
   coordinates: [number, number];
+}
+
+// Type for rendered POI data
+interface RenderedPOI {
+  id: number;
+  x: number;
+  y: number;
+  poiType: string;
+  icon?: string;
+  value?: string;
 }
 
 function getTileGridUrls(mapLayout: string) {
@@ -149,7 +160,7 @@ const POI_TYPE_ICON_MAP: Record<string, string> = {
   "Spawn_Locations": "Spawn_Location.png",
 };
 
-const MapCanvas: React.FC<{ mapLayout: string, iconToggles: IconToggles }> = ({ mapLayout, iconToggles }) => {
+const MapCanvas: React.FC<{ mapLayout: string, iconToggles: IconToggles, layoutNumber?: number }> = ({ mapLayout, iconToggles, layoutNumber }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<KonvaStageType>(null);
   const [dimensions, setDimensions] = useState({ width: 300, height: 300 });
@@ -490,6 +501,18 @@ const MapCanvas: React.FC<{ mapLayout: string, iconToggles: IconToggles }> = ({ 
   const [poiData, setPoiData] = useState<POICoordinates | null>(null);
   const [poiMasterList, setPoiMasterList] = useState<PoiWithId[]>([]);
 
+  // Dynamic POI data from layout
+  const { data: dynamicPOIData } = api.poi.getDynamicPOIs.useQuery(
+    { 
+      layoutNumber: layoutNumber || 1, 
+      mapLayout 
+    },
+    { 
+      enabled: !!layoutNumber,
+      staleTime: 5 * 60 * 1000, // 5 minutes
+    }
+  );
+
   // Helper to get coordinate file path based on mapLayout
   function getCoordinateJsonPath(layout: string) {
     switch (layout) {
@@ -540,7 +563,20 @@ const MapCanvas: React.FC<{ mapLayout: string, iconToggles: IconToggles }> = ({ 
   // DERIVED STATE: Create a clean, unique list of POIs to render for the current map layout.
   // This is the core fix: we process all coordinates first, handle duplicates,
   // find their master IDs, and then pass a clean list to the rendering logic.
-  const poisToRender = React.useMemo(() => {
+  const poisToRender = React.useMemo((): RenderedPOI[] => {
+    // If we have dynamic POI data, use that instead of the static coordinate data
+    if (dynamicPOIData && dynamicPOIData.dynamicPOIs.length > 0) {
+      return dynamicPOIData.dynamicPOIs.map(poi => ({
+        id: poi.id,
+        x: poi.coordinates[0],
+        y: poi.coordinates[1],
+        poiType: poi.type,
+        icon: poi.icon,
+        value: poi.value,
+      }));
+    }
+
+    // Fallback to static POI data
     if (!poiData || poiMasterList.length === 0) {
       return [];
     }
@@ -591,7 +627,7 @@ const MapCanvas: React.FC<{ mapLayout: string, iconToggles: IconToggles }> = ({ 
       return true;
     });
     return filtered;
-  }, [poiData, poiMasterList, iconToggles]);
+  }, [poiData, poiMasterList, iconToggles, dynamicPOIData]);
 
   useEffect(() => {
     console.log("--- POI DATA DEBUG ---");
@@ -724,10 +760,10 @@ const MapCanvas: React.FC<{ mapLayout: string, iconToggles: IconToggles }> = ({ 
           <Layer listening={false}>
             {/* Render every POI from our clean, processed list */}
             {poisToRender.map((poi) => {
-              const { id, x, y, poiType } = poi;
+              const { id, x, y, poiType, icon, value } = poi;
 
-              // Determine icon based on the poiType we stored
-              const iconFile = POI_TYPE_ICON_MAP[poiType] || POI_TYPE_ICON_MAP.Default;
+              // Determine icon based on dynamic data or fallback to poiType
+              const iconFile = icon || POI_TYPE_ICON_MAP[poiType] || POI_TYPE_ICON_MAP.Default;
               if (!iconFile) return null;
 
               const iconIndex = POI_ICONS.indexOf(iconFile);
