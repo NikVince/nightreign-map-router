@@ -91,14 +91,17 @@ export const poiRouter = createTRPCRouter({
           
           if (masterPOI) {
             const icon = getIconForPOIValue(poiValue);
-            dynamicPOIs.push({
-              id: masterPOI.id,
-              coordinates: masterPOI.coordinates,
-              location: location,
-              value: poiValue,
-              icon: icon,
-              type: key.split(' - ')[0], // Extract type (e.g., "Major Base", "Minor Base", etc.)
-            });
+            // Only add POI if it has a valid icon (skip Small Camps and other unmapped types)
+            if (icon) {
+              dynamicPOIs.push({
+                id: masterPOI.id,
+                coordinates: masterPOI.coordinates,
+                location: location,
+                value: poiValue,
+                icon: icon,
+                type: key.split(' - ')[0], // Extract type (e.g., "Major Base", "Minor Base", etc.)
+              });
+            }
           }
         }
       });

@@ -54,6 +54,7 @@ export const POI_LOCATION_TO_ID_MAP: POILocationMapping[] = [
 
   // Field Bosses
   { layoutLocation: "Far Southwest of Lake", poiId: 85 },
+  { layoutLocation: "Lake", poiId: 84 },
   { layoutLocation: "North of Stormhill Tunnel Entrance", poiId: 86 },
   { layoutLocation: "North of Murkwater Terminus", poiId: 87 },
   { layoutLocation: "Stormhill Spectral Hawk", poiId: 88 },
