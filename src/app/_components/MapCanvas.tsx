@@ -1,5 +1,5 @@
 "use client";
-import React, { useRef, useEffect, useState } from "react";
+import React, { useRef, useEffect, useState, useMemo } from "react";
 import { Stage, Layer } from "react-konva";
 import { Image as KonvaImage, Text as KonvaText, Line as KonvaLine } from "react-konva";
 import type { Stage as KonvaStageType } from "konva/lib/Stage";
@@ -95,8 +95,8 @@ const POI_ICONS = [
   "Event.png",
   "Night_Location.png",
   "Scale_Bearing_Merchant.png",
-  // --- Add spawn location icon ---
   "Spawn_Location.png",
+  "Arena_Boss.png",
 ];
 
 // --- MANUAL ICON SIZE CONTROL ---
@@ -564,12 +564,13 @@ const MapCanvas: React.FC<{ iconToggles: IconToggles, layoutNumber?: number }> =
   }, [effectiveMapLayout]);
 
   // DERIVED STATE: Create a clean, unique list of POIs to render for the current map layout.
-  // This is the core fix: we process all coordinates first, handle duplicates,
-  // find their master IDs, and then pass a clean list to the rendering logic.
-  const poisToRender = React.useMemo((): RenderedPOI[] => {
-    // If we have dynamic POI data, use that instead of the static coordinate data
+  // This combines both dynamic POIs (from layout files) and fixed POIs (from coordinate files)
+  const poisToRender = useMemo((): RenderedPOI[] => {
+    const allPOIs: RenderedPOI[] = [];
+    
+    // 1. Add dynamic POIs from layout files (if available)
     if (dynamicPOIData && dynamicPOIData.dynamicPOIs.length > 0) {
-      return dynamicPOIData.dynamicPOIs.map(poi => ({
+      const dynamicPOIs = dynamicPOIData.dynamicPOIs.map(poi => ({
         id: poi.id,
         x: poi.coordinates[0],
         y: poi.coordinates[1],
@@ -577,59 +578,72 @@ const MapCanvas: React.FC<{ iconToggles: IconToggles, layoutNumber?: number }> =
         icon: poi.icon,
         value: poi.value,
       }));
+      allPOIs.push(...dynamicPOIs);
     }
 
-    // Fallback to static POI data
-    if (!poiData || poiMasterList.length === 0) {
-      return [];
-    }
+    // 2. Add fixed POIs from coordinate files (Sites of Grace, Spirit Streams, etc.)
+    if (poiData && poiMasterList.length > 0) {
+      const uniquePois = new Map<string, { id: number; x: number; y: number; poiType: string }>();
+      const epsilon = 0.01;
 
-    const uniquePois = new Map<string, { id: number; x: number; y: number; poiType: string }>();
-    const epsilon = 0.01;
+      Object.entries(poiData).forEach(([poiType, coords]) => {
+        coords.forEach(([x, y]) => {
+          // Find the canonical POI info from the master list using a tolerance check
+          const poiInfo = poiMasterList.find(
+            p => Math.abs(p.coordinates[0] - x) < epsilon && Math.abs(p.coordinates[1] - y) < epsilon
+          );
 
-    Object.entries(poiData).forEach(([poiType, coords]) => {
-      coords.forEach(([x, y]) => {
-        // Find the canonical POI info from the master list using a tolerance check
-        const poiInfo = poiMasterList.find(
-          p => Math.abs(p.coordinates[0] - x) < epsilon && Math.abs(p.coordinates[1] - y) < epsilon
-        );
-
-        if (poiInfo) {
-          const coordKey = `${poiInfo.coordinates[0]},${poiInfo.coordinates[1]}`;
-          // If we haven't seen this canonical coordinate yet, add it to our list to be rendered.
-          if (!uniquePois.has(coordKey)) {
-            uniquePois.set(coordKey, {
-              id: poiInfo.id,
-              x: poiInfo.coordinates[0],
-              y: poiInfo.coordinates[1],
-              poiType: poiType, // Store the type to determine the icon later
-            });
+          if (poiInfo) {
+            const coordKey = `${poiInfo.coordinates[0]},${poiInfo.coordinates[1]}`;
+            // If we haven't seen this canonical coordinate yet, add it to our list to be rendered.
+            if (!uniquePois.has(coordKey)) {
+              uniquePois.set(coordKey, {
+                id: poiInfo.id,
+                x: poiInfo.coordinates[0],
+                y: poiInfo.coordinates[1],
+                poiType: poiType, // Store the type to determine the icon later
+              });
+            }
           }
-        }
+        });
       });
+
+      // Filter out POIs with id 24, 25, and 26 so they do not appear on the map.
+      // IMPORTANT: These should also be ignored by the route algorithm when implemented.
+      let filtered = Array.from(uniquePois.values()).filter(poi => ![24, 25, 26].includes(poi.id));
+
+      // Filter by icon category toggles
+      const categoryMap = {
+        sitesOfGrace: "Sites_of_grace",
+        spiritStreams: "Spiritstreams",
+        spiritHawkTrees: "Spectral_Hawk_Trees",
+        scarabs: "Scarabs",
+        buriedTreasures: "Buried_Treasures",
+      };
+      filtered = filtered.filter(poi => {
+        if (poi.poiType === categoryMap.sitesOfGrace && !iconToggles.sitesOfGrace) return false;
+        if (poi.poiType === categoryMap.spiritStreams && !iconToggles.spiritStreams) return false;
+        if (poi.poiType === categoryMap.spiritHawkTrees && !iconToggles.spiritHawkTrees) return false;
+        if (poi.poiType === categoryMap.scarabs && !iconToggles.scarabs) return false;
+        if (poi.poiType === categoryMap.buriedTreasures && !iconToggles.buriedTreasures) return false;
+        return true;
+      });
+      
+      // Add fixed POIs to the combined list
+      allPOIs.push(...filtered);
+    }
+
+    // 3. Remove duplicates based on coordinates (dynamic POIs take precedence)
+    const uniquePOIs = new Map<string, RenderedPOI>();
+    allPOIs.forEach(poi => {
+      const coordKey = `${poi.x},${poi.y}`;
+      // Only add if we haven't seen this coordinate before, or if this is a dynamic POI
+      if (!uniquePOIs.has(coordKey) || poi.icon) {
+        uniquePOIs.set(coordKey, poi);
+      }
     });
 
-    // Filter out POIs with id 24, 25, and 26 so they do not appear on the map.
-    // IMPORTANT: These should also be ignored by the route algorithm when implemented.
-    let filtered = Array.from(uniquePois.values()).filter(poi => ![24, 25, 26].includes(poi.id));
-
-    // Filter by icon category toggles
-    const categoryMap = {
-      sitesOfGrace: "Sites_of_grace",
-      spiritStreams: "Spiritstreams",
-      spiritHawkTrees: "Spectral_Hawk_Trees",
-      scarabs: "Scarabs",
-      buriedTreasures: "Buried_Treasures",
-    };
-    filtered = filtered.filter(poi => {
-      if (poi.poiType === categoryMap.sitesOfGrace && !iconToggles.sitesOfGrace) return false;
-      if (poi.poiType === categoryMap.spiritStreams && !iconToggles.spiritStreams) return false;
-      if (poi.poiType === categoryMap.spiritHawkTrees && !iconToggles.spiritHawkTrees) return false;
-      if (poi.poiType === categoryMap.scarabs && !iconToggles.scarabs) return false;
-      if (poi.poiType === categoryMap.buriedTreasures && !iconToggles.buriedTreasures) return false;
-      return true;
-    });
-    return filtered;
+    return Array.from(uniquePOIs.values());
   }, [poiData, poiMasterList, iconToggles, dynamicPOIData]);
 
   useEffect(() => {

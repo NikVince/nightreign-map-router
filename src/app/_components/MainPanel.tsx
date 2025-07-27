@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import dynamic from "next/dynamic";
 import { LayoutSelector } from "./LayoutSelector";
+import { SpecialEventsDisplay } from "./SpecialEventsDisplay";
 
 const MapCanvas = dynamic(() => import("./MapCanvas"), { ssr: false });
 
@@ -29,6 +30,10 @@ export function MainPanel({ iconToggles }: { iconToggles: IconToggles }) {
           iconToggles={iconToggles} 
           layoutNumber={layoutNumber}
         />
+        {/* Special Events Display */}
+        <div className="absolute top-4 left-4 z-10 bg-black bg-opacity-75 text-white p-3 rounded">
+          <SpecialEventsDisplay layoutNumber={layoutNumber} />
+        </div>
       </div>
     </main>
   );

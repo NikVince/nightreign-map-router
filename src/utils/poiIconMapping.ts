@@ -98,8 +98,18 @@ export const POI_VALUE_TO_ICON_MAP: POIIconMapping[] = [
   { value: "Miranda Blossom", icon: "Field_Boss.png", category: "Field Boss" },
   { value: "Night's Cavalry", icon: "Field_Boss.png", category: "Field Boss" },
   { value: "Putrid Ancestral Followers", icon: "Field_Boss.png", category: "Field Boss" },
-  { value: "Red Wolf", icon: "Field_Boss.png", category: "Field Boss" },
   { value: "Royal Carian Knight", icon: "Field_Boss.png", category: "Field Boss" },
+  { value: "Royal Revenant", icon: "Field_Boss.png", category: "Field Boss" },
+  { value: "Ulcerated Tree Spirit", icon: "Field_Boss.png", category: "Field Boss" },
+
+  // Arena Bosses
+  { value: "Grafted Scion", icon: "Arena_Boss.png", category: "Arena Boss" },
+
+  // New POI Types
+  { value: "Spawn Point", icon: "Spawn_Location.png", category: "Spawn Point" },
+  { value: "Scale-Bearing Merchant", icon: "Scale_Bearing_Merchant.png", category: "Merchant" },
+  { value: "Night Boss", icon: "Event.png", category: "Night Circle" },
+  { value: "Red Wolf", icon: "Field_Boss.png", category: "Field Boss" },
   { value: "Royal Revenant", icon: "Field_Boss.png", category: "Field Boss" },
   { value: "Tree Sentinel", icon: "Field_Boss.png", category: "Field Boss" },
   { value: "Trolls", icon: "Castle.png", category: "Castle" },

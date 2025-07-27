@@ -77,6 +77,41 @@ export const POI_LOCATION_TO_ID_MAP: POILocationMapping[] = [
   { layoutLocation: "Northwest", poiId: 167 },
   { layoutLocation: "Northeast", poiId: 152 },
   { layoutLocation: "Far Northeast", poiId: 168 },
+
+  // Spawn Points
+  { layoutLocation: "Above Stormhill Tunnel Entrance", poiId: 34 },
+  { layoutLocation: "Below Summonwater Hawk", poiId: 36 },
+  { layoutLocation: "East of Cavalry Bridge", poiId: 29 },
+  { layoutLocation: "Far Southwest", poiId: 31 },
+  { layoutLocation: "Minor Erdtree", poiId: 106 },
+  { layoutLocation: "Northeast of Saintsbridge", poiId: 35 },
+  { layoutLocation: "Southeast of Lake", poiId: 28 },
+  { layoutLocation: "Stormhill South of Gate", poiId: 32 },
+  { layoutLocation: "West of Warmaster's Shack", poiId: 33 },
+
+  // Night Circles
+  { layoutLocation: "East of Saintsbridge", poiId: 35 },
+  { layoutLocation: "Northeast Corner", poiId: 1 },
+  { layoutLocation: "Northeast of Lake", poiId: 2 },
+  { layoutLocation: "Northwest Corner", poiId: 3 },
+  { layoutLocation: "Northwest Lake", poiId: 4 },
+  { layoutLocation: "Northwest Mistwood Pond", poiId: 5 },
+  { layoutLocation: "Northwest of Castle", poiId: 6 },
+  { layoutLocation: "South Lake", poiId: 93 },
+  { layoutLocation: "South of Castle", poiId: 7 },
+  { layoutLocation: "Southwest Corner", poiId: 8 },
+  { layoutLocation: "Southwest Mistwood", poiId: 9 },
+  { layoutLocation: "West Stormhill Graveyard", poiId: 10 },
+  { layoutLocation: "Noklateo Entrance", poiId: 11 },
+  { layoutLocation: "North of Crater", poiId: 12 },
+  { layoutLocation: "Northwest Rotted Woods", poiId: 13 },
+  { layoutLocation: "Southeast Mountaintop", poiId: 14 },
+  { layoutLocation: "Southeast Rotted Woods", poiId: 15 },
+
+  // Scale-Bearing Merchant Locations
+  { layoutLocation: "Castle Front", poiId: 16 },
+  { layoutLocation: "Ruins North of Castle", poiId: 17 },
+  { layoutLocation: "Southeast Lakeshore", poiId: 18 },
 ];
 
 // Function to get POI ID for a layout location

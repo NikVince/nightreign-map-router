@@ -93,7 +93,7 @@ export const poiRouter = createTRPCRouter({
       // Process dynamic POIs based on layout data
       const dynamicPOIs = [];
       
-      // Extract dynamic POI entries from layout data
+      // Extract dynamic POI entries from layout data (Major/Minor locations)
       Object.entries(layoutData).forEach(([key, value]) => {
         if (typeof value === 'object' && value !== null && 'location' in value && 'value' in value) {
           const location = value.location;
@@ -122,6 +122,80 @@ export const poiRouter = createTRPCRouter({
           }
         }
       });
+
+      // Handle new POI types with simple string values
+      
+      // 1. Spawn Point
+      if (layoutData["Spawn Point"] && layoutData["Spawn Point"] !== "empty") {
+        const spawnLocation = layoutData["Spawn Point"];
+        const poiId = getPOIIdForLocation(spawnLocation);
+        const masterPOI = poiId ? masterPOIData.find((poi: any) => poi.id === poiId) : null;
+        
+        if (masterPOI) {
+          dynamicPOIs.push({
+            id: masterPOI.id,
+            coordinates: masterPOI.coordinates,
+            location: spawnLocation,
+            value: "Spawn Point",
+            icon: "Spawn_Location.png",
+            type: "Spawn Point",
+          });
+        }
+      }
+
+      // 2. Night 1 Circle
+      if (layoutData["Night 1 Circle"] && layoutData["Night 1 Circle"] !== "empty") {
+        const night1Location = layoutData["Night 1 Circle"];
+        const poiId = getPOIIdForLocation(night1Location);
+        const masterPOI = poiId ? masterPOIData.find((poi: any) => poi.id === poiId) : null;
+        
+        if (masterPOI) {
+          dynamicPOIs.push({
+            id: masterPOI.id,
+            coordinates: masterPOI.coordinates,
+            location: night1Location,
+            value: layoutData["Night 1 Boss"] || "Night Boss",
+            icon: "Event.png", // Using Event icon for night circles
+            type: "Night Circle",
+          });
+        }
+      }
+
+      // 3. Night 2 Circle
+      if (layoutData["Night 2 Circle"] && layoutData["Night 2 Circle"] !== "empty") {
+        const night2Location = layoutData["Night 2 Circle"];
+        const poiId = getPOIIdForLocation(night2Location);
+        const masterPOI = poiId ? masterPOIData.find((poi: any) => poi.id === poiId) : null;
+        
+        if (masterPOI) {
+          dynamicPOIs.push({
+            id: masterPOI.id,
+            coordinates: masterPOI.coordinates,
+            location: night2Location,
+            value: layoutData["Night 2 Boss"] || "Night Boss",
+            icon: "Event.png", // Using Event icon for night circles
+            type: "Night Circle",
+          });
+        }
+      }
+
+      // 4. Scale-Bearing Merchant
+      if (layoutData["Scale-Bearing Merchant"] && layoutData["Scale-Bearing Merchant"] !== "empty") {
+        const merchantLocation = layoutData["Scale-Bearing Merchant"];
+        const poiId = getPOIIdForLocation(merchantLocation);
+        const masterPOI = poiId ? masterPOIData.find((poi: any) => poi.id === poiId) : null;
+        
+        if (masterPOI) {
+          dynamicPOIs.push({
+            id: masterPOI.id,
+            coordinates: masterPOI.coordinates,
+            location: merchantLocation,
+            value: "Scale-Bearing Merchant",
+            icon: "Scale_Bearing_Merchant.png",
+            type: "Merchant",
+          });
+        }
+      }
       
       const shiftingEarth = layoutData["Shifting Earth"] || "Default";
       const mapLayout = getMapLayoutFromShiftingEarth(shiftingEarth);
