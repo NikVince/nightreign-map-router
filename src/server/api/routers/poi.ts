@@ -6,6 +6,23 @@ import path from "path";
 import { getIconForPOIValue, shouldShowPOI } from "~/utils/poiIconMapping";
 import { getPOIIdForLocation } from "~/utils/poiLocationMapping";
 
+// Helper function to map "Shifting Earth" values to map tile directories
+function getMapLayoutFromShiftingEarth(shiftingEarth: string): string {
+  switch (shiftingEarth) {
+    case "Mountaintop":
+      return "the_mountaintop_shifted";
+    case "Crater":
+      return "the_crater_shifted";
+    case "Rotted Woods":
+      return "the_rotten_woods_shifted";
+    case "Noklateo":
+      return "noklateo_shifted";
+    case "Default":
+    default:
+      return "default";
+  }
+}
+
 export const poiRouter = createTRPCRouter({
   // Get all map patterns (with minimal info)
   allPatterns: publicProcedure.query(async ({ ctx }) => {
@@ -106,9 +123,13 @@ export const poiRouter = createTRPCRouter({
         }
       });
       
+      const shiftingEarth = layoutData["Shifting Earth"] || "Default";
+      const mapLayout = getMapLayoutFromShiftingEarth(shiftingEarth);
+      
       return {
         layoutNumber: input.layoutNumber,
-        shiftingEarth: layoutData["Shifting Earth"] || "Default",
+        shiftingEarth: shiftingEarth,
+        mapLayout: mapLayout,
         dynamicPOIs,
         layoutData
       };

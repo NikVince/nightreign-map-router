@@ -160,7 +160,7 @@ const POI_TYPE_ICON_MAP: Record<string, string> = {
   "Spawn_Locations": "Spawn_Location.png",
 };
 
-const MapCanvas: React.FC<{ mapLayout: string, iconToggles: IconToggles, layoutNumber?: number }> = ({ mapLayout, iconToggles, layoutNumber }) => {
+const MapCanvas: React.FC<{ iconToggles: IconToggles, layoutNumber?: number }> = ({ iconToggles, layoutNumber }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<KonvaStageType>(null);
   const [dimensions, setDimensions] = useState({ width: 300, height: 300 });
@@ -197,41 +197,6 @@ const MapCanvas: React.FC<{ mapLayout: string, iconToggles: IconToggles, layoutN
     window.addEventListener("resize", updateSize);
     return () => window.removeEventListener("resize", updateSize);
   }, []);
-
-  useEffect(() => {
-    const urls = getTileGridUrls(mapLayout);
-    const imgGrid: (HTMLImageElement | null)[][] = urls.map(row => row.map(() => null));
-    let loaded = 0;
-    const total = 36;
-    let firstImgLoaded = false;
-    urls.forEach((rowArr, rowIdx) => {
-      rowArr.forEach((url, colIdx) => {
-        if (!url) return;
-        const img = new window.Image();
-        img.src = url;
-        img.onload = () => {
-          loaded++;
-          if (imgGrid[rowIdx]) {
-            imgGrid[rowIdx][colIdx] = img;
-          }
-          // Set tile size from the first loaded image
-          if (!firstImgLoaded && img && img.width && img.height) {
-            setTileSize({ width: img.width, height: img.height });
-            firstImgLoaded = true;
-          }
-          if (loaded === total) {
-            setImages(imgGrid);
-          }
-        };
-        img.onerror = () => {
-          loaded++;
-          if (loaded === total) {
-            setImages(imgGrid);
-          }
-        };
-      });
-    });
-  }, [mapLayout]);
 
   // Calculate map size
   const mapWidth = tileSize.width * 6;
@@ -505,13 +470,51 @@ const MapCanvas: React.FC<{ mapLayout: string, iconToggles: IconToggles, layoutN
   const { data: dynamicPOIData } = api.poi.getDynamicPOIs.useQuery(
     { 
       layoutNumber: layoutNumber || 1, 
-      mapLayout 
+      mapLayout: "default" // This will be overridden by the returned mapLayout
     },
     { 
       enabled: !!layoutNumber,
       staleTime: 5 * 60 * 1000, // 5 minutes
     }
   );
+
+  // Use the mapLayout from dynamic data if available, otherwise fall back to default
+  const effectiveMapLayout = dynamicPOIData?.mapLayout || "default";
+
+  useEffect(() => {
+    const urls = getTileGridUrls(effectiveMapLayout);
+    const imgGrid: (HTMLImageElement | null)[][] = urls.map(row => row.map(() => null));
+    let loaded = 0;
+    const total = 36;
+    let firstImgLoaded = false;
+    urls.forEach((rowArr, rowIdx) => {
+      rowArr.forEach((url, colIdx) => {
+        if (!url) return;
+        const img = new window.Image();
+        img.src = url;
+        img.onload = () => {
+          loaded++;
+          if (imgGrid[rowIdx]) {
+            imgGrid[rowIdx][colIdx] = img;
+          }
+          // Set tile size from the first loaded image
+          if (!firstImgLoaded && img && img.width && img.height) {
+            setTileSize({ width: img.width, height: img.height });
+            firstImgLoaded = true;
+          }
+          if (loaded === total) {
+            setImages(imgGrid);
+          }
+        };
+        img.onerror = () => {
+          loaded++;
+          if (loaded === total) {
+            setImages(imgGrid);
+          }
+        };
+      });
+    });
+  }, [effectiveMapLayout]);
 
   // Helper to get coordinate file path based on mapLayout
   function getCoordinateJsonPath(layout: string) {
@@ -538,9 +541,9 @@ const MapCanvas: React.FC<{ mapLayout: string, iconToggles: IconToggles, layoutN
       .catch(() => setPoiMasterList([]));
   }, []);
 
-  // Load POI coordinates from JSON whenever mapLayout changes
+  // Load POI coordinates from JSON whenever effectiveMapLayout changes
   useEffect(() => {
-    const jsonPath = getCoordinateJsonPath(mapLayout);
+    const jsonPath = getCoordinateJsonPath(effectiveMapLayout);
     fetch(jsonPath)
       .then((res) => {
         if (!res.ok) throw new Error("File not found");
@@ -549,7 +552,7 @@ const MapCanvas: React.FC<{ mapLayout: string, iconToggles: IconToggles, layoutN
       .then((data: POICoordinates) => setPoiData(data))
       .catch((_err) => {
         // Fallback to default if file not found
-        if (mapLayout !== "default") {
+        if (effectiveMapLayout !== "default") {
           fetch("/assets/maps/coordinates/default_map_layout.json")
             .then((res) => res.json())
             .then((data: POICoordinates) => setPoiData(data))
@@ -558,7 +561,7 @@ const MapCanvas: React.FC<{ mapLayout: string, iconToggles: IconToggles, layoutN
           setPoiData(null);
         }
       });
-  }, [mapLayout]);
+  }, [effectiveMapLayout]);
 
   // DERIVED STATE: Create a clean, unique list of POIs to render for the current map layout.
   // This is the core fix: we process all coordinates first, handle duplicates,
@@ -631,7 +634,7 @@ const MapCanvas: React.FC<{ mapLayout: string, iconToggles: IconToggles, layoutN
 
   useEffect(() => {
     console.log("--- POI DATA DEBUG ---");
-    console.log("Current mapLayout:", mapLayout);
+    console.log("Current effectiveMapLayout:", effectiveMapLayout);
     if (poiData && poiMasterList.length > 0) {
       console.log("poiMasterList loaded:", poiMasterList.length, "entries. First 5:", poiMasterList.slice(0, 5));
       console.log("poiData loaded for layout:", Object.keys(poiData).length, "categories");
@@ -661,7 +664,7 @@ const MapCanvas: React.FC<{ mapLayout: string, iconToggles: IconToggles, layoutN
       console.log("Data not fully loaded yet (poiData or poiMasterList is missing).");
     }
     console.log("--- END POI DATA DEBUG ---");
-  }, [poiData, poiMasterList, mapLayout]);
+  }, [poiData, poiMasterList, effectiveMapLayout]);
 
   return (
     <div ref={containerRef} className="w-full h-full flex-1" style={{ position: 'relative' }}>

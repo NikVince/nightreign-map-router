@@ -13,7 +13,7 @@ export type IconToggles = {
   buriedTreasures: boolean;
 };
 
-export function MainPanel({ mapLayout, iconToggles }: { mapLayout: string, iconToggles: IconToggles }) {
+export function MainPanel({ iconToggles }: { iconToggles: IconToggles }) {
   const [layoutNumber, setLayoutNumber] = useState(1);
 
   return (
@@ -26,7 +26,6 @@ export function MainPanel({ mapLayout, iconToggles }: { mapLayout: string, iconT
           />
         </div>
         <MapCanvas 
-          mapLayout={mapLayout} 
           iconToggles={iconToggles} 
           layoutNumber={layoutNumber}
         />
