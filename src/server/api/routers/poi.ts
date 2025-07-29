@@ -155,7 +155,7 @@ export const poiRouter = createTRPCRouter({
             coordinates: masterPOI.coordinates,
             location: night1Location,
             value: layoutData["Night 1 Boss"] || "Night Boss",
-            icon: "Event.png", // Using Event icon for night circles
+            icon: "Night_Location.png", // Using Night_Location icon for night circles
             type: "Night Circle",
           });
         }
@@ -173,7 +173,7 @@ export const poiRouter = createTRPCRouter({
             coordinates: masterPOI.coordinates,
             location: night2Location,
             value: layoutData["Night 2 Boss"] || "Night Boss",
-            icon: "Event.png", // Using Event icon for night circles
+            icon: "Night_Location.png", // Using Night_Location icon for night circles
             type: "Night Circle",
           });
         }
