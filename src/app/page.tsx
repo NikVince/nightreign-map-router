@@ -9,6 +9,7 @@ const MainPanel = dynamic(() => import("./_components/MainPanel").then(mod => mo
 export default function Home() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isDesktop, setIsDesktop] = useState(false);
+  const [layoutNumber, setLayoutNumber] = useState(1);
 
   // Icon category toggles
   const [iconToggles, setIconToggles] = useState({
@@ -62,19 +63,20 @@ export default function Home() {
                 onClose={() => setSidebarOpen(false)}
                 iconToggles={iconToggles}
                 onToggleChange={handleToggleChange}
+                layoutNumber={layoutNumber}
               />
             </div>
             {/* 8px gap between objectives and map */}
             <div style={{ width: 8 }} />
             {/* Map panel, no border */}
             <div className="h-full flex-1 flex flex-col w-full sm:w-3/4 min-h-0">
-              <MainPanel iconToggles={iconToggles} />
+              <MainPanel iconToggles={iconToggles} onLayoutChange={setLayoutNumber} />
             </div>
           </>
         ) : (
           // Mobile: map canvas fills width, objectives overlays as before
           <div className="h-full flex-1 flex flex-col w-full min-h-0">
-            <MainPanel iconToggles={iconToggles} />
+            <MainPanel iconToggles={iconToggles} onLayoutChange={setLayoutNumber} />
             {sidebarOpen && (
               <>
                 {/* Overlay for closing */}
@@ -94,6 +96,7 @@ export default function Home() {
                     onClose={() => setSidebarOpen(false)}
                     iconToggles={iconToggles}
                     onToggleChange={handleToggleChange}
+                    layoutNumber={layoutNumber}
                   />
                 </div>
               </>

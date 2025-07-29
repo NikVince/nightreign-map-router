@@ -1,4 +1,5 @@
 import React from "react";
+import { api } from "~/trpc/react";
 
 export type SidebarProps = {
   isOpen: boolean;
@@ -11,10 +12,18 @@ export type SidebarProps = {
     buriedTreasures: boolean;
   };
   onToggleChange: (key: keyof SidebarProps['iconToggles']) => void;
+  layoutNumber?: number;
 };
 
-export function Sidebar({ isOpen, onClose, iconToggles, onToggleChange }: SidebarProps) {
+export function Sidebar({ isOpen, onClose, iconToggles, onToggleChange, layoutNumber }: SidebarProps) {
   if (!isOpen) return null;
+
+  // Fetch layout data if layoutNumber is provided
+  const { data: layoutData } = api.poi.getLayout.useQuery(
+    { layoutNumber: layoutNumber || 1 },
+    { enabled: !!layoutNumber }
+  );
+
   return (
     <aside className="elden-panel flex flex-col h-full flex-1 p-6 bg-[var(--elden-background)]" style={{ fontFamily: "var(--elden-ui-font)" }}>
       <div className="flex items-center justify-between mb-4">
@@ -25,6 +34,41 @@ export function Sidebar({ isOpen, onClose, iconToggles, onToggleChange }: Sideba
           </button>
         )}
       </div>
+
+      {/* Layout Information */}
+      {layoutData && (
+        <div className="mb-4 p-3 bg-black bg-opacity-75 rounded">
+          <div className="text-sm">
+            <div className="font-bold mb-2">Layout {layoutNumber}</div>
+            {layoutData["Special Event"] && layoutData["Special Event"] !== "empty" && (
+              <div className="mb-1">
+                <span className="text-yellow-400">Event:</span> {layoutData["Special Event"]}
+              </div>
+            )}
+            {layoutData["Night 1 Boss"] && layoutData["Night 1 Boss"] !== "empty" && (
+              <div className="mb-1">
+                <span className="text-red-400">Night 1:</span> {layoutData["Night 1 Boss"]}
+              </div>
+            )}
+            {layoutData["Night 2 Boss"] && layoutData["Night 2 Boss"] !== "empty" && (
+              <div className="mb-1">
+                <span className="text-red-400">Night 2:</span> {layoutData["Night 2 Boss"]}
+              </div>
+            )}
+            {layoutData["Extra Night Boss"] && layoutData["Extra Night Boss"] !== "empty" && (
+              <div className="mb-1">
+                <span className="text-orange-400">Extra Night:</span> {layoutData["Extra Night Boss"]}
+              </div>
+            )}
+            {(!layoutData["Special Event"] || layoutData["Special Event"] === "empty") && 
+             (!layoutData["Night 1 Boss"] || layoutData["Night 1 Boss"] === "empty") && 
+             (!layoutData["Night 2 Boss"] || layoutData["Night 2 Boss"] === "empty") && 
+             (!layoutData["Extra Night Boss"] || layoutData["Extra Night Boss"] === "empty") && (
+              <div className="text-gray-400">No special events</div>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Icon category toggles */}
       <div className="mb-4">

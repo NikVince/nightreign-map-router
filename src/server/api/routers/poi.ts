@@ -99,8 +99,11 @@ export const poiRouter = createTRPCRouter({
           const location = value.location;
           const poiValue = value.value;
           
-          // Skip empty POIs
-          if (!shouldShowPOI(poiValue)) return;
+          // Skip empty POIs - ensure poiValue is a string
+          if (typeof poiValue !== 'string' || !shouldShowPOI(poiValue)) return;
+          
+          // Ensure location is a string before using it
+          if (typeof location !== 'string') return;
           
           // Find the coordinate for this location using the mapping system
           const poiId = getPOIIdForLocation(location);
