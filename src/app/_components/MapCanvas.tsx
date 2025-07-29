@@ -582,11 +582,18 @@ const MapCanvas: React.FC<{ iconToggles: IconToggles, layoutNumber?: number }> =
     }
 
     // 2. Add fixed POIs from coordinate files (Sites of Grace, Spirit Streams, etc.)
+    // EXCLUDE: Spawn_Locations, Event_Locations, Scale_Bearing_Merchant_Locations
+    // These should only appear when specified in layout JSON files
     if (poiData && poiMasterList.length > 0) {
       const uniquePois = new Map<string, { id: number; x: number; y: number; poiType: string }>();
       const epsilon = 0.01;
 
       Object.entries(poiData).forEach(([poiType, coords]) => {
+        // Skip the new POI types that should only appear when specified in layout JSON
+        if (poiType === "Spawn_Locations" || poiType === "Event_Locations" || poiType === "Scale_Bearing_Merchant_Locations" || poiType === "Circle_Locations") {
+          return;
+        }
+
         coords.forEach(([x, y]) => {
           // Find the canonical POI info from the master list using a tolerance check
           const poiInfo = poiMasterList.find(
@@ -646,39 +653,7 @@ const MapCanvas: React.FC<{ iconToggles: IconToggles, layoutNumber?: number }> =
     return Array.from(uniquePOIs.values());
   }, [poiData, poiMasterList, iconToggles, dynamicPOIData]);
 
-  useEffect(() => {
-    console.log("--- POI DATA DEBUG ---");
-    console.log("Current effectiveMapLayout:", effectiveMapLayout);
-    if (poiData && poiMasterList.length > 0) {
-      console.log("poiMasterList loaded:", poiMasterList.length, "entries. First 5:", poiMasterList.slice(0, 5));
-      console.log("poiData loaded for layout:", Object.keys(poiData).length, "categories");
 
-      const firstCategory = Object.keys(poiData)[0];
-      const firstCoordsArray = firstCategory ? poiData[firstCategory] : undefined;
-      
-      if (firstCoordsArray && firstCoordsArray.length > 0) {
-        const firstCoord = firstCoordsArray[0];
-        if(firstCoord){
-          console.log(`Testing lookup for first coordinate in layout: [${firstCoord[0]}, ${firstCoord[1]}]`);
-          
-          const epsilon = 0.01;
-          const foundPoi = poiMasterList.find(
-            p => Math.abs(p.coordinates[0] - firstCoord[0]) < epsilon && Math.abs(p.coordinates[1] - firstCoord[1]) < epsilon
-          );
-
-          if (foundPoi) {
-            console.log("LOOKUP SUCCESS:", foundPoi);
-          } else {
-            console.log("LOOKUP FAILED for", firstCoord);
-            console.log("This means the coordinate from the layout file does not have a close match in poi_coordinates_with_ids.json");
-          }
-        }
-      }
-    } else {
-      console.log("Data not fully loaded yet (poiData or poiMasterList is missing).");
-    }
-    console.log("--- END POI DATA DEBUG ---");
-  }, [poiData, poiMasterList, effectiveMapLayout]);
 
   return (
     <div ref={containerRef} className="w-full h-full flex-1" style={{ position: 'relative' }}>
