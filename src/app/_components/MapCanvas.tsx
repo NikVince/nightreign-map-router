@@ -104,11 +104,11 @@ const POI_ICONS = [
 // If an icon is not listed, it will use its natural size.
 export const POI_ICON_SIZES: Record<string, { width?: number; height?: number }> = {
   "Mission_Objective.png": { width: 64 },
-  "Main_Encampment.png": { width: 64 },
-  "Great_Church.png": { width: 96 },
+  "Main_Encampment.png": { width: 96 },
+  "Great_Church.png": { width: 128 },
   "Fort.png": { width: 128 },
-  "Field_Boss.png": { width: 48 },
-  "Evergaol.png": { width: 48 },
+  "Field_Boss.png": { width: 64 },
+  "Evergaol.png": { width: 64 },
   "Church.png": { width: 64 },
   "Castle.png": { width: 128 },
   "Buried_Treasure.png": { width: 48 },
@@ -122,10 +122,10 @@ export const POI_ICON_SIZES: Record<string, { width?: number; height?: number }>
   "Ruins.png": { width: 96 },
   // --- New sizes ---
   "Event.png": { width: 64 },
-  "Night_Location.png": { width: 64 },
+  "Night_Location.png": { width: 96 },
   "Scale_Bearing_Merchant.png": { width: 48 },
   // --- Add spawn location icon size ---
-  "Spawn_Location.png": { width: 64 },
+  "Spawn_Location.png": { width: 128 },
 };
 // ---------------------------------
 
