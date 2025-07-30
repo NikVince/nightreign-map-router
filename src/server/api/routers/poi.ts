@@ -3,7 +3,7 @@ import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 import { LandmarkType } from "@prisma/client";
 import fs from "fs";
 import path from "path";
-import { getIconForPOIValue, shouldShowPOI } from "~/utils/poiIconMapping";
+import { getIconForPOIValue, getIconForPOIWithContext, shouldShowPOI } from "~/utils/poiIconMapping";
 import { getPOIIdForLocation } from "~/utils/poiLocationMapping";
 
 // Helper function to map "Shifting Earth" values to map tile directories
@@ -128,7 +128,7 @@ export const poiRouter = createTRPCRouter({
           const masterPOI = poiId ? masterPOIData.find((poi: any) => poi.id === poiId) : null;
           
           if (masterPOI) {
-            const icon = getIconForPOIValue(poiValue);
+            const icon = getIconForPOIWithContext(key, poiValue);
             // Only add POI if it has a valid icon (skip Small Camps and other unmapped types)
             if (icon) {
               dynamicPOIs.push({

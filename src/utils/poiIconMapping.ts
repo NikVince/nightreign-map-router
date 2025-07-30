@@ -76,6 +76,7 @@ export const POI_VALUE_TO_ICON_MAP: POIIconMapping[] = [
   { value: "Nox Warriors", icon: "Evergaol.png", category: "Evergaol" },
   { value: "Omen", icon: "Evergaol.png", category: "Evergaol" },
   { value: "Stoneskin Lords", icon: "Evergaol.png", category: "Evergaol" },
+  { value: "Dragonkin Soldier", icon: "Evergaol.png", category: "Evergaol" },
 
   // Field Bosses
   { value: "Ancient Dragon", icon: "Field_Boss.png", category: "Field Boss" },
@@ -87,7 +88,6 @@ export const POI_VALUE_TO_ICON_MAP: POIIconMapping[] = [
   { value: "Death Rite Bird", icon: "Field_Boss.png", category: "Field Boss" },
   { value: "Demi-Human Queen", icon: "Field_Boss.png", category: "Field Boss" },
   { value: "Draconic Tree Sentinel", icon: "Field_Boss.png", category: "Field Boss" },
-  { value: "Dragonkin Soldier", icon: "Field_Boss.png", category: "Field Boss" },
   { value: "Elder Lion", icon: "Field_Boss.png", category: "Field Boss" },
   { value: "Erdtree Avatar", icon: "Field_Boss.png", category: "Field Boss" },
   { value: "Flying Dragon", icon: "Field_Boss.png", category: "Field Boss" },
@@ -141,10 +141,29 @@ export const POI_VALUE_TO_ICON_MAP: POIIconMapping[] = [
   { value: "Difficult Sorcerer's Rise - Rear Withered Trees, Right of Door, Missing Statue", icon: "Sorcerer's_Rise.png", category: "Minor Base" },
 ];
 
-// Function to get icon for a POI value
+// Function to get icon for a POI value (legacy function for backward compatibility)
 export function getIconForPOIValue(value: string): string | null {
   const mapping = POI_VALUE_TO_ICON_MAP.find(m => m.value === value);
   return mapping?.icon || null; // Return null instead of default fallback
+}
+
+// New function that considers both key context and value for icon assignment
+export function getIconForPOIWithContext(key: string, value: string): string | null {
+  // First, check if the key provides context about the POI type
+  const keyType = key.split(' - ')[0]; // Extract type from key (e.g., "Evergaol", "Field Boss", etc.)
+  
+  // Special handling for Dragonkin Soldier based on context
+  if (value === "Dragonkin Soldier") {
+    if (keyType === "Evergaol") {
+      return "Evergaol.png";
+    } else if (keyType === "Field Boss" || keyType === "Night") {
+      return "Field_Boss.png";
+    }
+  }
+  
+  // For other cases, use the existing mapping logic
+  const mapping = POI_VALUE_TO_ICON_MAP.find(m => m.value === value);
+  return mapping?.icon || null;
 }
 
 // Function to get category for a POI value
