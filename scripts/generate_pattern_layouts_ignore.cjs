@@ -41,8 +41,12 @@ for (let i = 2; i < rows.length; i++) {
     // If header is empty, skip (shouldn't happen except for layout number)
     if (!header) continue;
 
+    // Special handling for Field Boss Lake to avoid location name conflict
+    if (header === 'Field Boss' && subtitle === 'Lake') {
+      output[`${header} - ${subtitle}`] = { location: 'Lake Field Boss', value };
+    }
     // If subtitle exists, use nested object
-    if (subtitle) {
+    else if (subtitle) {
       output[`${header} - ${subtitle}`] = { location: subtitle, value };
     } else {
       output[header] = value;

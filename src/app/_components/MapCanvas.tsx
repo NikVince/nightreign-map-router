@@ -480,6 +480,17 @@ const MapCanvas: React.FC<{ iconToggles: IconToggles, layoutNumber?: number }> =
     }
   );
 
+  // Debug logging for dynamic POI data
+  useEffect(() => {
+    if (dynamicPOIData) {
+      console.log('Dynamic POI data:', {
+        layoutNumber: dynamicPOIData.layoutNumber,
+        sorcerersRiseLocations: dynamicPOIData.sorcerersRiseLocations,
+        dynamicPOIs: dynamicPOIData.dynamicPOIs?.filter(poi => poi.icon === "Sorcerer's_Rise.png")
+      });
+    }
+  }, [dynamicPOIData]);
+
   // Use the mapLayout from dynamic data if available, otherwise fall back to default
   const effectiveMapLayout = dynamicPOIData?.mapLayout || "default";
 
@@ -733,6 +744,19 @@ const MapCanvas: React.FC<{ iconToggles: IconToggles, layoutNumber?: number }> =
     return Array.from(uniquePOIs.values());
   }, [poiData, poiMasterList, iconToggles, dynamicPOIData]);
 
+  // Debug logging for poisToRender
+  useEffect(() => {
+    if (poisToRender.length > 0) {
+      const sorcerersRisePOIs = poisToRender.filter(poi => poi.icon === "Sorcerer's_Rise.png");
+      if (sorcerersRisePOIs.length > 0) {
+        console.log('Sorcerer\'s Rise POIs in poisToRender:', sorcerersRisePOIs);
+      } else {
+        console.log('No Sorcerer\'s Rise POIs found in poisToRender');
+        console.log('All POIs in poisToRender:', poisToRender.map(poi => ({ id: poi.id, icon: poi.icon, value: poi.value })));
+      }
+    }
+  }, [poisToRender]);
+
   // --- Collision-avoiding POI title placement ---
   // Helper to get bounding box for a text overlay
   function getTextBounds(x: number, y: number, text: string, fontSize = 21) {
@@ -781,7 +805,7 @@ const MapCanvas: React.FC<{ iconToggles: IconToggles, layoutNumber?: number }> =
         if (found) allTitles.push({ id, x: scaledX, y: scaledY, text: formatBossName(found.boss), priority: 2 });
       }
       // Major Location
-      if ((icon === "Ruins.png" || icon === "Main_Encampment.png" || icon === "Great_Church.png" || icon === "Fort.png" || icon === "Church.png" || icon === "Sorcerer's_Rise.png" || icon === "Township.png") && dynamicPOIData?.majorLocations) {
+      if ((icon === "Ruins.png" || icon === "Main_Encampment.png" || icon === "Great_Church.png" || icon === "Fort.png" || icon === "Church.png" || icon === "Township.png") && dynamicPOIData?.majorLocations) {
         const found = dynamicPOIData.majorLocations.find((m: { id: number; location: string }) => m.id === id);
         if (found) {
           allTitles.push({ id, x: scaledX, y: scaledY, text: formatBossName(found.location), priority: 3 });
@@ -799,7 +823,10 @@ const MapCanvas: React.FC<{ iconToggles: IconToggles, layoutNumber?: number }> =
       if (icon === "Sorcerer's_Rise.png" && dynamicPOIData?.sorcerersRiseLocations) {
         const found = dynamicPOIData.sorcerersRiseLocations.find((s: { id: number; location: string }) => s.id === id);
         if (found) {
+          console.log('Found Sorcerer\'s Rise title:', { id, location: found.location, text: formatBossName(found.location) });
           allTitles.push({ id, x: scaledX, y: scaledY, text: formatBossName(found.location), priority: 4 }); // Priority 4 for sorcerer's rise
+        } else {
+          console.log('Sorcerer\'s Rise icon found but no matching data:', { id, icon, sorcerersRiseLocations: dynamicPOIData.sorcerersRiseLocations });
         }
       }
     });
@@ -888,6 +915,22 @@ const MapCanvas: React.FC<{ iconToggles: IconToggles, layoutNumber?: number }> =
     
     return placed;
   }, [poisToRender, dynamicPOIData, showTitles, mapWidth, mapHeight]);
+
+  // Debug logging for titlePlacements
+  useEffect(() => {
+    if (titlePlacements.length > 0) {
+      const sorcerersRiseTitles = titlePlacements.filter(title => {
+        const poi = poisToRender.find(p => p.id === title.id);
+        return poi?.icon === "Sorcerer's_Rise.png";
+      });
+      if (sorcerersRiseTitles.length > 0) {
+        console.log('Sorcerer\'s Rise titles in titlePlacements:', sorcerersRiseTitles);
+      } else {
+        console.log('No Sorcerer\'s Rise titles found in titlePlacements');
+        console.log('All titles in titlePlacements:', titlePlacements);
+      }
+    }
+  }, [titlePlacements, poisToRender]);
 
 
   return (
@@ -999,6 +1042,11 @@ const MapCanvas: React.FC<{ iconToggles: IconToggles, layoutNumber?: number }> =
             {/* Render every POI from our clean, processed list */}
             {poisToRender.map((poi) => {
               const { id, x, y, poiType, icon, value } = poi;
+              
+              // Debug logging for Sorcerer's Rise POIs
+              if (icon === "Sorcerer's_Rise.png") {
+                console.log('Rendering Sorcerer\'s Rise POI:', { id, x, y, poiType, icon, value });
+              }
 
               // Determine icon based on dynamic data or fallback to poiType
               const iconFile = icon || POI_TYPE_ICON_MAP[poiType] || POI_TYPE_ICON_MAP.Default;

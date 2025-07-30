@@ -33,7 +33,7 @@ export const POI_LOCATION_TO_ID_MAP: POILocationMapping[] = [
 
   // Minor Bases
   { layoutLocation: "Far Southwest", poiId: 31 },
-  { layoutLocation: "Lake", poiId: 30 },
+  { layoutLocation: "Lake", poiId: 30, description: "Minor Base Lake" },
   { layoutLocation: "Stormhill South of Gate", poiId: 32 },
   { layoutLocation: "Above Stormhill Tunnel Entrance", poiId: 34 },
   { layoutLocation: "West of Warmaster's Shack", poiId: 33 },
@@ -54,7 +54,7 @@ export const POI_LOCATION_TO_ID_MAP: POILocationMapping[] = [
 
   // Field Bosses
   { layoutLocation: "Far Southwest of Lake", poiId: 85 },
-  { layoutLocation: "Lake", poiId: 84 },
+  { layoutLocation: "Lake Field Boss", poiId: 84, description: "Field Boss Lake" },
   { layoutLocation: "North of Stormhill Tunnel Entrance", poiId: 86 },
   { layoutLocation: "North of Murkwater Terminus", poiId: 87 },
   { layoutLocation: "Stormhill Spectral Hawk", poiId: 88 },
