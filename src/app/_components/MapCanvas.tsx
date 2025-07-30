@@ -783,6 +783,72 @@ const MapCanvas: React.FC<{ iconToggles: IconToggles, layoutNumber?: number }> =
                   const scaledX = ((x - leftBound) / activeWidth) * mapWidth;
                   const scaledY = (y / 1690) * mapHeight;
 
+              // Special handling for POI 159 (central castle) - show text instead of icon
+              if (id === 159) {
+                const castleEnemyType = dynamicPOIData?.castleEnemyType;
+                if (!castleEnemyType) return null; // Don't render if no enemy type data
+
+                const leftBound = 507;
+                const activeWidth = 1690;
+                const scaledX = ((x - leftBound) / activeWidth) * mapWidth;
+                const scaledY = (y / 1690) * mapHeight;
+
+                return (
+                  <React.Fragment key={id}>
+                    {showIcons && (
+                      <KonvaText
+                        text={castleEnemyType}
+                        x={scaledX}
+                        y={scaledY}
+                        fontSize={23}
+                        fontFamily="Arial"
+                        fill="#000000"
+                        align="center"
+                        listening={false}
+                        fontStyle="bold"
+                        offsetX={0}
+                        offsetY={0}
+                        shadowColor="#FFFFFF"
+                        shadowBlur={8}
+                        shadowOpacity={1}
+                        shadowOffset={{ x: 0, y: 0 }}
+                        stroke="#FFFFFF"
+                        strokeWidth={.05}
+                      />
+                    )}
+                    {showNumbers && (
+                      <>
+                        <KonvaImage
+                          image={undefined}
+                          x={scaledX - 24}
+                          y={scaledY - 16}
+                          width={48}
+                          height={32}
+                          fill="rgba(255,255,255,0.7)"
+                          stroke="#000"
+                          strokeWidth={1}
+                          cornerRadius={8}
+                          listening={false}
+                        />
+                        <KonvaText
+                          text={String(id)}
+                          x={scaledX - 24}
+                          y={scaledY - 16}
+                          fontSize={18}
+                          fontFamily="Arial"
+                          fill="#000"
+                          align="center"
+                          width={48}
+                          height={32}
+                          listening={false}
+                          verticalAlign="middle"
+                        />
+                      </>
+                    )}
+                  </React.Fragment>
+                );
+              }
+
               return (
                 <React.Fragment key={id}>
                       {showIcons && img && (
