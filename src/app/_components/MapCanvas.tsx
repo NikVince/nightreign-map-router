@@ -481,6 +481,16 @@ const MapCanvas: React.FC<{ iconToggles: IconToggles, layoutNumber?: number }> =
   // Use the mapLayout from dynamic data if available, otherwise fall back to default
   const effectiveMapLayout = dynamicPOIData?.mapLayout || "default";
 
+  // Helper function to format boss names with line breaks
+  const formatBossName = (bossName: string): string => {
+    const words = bossName.split(' ');
+    if (words.length <= 1) return bossName;
+    
+    // Find the middle point to split
+    const midPoint = Math.ceil(words.length / 2);
+    return words.slice(0, midPoint).join(' ') + '\n' + words.slice(midPoint).join(' ');
+  };
+
   useEffect(() => {
     const urls = getTileGridUrls(effectiveMapLayout);
     const imgGrid: (HTMLImageElement | null)[][] = urls.map(row => row.map(() => null));
@@ -797,7 +807,7 @@ const MapCanvas: React.FC<{ iconToggles: IconToggles, layoutNumber?: number }> =
                   <React.Fragment key={id}>
                     {showIcons && (
                       <KonvaText
-                        text={castleEnemyType}
+                        text={formatBossName(castleEnemyType)}
                         x={scaledX}
                         y={scaledY}
                         fontSize={23}
@@ -813,7 +823,7 @@ const MapCanvas: React.FC<{ iconToggles: IconToggles, layoutNumber?: number }> =
                         shadowOpacity={1}
                         shadowOffset={{ x: 0, y: 0 }}
                         stroke="#FFFFFF"
-                        strokeWidth={.05}
+                        strokeWidth={0.05}
                       />
                     )}
                     {showNumbers && (
@@ -849,48 +859,79 @@ const MapCanvas: React.FC<{ iconToggles: IconToggles, layoutNumber?: number }> =
                 );
               }
 
+              // Overlay boss name on Evergaol icons
+              const isEvergaol = iconFile === "Evergaol.png" || poiType === "Evergaols";
+              let evergaolBoss: string | undefined = undefined;
+              if (isEvergaol && dynamicPOIData?.evergaolBosses) {
+                const found = dynamicPOIData.evergaolBosses.find((b: { id: number; boss: string }) => b.id === id);
+                if (found) evergaolBoss = found.boss;
+              }
+
               return (
                 <React.Fragment key={id}>
-                      {showIcons && img && (
-                        <KonvaImage
-                          image={img}
-                          x={scaledX - displayWidth / 2}
-                          y={scaledY - displayHeight / 2}
-                          width={displayWidth}
-                          height={displayHeight}
+                  {showIcons && img && (
+                    <>
+                      <KonvaImage
+                        image={img}
+                        x={scaledX - displayWidth / 2}
+                        y={scaledY - displayHeight / 2}
+                        width={displayWidth}
+                        height={displayHeight}
+                      />
+                      {isEvergaol && evergaolBoss && (
+                        <KonvaText
+                          text={formatBossName(evergaolBoss)}
+                          x={scaledX}
+                          y={scaledY}
+                          fontSize={23}
+                          fontFamily="Arial"
+                          fill="#000000"
+                          align="center"
+                          listening={false}
+                          fontStyle="bold"
+                          offsetX={0}
+                          offsetY={0}
+                          shadowColor="#FFFFFF"
+                          shadowBlur={8}
+                          shadowOpacity={1}
+                          shadowOffset={{ x: 0, y: 0 }}
+                          stroke="#FFFFFF"
+                          strokeWidth={0.05}
                         />
                       )}
-                      {showNumbers && (
-                        <>
-                          <KonvaImage
-                            image={undefined}
-                            x={scaledX - 24}
-                            y={scaledY - 16}
-                            width={48}
-                            height={32}
-                            fill="rgba(255,255,255,0.7)"
-                            stroke="#000"
-                            strokeWidth={1}
-                            cornerRadius={8}
-                            listening={false}
-                          />
-                          <KonvaText
+                    </>
+                  )}
+                  {showNumbers && (
+                    <>
+                      <KonvaImage
+                        image={undefined}
+                        x={scaledX - 24}
+                        y={scaledY - 16}
+                        width={48}
+                        height={32}
+                        fill="rgba(255,255,255,0.7)"
+                        stroke="#000"
+                        strokeWidth={1}
+                        cornerRadius={8}
+                        listening={false}
+                      />
+                      <KonvaText
                         text={String(id)}
-                            x={scaledX - 24}
-                            y={scaledY - 16}
-                            fontSize={18}
-                            fontFamily="Arial"
-                            fill="#000"
-                            align="center"
-                            width={48}
-                            height={32}
-                            listening={false}
-                            verticalAlign="middle"
-                          />
-                        </>
-                      )}
-                    </React.Fragment>
-                  );
+                        x={scaledX - 24}
+                        y={scaledY - 16}
+                        fontSize={18}
+                        fontFamily="Arial"
+                        fill="#000"
+                        align="center"
+                        width={48}
+                        height={32}
+                        listening={false}
+                        verticalAlign="middle"
+                      />
+                    </>
+                  )}
+                </React.Fragment>
+              );
             })}
           </Layer>
         )}

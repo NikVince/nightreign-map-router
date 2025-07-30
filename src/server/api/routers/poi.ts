@@ -93,6 +93,16 @@ export const poiRouter = createTRPCRouter({
       // Process dynamic POIs based on layout data
       const dynamicPOIs = [];
       
+      // Extract castle enemy type for POI 159 (central castle)
+      let castleEnemyType: string | null = null;
+      if (layoutData["Castle - Castle"] && typeof layoutData["Castle - Castle"] === 'object') {
+        const castleData = layoutData["Castle - Castle"] as { location: string; value: string };
+        castleEnemyType = castleData.value;
+      }
+
+      // Collect Evergaol bosses
+      const evergaolBosses: { id: number, boss: string }[] = [];
+
       // Extract dynamic POI entries from layout data (Major/Minor locations)
       Object.entries(layoutData).forEach(([key, value]) => {
         if (typeof value === 'object' && value !== null && 'location' in value && 'value' in value) {
@@ -121,6 +131,10 @@ export const poiRouter = createTRPCRouter({
                 icon: icon,
                 type: key.split(' - ')[0], // Extract type (e.g., "Major Base", "Minor Base", etc.)
               });
+              // If this is an Evergaol, add to evergaolBosses
+              if (icon === "Evergaol.png") {
+                evergaolBosses.push({ id: masterPOI.id, boss: poiValue });
+              }
             }
           }
         }
@@ -208,6 +222,8 @@ export const poiRouter = createTRPCRouter({
         shiftingEarth: shiftingEarth,
         mapLayout: mapLayout,
         dynamicPOIs,
+        castleEnemyType, // Add castle enemy type to response
+        evergaolBosses, // Add evergaol bosses to response
         layoutData
       };
     } catch (error) {
