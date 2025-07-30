@@ -106,6 +106,10 @@ export const poiRouter = createTRPCRouter({
       const fieldBosses: { id: number, boss: string }[] = [];
       // Collect Major Locations
       const majorLocations: { id: number, location: string }[] = [];
+      // Collect Night Circles
+      const nightCircles: { id: number, boss: string, night: number }[] = [];
+      // Collect Sorcerer's Rise locations
+      const sorcerersRiseLocations: { id: number, location: string }[] = [];
 
       // Extract dynamic POI entries from layout data (Major/Minor locations)
       Object.entries(layoutData).forEach(([key, value]) => {
@@ -149,6 +153,12 @@ export const poiRouter = createTRPCRouter({
                 const cleanValue = poiValue.replace(/^(Ruins|Camp|Fort|Great Church|Church|Sorcerer's Rise|Township) - /, '');
                 majorLocations.push({ id: masterPOI.id, location: cleanValue });
               }
+              // If this is a Sorcerer's Rise, add to sorcerersRiseLocations
+              if (poiValue.startsWith("Sorcerer's Rise -")) {
+                // Remove the "Sorcerer's Rise -" prefix
+                const cleanValue = poiValue.replace(/^Sorcerer's Rise - /, '');
+                sorcerersRiseLocations.push({ id: masterPOI.id, location: cleanValue });
+              }
             }
           }
         }
@@ -181,14 +191,17 @@ export const poiRouter = createTRPCRouter({
         const masterPOI = poiId ? masterPOIData.find((poi: any) => poi.id === poiId) : null;
         
         if (masterPOI) {
+          const night1Boss = layoutData["Night 1 Boss"] || "Night Boss";
           dynamicPOIs.push({
             id: masterPOI.id,
             coordinates: masterPOI.coordinates,
             location: night1Location,
-            value: layoutData["Night 1 Boss"] || "Night Boss",
+            value: night1Boss,
             icon: "Night_Location.png", // Using Night_Location icon for night circles
             type: "Night Circle",
           });
+          // Add to night circles collection
+          nightCircles.push({ id: masterPOI.id, boss: night1Boss, night: 1 });
         }
       }
 
@@ -199,14 +212,17 @@ export const poiRouter = createTRPCRouter({
         const masterPOI = poiId ? masterPOIData.find((poi: any) => poi.id === poiId) : null;
         
         if (masterPOI) {
+          const night2Boss = layoutData["Night 2 Boss"] || "Night Boss";
           dynamicPOIs.push({
             id: masterPOI.id,
             coordinates: masterPOI.coordinates,
             location: night2Location,
-            value: layoutData["Night 2 Boss"] || "Night Boss",
+            value: night2Boss,
             icon: "Night_Location.png", // Using Night_Location icon for night circles
             type: "Night Circle",
           });
+          // Add to night circles collection
+          nightCircles.push({ id: masterPOI.id, boss: night2Boss, night: 2 });
         }
       }
 
@@ -240,6 +256,8 @@ export const poiRouter = createTRPCRouter({
         evergaolBosses, // Add evergaol bosses to response
         fieldBosses, // Add field bosses to response
         majorLocations, // Add major locations to response
+        nightCircles, // Add night circles to response
+        sorcerersRiseLocations, // Add sorcerer's rise locations to response
         layoutData
       };
     } catch (error) {

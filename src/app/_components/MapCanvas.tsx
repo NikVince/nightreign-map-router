@@ -787,6 +787,21 @@ const MapCanvas: React.FC<{ iconToggles: IconToggles, layoutNumber?: number }> =
           allTitles.push({ id, x: scaledX, y: scaledY, text: formatBossName(found.location), priority: 3 });
         }
       }
+      // Night Circle
+      if (icon === "Night_Location.png" && dynamicPOIData?.nightCircles) {
+        const found = dynamicPOIData.nightCircles.find((n: { id: number; boss: string; night: number }) => n.id === id);
+        if (found) {
+          const nightText = `Night ${found.night}\n${formatBossName(found.boss)}`;
+          allTitles.push({ id, x: scaledX, y: scaledY, text: nightText, priority: 0 }); // Priority 0 for highest priority
+        }
+      }
+      // Sorcerer's Rise
+      if (icon === "Sorcerer's_Rise.png" && dynamicPOIData?.sorcerersRiseLocations) {
+        const found = dynamicPOIData.sorcerersRiseLocations.find((s: { id: number; location: string }) => s.id === id);
+        if (found) {
+          allTitles.push({ id, x: scaledX, y: scaledY, text: formatBossName(found.location), priority: 4 }); // Priority 4 for sorcerer's rise
+        }
+      }
     });
     
     // Sort by priority (lower = higher priority)
