@@ -670,7 +670,7 @@ const MapCanvas: React.FC<{ iconToggles: IconToggles, layoutNumber?: number }> =
 
       Object.entries(poiData).forEach(([poiType, coords]) => {
         // Skip the new POI types that should only appear when specified in layout JSON
-        if (poiType === "Spawn_Locations" || poiType === "Event_Locations" || poiType === "Scale_Bearing_Merchant_Locations" || poiType === "Circle_Locations") {
+        if (poiType === "Spawn_Locations" || poiType === "Event_Locations" || poiType === "Scale_Bearing_Merchant_Locations" || poiType === "Circle_Locations" || poiType === "Minor_Locations" || poiType === "Major_Locations" || poiType === "Merchants" || poiType === "Smithing_Tables") {
           return;
         }
 
