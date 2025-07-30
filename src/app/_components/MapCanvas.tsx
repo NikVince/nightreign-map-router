@@ -505,7 +505,7 @@ const MapCanvas: React.FC<{ iconToggles: IconToggles, layoutNumber?: number }> =
     const [offsetY, setOffsetY] = useState(0);
     
     // Calculate text bounds (approximate)
-    const fontSize = 23;
+    const fontSize = 21;
     const lineHeight = fontSize * 1.2;
     const lines = text.split('\n').length;
     const textHeight = lines * lineHeight;
@@ -735,7 +735,7 @@ const MapCanvas: React.FC<{ iconToggles: IconToggles, layoutNumber?: number }> =
 
   // --- Collision-avoiding POI title placement ---
   // Helper to get bounding box for a text overlay
-  function getTextBounds(x: number, y: number, text: string, fontSize = 23) {
+  function getTextBounds(x: number, y: number, text: string, fontSize = 21) {
     const lines = text.split('\n');
     const lineHeight = fontSize * 1.2;
     const textHeight = lines.length * lineHeight;
@@ -759,7 +759,7 @@ const MapCanvas: React.FC<{ iconToggles: IconToggles, layoutNumber?: number }> =
     // Coordinate transformation constants
     const leftBound = 507;
     const activeWidth = 1690;
-    const maxMovementDistance = 64; // Maximum pixels a text can move from its icon center
+    const maxMovementDistance = 48; // Maximum pixels a text can move from its icon center
     
     // Gather all titles (Evergaols, Field Bosses, etc.)
     poisToRender.forEach((poi) => {
@@ -779,6 +779,13 @@ const MapCanvas: React.FC<{ iconToggles: IconToggles, layoutNumber?: number }> =
       if ((icon === "Field_Boss.png" || poiType === "Field_Bosses") && dynamicPOIData?.fieldBosses) {
         const found = dynamicPOIData.fieldBosses.find((b: { id: number; boss: string }) => b.id === id);
         if (found) allTitles.push({ id, x: scaledX, y: scaledY, text: formatBossName(found.boss), priority: 2 });
+      }
+      // Major Location
+      if ((icon === "Ruins.png" || icon === "Main_Encampment.png" || icon === "Great_Church.png" || icon === "Fort.png" || icon === "Church.png" || icon === "Sorcerer's_Rise.png" || icon === "Township.png") && dynamicPOIData?.majorLocations) {
+        const found = dynamicPOIData.majorLocations.find((m: { id: number; location: string }) => m.id === id);
+        if (found) {
+          allTitles.push({ id, x: scaledX, y: scaledY, text: formatBossName(found.location), priority: 3 });
+        }
       }
     });
     
@@ -1024,7 +1031,7 @@ const MapCanvas: React.FC<{ iconToggles: IconToggles, layoutNumber?: number }> =
                         text={formatBossName(castleEnemyType)}
                         x={scaledX}
                         y={scaledY}
-                        fontSize={23}
+                        fontSize={21}
                         fontFamily="Arial"
                         fill="#000000"
                         align="center"

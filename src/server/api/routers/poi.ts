@@ -104,6 +104,8 @@ export const poiRouter = createTRPCRouter({
       const evergaolBosses: { id: number, boss: string }[] = [];
       // Collect Field Bosses
       const fieldBosses: { id: number, boss: string }[] = [];
+      // Collect Major Locations
+      const majorLocations: { id: number, location: string }[] = [];
 
       // Extract dynamic POI entries from layout data (Major/Minor locations)
       Object.entries(layoutData).forEach(([key, value]) => {
@@ -140,6 +142,12 @@ export const poiRouter = createTRPCRouter({
               // If this is a Field Boss, add to fieldBosses
               if (icon === "Field_Boss.png") {
                 fieldBosses.push({ id: masterPOI.id, boss: poiValue });
+              }
+              // If this is a Major Base, add to majorLocations
+              if (key.startsWith("Major Base -")) {
+                // Remove redundant prefixes like "Ruins -", "Camp -", etc.
+                const cleanValue = poiValue.replace(/^(Ruins|Camp|Fort|Great Church|Church|Sorcerer's Rise|Township) - /, '');
+                majorLocations.push({ id: masterPOI.id, location: cleanValue });
               }
             }
           }
@@ -231,6 +239,7 @@ export const poiRouter = createTRPCRouter({
         castleEnemyType, // Add castle enemy type to response
         evergaolBosses, // Add evergaol bosses to response
         fieldBosses, // Add field bosses to response
+        majorLocations, // Add major locations to response
         layoutData
       };
     } catch (error) {
