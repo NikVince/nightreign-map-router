@@ -733,6 +733,139 @@ const MapCanvas: React.FC<{ iconToggles: IconToggles, layoutNumber?: number }> =
     return Array.from(uniquePOIs.values());
   }, [poiData, poiMasterList, iconToggles, dynamicPOIData]);
 
+  // --- Collision-avoiding POI title placement ---
+  // Helper to get bounding box for a text overlay
+  function getTextBounds(x: number, y: number, text: string, fontSize = 23) {
+    const lines = text.split('\n');
+    const lineHeight = fontSize * 1.2;
+    const textHeight = lines.length * lineHeight;
+    const textWidth = Math.max(...lines.map(line => line.length * fontSize * 0.6)) || 0;
+    return {
+      left: x - textWidth / 2,
+      right: x + textWidth / 2,
+      top: y - textHeight / 2,
+      bottom: y + textHeight / 2,
+      width: textWidth,
+      height: textHeight,
+    };
+  }
+
+  // Precompute all POI title positions (except castle)
+  const titlePlacements = useMemo(() => {
+    if (!showTitles) return [];
+    const placed: { id: number, x: number, y: number, text: string, priority: number }[] = [];
+    const allTitles: { id: number, x: number, y: number, text: string, priority: number }[] = [];
+    
+    // Coordinate transformation constants
+    const leftBound = 507;
+    const activeWidth = 1690;
+    const maxMovementDistance = 64; // Maximum pixels a text can move from its icon center
+    
+    // Gather all titles (Evergaols, Field Bosses, etc.)
+    poisToRender.forEach((poi) => {
+      const { id, x, y, poiType, icon } = poi;
+      if (id === 159) return; // skip castle
+      
+      // Apply the same coordinate transformation as used for POI icons
+      const scaledX = ((x - leftBound) / activeWidth) * mapWidth;
+      const scaledY = (y / 1690) * mapHeight;
+      
+      // Evergaol
+      if ((icon === "Evergaol.png" || poiType === "Evergaols") && dynamicPOIData?.evergaolBosses) {
+        const found = dynamicPOIData.evergaolBosses.find((b: { id: number; boss: string }) => b.id === id);
+        if (found) allTitles.push({ id, x: scaledX, y: scaledY, text: formatBossName(found.boss), priority: 1 });
+      }
+      // Field Boss
+      if ((icon === "Field_Boss.png" || poiType === "Field_Bosses") && dynamicPOIData?.fieldBosses) {
+        const found = dynamicPOIData.fieldBosses.find((b: { id: number; boss: string }) => b.id === id);
+        if (found) allTitles.push({ id, x: scaledX, y: scaledY, text: formatBossName(found.boss), priority: 2 });
+      }
+    });
+    
+    // Sort by priority (lower = higher priority)
+    allTitles.sort((a, b) => a.priority - b.priority);
+    
+    // Bidirectional collision resolution with movement limits
+    for (const title of allTitles) {
+      let currentPos = { x: title.x, y: title.y };
+      let needsRepositioning = true;
+      let iterations = 0;
+      const maxIterations = 10; // Prevent infinite loops
+      
+      while (needsRepositioning && iterations < maxIterations) {
+        needsRepositioning = false;
+        iterations++;
+        
+        const currentBounds = getTextBounds(currentPos.x, currentPos.y, title.text);
+        
+        // Check for collisions with already placed titles
+        for (const placedTitle of placed) {
+          const placedBounds = getTextBounds(placedTitle.x, placedTitle.y, placedTitle.text);
+          
+          // Check if there's a collision
+          const collision = !(
+            currentBounds.right < placedBounds.left ||
+            currentBounds.left > placedBounds.right ||
+            currentBounds.bottom < placedBounds.top ||
+            currentBounds.top > placedBounds.bottom
+          );
+          
+          if (collision) {
+            // Calculate the minimum movement needed to resolve collision
+            const dx = Math.max(0, placedBounds.right - currentBounds.left + 5, currentBounds.right - placedBounds.left + 5);
+            const dy = Math.max(0, placedBounds.bottom - currentBounds.top + 5, currentBounds.bottom - placedBounds.top + 5);
+            
+            // Determine the best direction to move both texts
+            const centerX = (currentPos.x + placedTitle.x) / 2;
+            const centerY = (currentPos.y + placedTitle.y) / 2;
+            
+            // Calculate movement for current title
+            let moveX = currentPos.x < centerX ? -dx/2 : dx/2;
+            let moveY = currentPos.y < centerY ? -dy/2 : dy/2;
+            
+            // Limit movement to maxMovementDistance from original position
+            const distanceFromOriginal = Math.sqrt(moveX * moveX + moveY * moveY);
+            if (distanceFromOriginal > maxMovementDistance) {
+              const scale = maxMovementDistance / distanceFromOriginal;
+              moveX *= scale;
+              moveY *= scale;
+            }
+            
+            // Calculate movement for placed title (opposite direction)
+            let placedMoveX = -moveX;
+            let placedMoveY = -moveY;
+            
+            // Limit placed title movement to maxMovementDistance from its original position
+            const placedDistanceFromOriginal = Math.sqrt(
+              Math.pow(placedTitle.x - title.x + placedMoveX, 2) + 
+              Math.pow(placedTitle.y - title.y + placedMoveY, 2)
+            );
+            if (placedDistanceFromOriginal > maxMovementDistance) {
+              const scale = maxMovementDistance / placedDistanceFromOriginal;
+              placedMoveX *= scale;
+              placedMoveY *= scale;
+            }
+            
+            currentPos = {
+              x: currentPos.x + moveX,
+              y: currentPos.y + moveY
+            };
+            
+            // Also move the placed title in the opposite direction
+            placedTitle.x += placedMoveX;
+            placedTitle.y += placedMoveY;
+            
+            needsRepositioning = true;
+            break;
+          }
+        }
+      }
+      
+      placed.push({ ...title, x: currentPos.x, y: currentPos.y });
+    }
+    
+    return placed;
+  }, [poisToRender, dynamicPOIData, showTitles, mapWidth, mapHeight]);
 
 
   return (
@@ -940,21 +1073,8 @@ const MapCanvas: React.FC<{ iconToggles: IconToggles, layoutNumber?: number }> =
                 );
               }
 
-              // Overlay boss name on Evergaol icons
-              const isEvergaol = iconFile === "Evergaol.png" || poiType === "Evergaols";
-              let evergaolBoss: string | undefined = undefined;
-              if (isEvergaol && dynamicPOIData?.evergaolBosses) {
-                const found = dynamicPOIData.evergaolBosses.find((b: { id: number; boss: string }) => b.id === id);
-                if (found) evergaolBoss = found.boss;
-              }
-
-              // Overlay boss name on Field Boss icons
-              const isFieldBoss = iconFile === "Field_Boss.png" || poiType === "Field_Bosses";
-              let fieldBoss: string | undefined = undefined;
-              if (isFieldBoss && dynamicPOIData?.fieldBosses) {
-                const found = dynamicPOIData.fieldBosses.find((b: { id: number; boss: string }) => b.id === id);
-                if (found) fieldBoss = found.boss;
-              }
+              // Overlay boss name on Evergaol and Field Boss icons using precomputed positions
+              const titlePlacement = titlePlacements.find(t => t.id === id);
 
               return (
                 <React.Fragment key={id}>
@@ -967,21 +1087,12 @@ const MapCanvas: React.FC<{ iconToggles: IconToggles, layoutNumber?: number }> =
                         width={displayWidth}
                         height={displayHeight}
                       />
-                      {showTitles && isEvergaol && evergaolBoss && (
+                      {showTitles && titlePlacement && (
                         <TextOverlay
-                          text={formatBossName(evergaolBoss)}
-                          x={scaledX}
-                          y={scaledY}
-                          priority={1}
-                          id={String(id)}
-                        />
-                      )}
-                      {showTitles && isFieldBoss && fieldBoss && (
-                        <TextOverlay
-                          text={formatBossName(fieldBoss)}
-                          x={scaledX}
-                          y={scaledY}
-                          priority={2}
+                          text={titlePlacement.text}
+                          x={titlePlacement.x}
+                          y={titlePlacement.y}
+                          priority={titlePlacement.priority}
                           id={String(id)}
                         />
                       )}
