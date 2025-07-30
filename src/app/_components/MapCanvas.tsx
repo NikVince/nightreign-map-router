@@ -171,6 +171,8 @@ const MapCanvas: React.FC<{ iconToggles: IconToggles, layoutNumber?: number }> =
   const [isDragging, setIsDragging] = useState(false);
   const [lastPointerPos, setLastPointerPos] = useState<{ x: number; y: number } | null>(null);
   const [showIcons, setShowIcons] = useState(true); // Debug toggle for icons layer
+  // Add a toggle for showing all POI titles (except central castle)
+  const [showTitles, setShowTitles] = useState(true);
   const [showNumbers, setShowNumbers] = useState(false); // Start with numbers hidden by default
 
   // Add refs for scale and position
@@ -747,6 +749,17 @@ const MapCanvas: React.FC<{ iconToggles: IconToggles, layoutNumber?: number }> =
           Show icons layer
         </label>
         <br />
+        {/* Toggle for showing all POI titles */}
+        <label style={{ color: '#fff', fontSize: 14 }}>
+          <input
+            type="checkbox"
+            checked={showTitles}
+            onChange={e => setShowTitles(e.target.checked)}
+            style={{ marginRight: 6 }}
+          />
+          Show POI titles
+        </label>
+        <br />
         <label style={{ color: '#fff', fontSize: 14 }}>
           <input
             type="checkbox"
@@ -935,6 +948,14 @@ const MapCanvas: React.FC<{ iconToggles: IconToggles, layoutNumber?: number }> =
                 if (found) evergaolBoss = found.boss;
               }
 
+              // Overlay boss name on Field Boss icons
+              const isFieldBoss = iconFile === "Field_Boss.png" || poiType === "Field_Bosses";
+              let fieldBoss: string | undefined = undefined;
+              if (isFieldBoss && dynamicPOIData?.fieldBosses) {
+                const found = dynamicPOIData.fieldBosses.find((b: { id: number; boss: string }) => b.id === id);
+                if (found) fieldBoss = found.boss;
+              }
+
               return (
                 <React.Fragment key={id}>
                   {showIcons && img && (
@@ -946,12 +967,21 @@ const MapCanvas: React.FC<{ iconToggles: IconToggles, layoutNumber?: number }> =
                         width={displayWidth}
                         height={displayHeight}
                       />
-                      {isEvergaol && evergaolBoss && (
+                      {showTitles && isEvergaol && evergaolBoss && (
                         <TextOverlay
                           text={formatBossName(evergaolBoss)}
                           x={scaledX}
                           y={scaledY}
                           priority={1}
+                          id={String(id)}
+                        />
+                      )}
+                      {showTitles && isFieldBoss && fieldBoss && (
+                        <TextOverlay
+                          text={formatBossName(fieldBoss)}
+                          x={scaledX}
+                          y={scaledY}
+                          priority={2}
                           id={String(id)}
                         />
                       )}

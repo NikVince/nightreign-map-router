@@ -102,6 +102,8 @@ export const poiRouter = createTRPCRouter({
 
       // Collect Evergaol bosses
       const evergaolBosses: { id: number, boss: string }[] = [];
+      // Collect Field Bosses
+      const fieldBosses: { id: number, boss: string }[] = [];
 
       // Extract dynamic POI entries from layout data (Major/Minor locations)
       Object.entries(layoutData).forEach(([key, value]) => {
@@ -134,6 +136,10 @@ export const poiRouter = createTRPCRouter({
               // If this is an Evergaol, add to evergaolBosses
               if (icon === "Evergaol.png") {
                 evergaolBosses.push({ id: masterPOI.id, boss: poiValue });
+              }
+              // If this is a Field Boss, add to fieldBosses
+              if (icon === "Field_Boss.png") {
+                fieldBosses.push({ id: masterPOI.id, boss: poiValue });
               }
             }
           }
@@ -224,6 +230,7 @@ export const poiRouter = createTRPCRouter({
         dynamicPOIs,
         castleEnemyType, // Add castle enemy type to response
         evergaolBosses, // Add evergaol bosses to response
+        fieldBosses, // Add field bosses to response
         layoutData
       };
     } catch (error) {
