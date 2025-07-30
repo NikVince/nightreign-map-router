@@ -39,6 +39,7 @@ export const POI_LOCATION_TO_ID_MAP: POILocationMapping[] = [
   { layoutLocation: "West of Warmaster's Shack", poiId: 33 },
   { layoutLocation: "Southeast of Lake", poiId: 28 },
   { layoutLocation: "East of Cavalry Bridge", poiId: 29 },
+
   { layoutLocation: "Below Summonwater Hawk", poiId: 36 },
   { layoutLocation: "Third Church", poiId: 37 },
   { layoutLocation: "Northeast of Saintsbridge", poiId: 35 },
@@ -119,6 +120,22 @@ export const POI_LOCATION_TO_ID_MAP: POILocationMapping[] = [
 export function getPOIIdForLocation(location: string): number | null {
   const mapping = POI_LOCATION_TO_ID_MAP.find(m => m.layoutLocation === location);
   return mapping?.poiId || null;
+}
+
+// Function to get POI ID for a layout location with context (for special cases like Minor Erdtree)
+export function getPOIIdForLocationWithContext(key: string, location: string): number | null {
+  // Special handling for Minor Erdtree which has two different POIs
+  if (location === "Minor Erdtree") {
+    const keyType = key.split(' - ')[0]; // Extract type from key (e.g., "Major Base", "Minor Base", etc.)
+    if (keyType === "Major Base") {
+      return 106; // Major Base Minor Erdtree
+    } else if (keyType === "Minor Base") {
+      return 157; // Minor Base Minor Erdtree
+    }
+  }
+  
+  // For all other cases, use the standard mapping
+  return getPOIIdForLocation(location);
 }
 
 // Function to get all POI IDs for a list of locations
