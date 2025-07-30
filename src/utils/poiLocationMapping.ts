@@ -97,7 +97,7 @@ export const POI_LOCATION_TO_ID_MAP: POILocationMapping[] = [
   { layoutLocation: "Northwest Lake", poiId: 185 },
   { layoutLocation: "Northwest Mistwood Pond", poiId: 181 },
   { layoutLocation: "Northwest of Castle", poiId: 183 },
-  { layoutLocation: "South Lake", poiId: 179 },
+  { layoutLocation: "South Lake Night Circle", poiId: 179, description: "Night Circle South Lake" },
   { layoutLocation: "South of Castle Night Circle", poiId: 187, description: "Night Circle South of Castle" },
   { layoutLocation: "Southwest Corner", poiId: 180 },
   { layoutLocation: "Southwest Mistwood", poiId: 186 },
