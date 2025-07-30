@@ -98,7 +98,7 @@ export const POI_LOCATION_TO_ID_MAP: POILocationMapping[] = [
   { layoutLocation: "Northwest Mistwood Pond", poiId: 181 },
   { layoutLocation: "Northwest of Castle", poiId: 183 },
   { layoutLocation: "South Lake", poiId: 179 },
-  { layoutLocation: "South of Castle", poiId: 187 },
+  { layoutLocation: "South of Castle Night Circle", poiId: 187, description: "Night Circle South of Castle" },
   { layoutLocation: "Southwest Corner", poiId: 180 },
   { layoutLocation: "Southwest Mistwood", poiId: 186 },
   { layoutLocation: "West Stormhill Graveyard", poiId: 176 },
@@ -112,6 +112,7 @@ export const POI_LOCATION_TO_ID_MAP: POILocationMapping[] = [
   { layoutLocation: "Castle Front", poiId: 174 },
   { layoutLocation: "Ruins North of Castle", poiId: 170 },
   { layoutLocation: "Southeast Lakeshore", poiId: 172 },
+  { layoutLocation: "South of Castle", poiId: 169, description: "Scale-Bearing Merchant South of Castle" },
 ];
 
 // Function to get POI ID for a layout location

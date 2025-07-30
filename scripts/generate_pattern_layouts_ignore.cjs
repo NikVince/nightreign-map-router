@@ -45,6 +45,14 @@ for (let i = 2; i < rows.length; i++) {
     if (header === 'Field Boss' && subtitle === 'Lake') {
       output[`${header} - ${subtitle}`] = { location: 'Lake Field Boss', value };
     }
+    // Special handling for Night 2 Circle South Lake to avoid location name conflict
+    else if (header === 'Night 2 Circle' && value === 'South Lake') {
+      output[header] = 'South Lake Night Circle';
+    }
+    // Special handling for Night 2 Circle South of Castle to avoid location name conflict
+    else if (header === 'Night 2 Circle' && value === 'South of Castle') {
+      output[header] = 'South of Castle Night Circle';
+    }
     // If subtitle exists, use nested object
     else if (subtitle) {
       output[`${header} - ${subtitle}`] = { location: subtitle, value };
