@@ -42,7 +42,11 @@ export function Sidebar({ isOpen, onClose, iconToggles, onToggleChange, layoutNu
             <div className="font-bold mb-2">Layout {layoutNumber}</div>
             {layoutData["Special Event"] && layoutData["Special Event"] !== "empty" && (
               <div className="mb-1">
-                <span className="text-yellow-400">Event:</span> {layoutData["Special Event"]}
+                <span className="text-yellow-400">Event:</span> {
+                  layoutData["Special Event"].includes("Frenzy Tower") 
+                    ? "Frenzy Tower" 
+                    : layoutData["Special Event"]
+                }
               </div>
             )}
             {layoutData["Night 1 Boss"] && layoutData["Night 1 Boss"] !== "empty" && (
