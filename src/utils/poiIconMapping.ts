@@ -148,7 +148,7 @@ export function getIconForPOIValue(value: string): string | null {
 }
 
 // New function that considers both key context and value for icon assignment
-export function getIconForPOIWithContext(key: string, value: string): string | null {
+export function getIconForPOIWithContext(key: string, value: string, specialEvent?: string): string | null {
   // First, check if the key provides context about the POI type
   const keyType = key.split(' - ')[0]; // Extract type from key (e.g., "Evergaol", "Field Boss", etc.)
   
@@ -158,6 +158,19 @@ export function getIconForPOIWithContext(key: string, value: string): string | n
       return "Evergaol.png";
     } else if (keyType === "Field Boss" || keyType === "Night") {
       return "Field_Boss.png";
+    }
+  }
+  
+  // Special handling for meteor strikes and frenzy towers
+  if (specialEvent) {
+    // Check if this is a meteor strike or frenzy tower event
+    const isMeteorStrike = specialEvent.includes("Meteor Strike");
+    const isFrenzyTower = specialEvent.includes("Frenzy Tower");
+    
+    // If this is a Map Event POI and we have a meteor strike or frenzy tower event,
+    // override the icon to Event.png
+    if ((isMeteorStrike || isFrenzyTower) && value.startsWith("Map Event -")) {
+      return "Event.png";
     }
   }
   
