@@ -162,3 +162,48 @@ export function getPOIIdForSpawnLocation(location: string): number | null {
   
   return spawnPointMapping[location] || null;
 } 
+
+// Function to get POI ID for a night circle location
+export function getPOIIdForNightCircleLocation(location: string): number | null {
+  // Special mapping for night circles - they use different POI IDs than regular locations
+  const nightCircleMapping: { [key: string]: number } = {
+    "East of Saintsbridge": 182,
+    "Northeast Corner": 177,
+    "Northeast of Lake": 184,
+    "Northwest Corner": 178,
+    "Northwest Lake": 185,
+    "Northwest Mistwood Pond": 181,
+    "Northwest of Castle": 183,
+    "South Lake": 179,
+    "South of Castle": 187,
+    "Southwest Corner": 180,
+    "Southwest Mistwood": 186,
+    "West Stormhill Graveyard": 176,
+    "North of Crater": 211,
+    "Southeast Mountaintop": 212,
+    "Noklateo Entrance": 210,
+    "Southeast Rotted Woods": 213,
+    "Northwest Rotted Woods": 214,
+    "South Lake Night Circle": 215,
+    "South of Castle Night Circle": 216,
+  };
+  
+  return nightCircleMapping[location] || null;
+}
+
+// Function to get POI ID for a scale-bearing merchant location
+export function getPOIIdForMerchantLocation(location: string): number | null {
+  // Special mapping for scale-bearing merchants - they use different POI IDs than regular locations
+  const merchantMapping: { [key: string]: number } = {
+    "South of Castle": 169,
+    "Ruins North of Castle": 170,
+    "Northeast Corner": 171,
+    "Southeast Lakeshore": 172,
+    "Northwest Corner": 27,
+    "East of Saintsbridge": 173,
+    "Castle Front": 174,
+    "Southwest Corner": 175,
+  };
+  
+  return merchantMapping[location] || null;
+} 

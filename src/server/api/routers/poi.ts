@@ -4,7 +4,7 @@ import { LandmarkType } from "@prisma/client";
 import fs from "fs";
 import path from "path";
 import { getIconForPOIValue, getIconForPOIWithContext, shouldShowPOI } from "~/utils/poiIconMapping";
-import { getPOIIdForLocation, getPOIIdForLocationWithContext, getPOIIdForSpawnLocation } from "~/utils/poiLocationMapping";
+import { getPOIIdForLocation, getPOIIdForLocationWithContext, getPOIIdForSpawnLocation, getPOIIdForNightCircleLocation, getPOIIdForMerchantLocation } from "~/utils/poiLocationMapping";
 
 // Helper function to map "Shifting Earth" values to map tile directories
 function getMapLayoutFromShiftingEarth(shiftingEarth: string): string {
@@ -187,7 +187,7 @@ export const poiRouter = createTRPCRouter({
       // 2. Night 1 Circle
       if (layoutData["Night 1 Circle"] && layoutData["Night 1 Circle"] !== "empty") {
         const night1Location = layoutData["Night 1 Circle"];
-        const poiId = getPOIIdForLocation(night1Location);
+        const poiId = getPOIIdForNightCircleLocation(night1Location);
         const masterPOI = poiId ? masterPOIData.find((poi: any) => poi.id === poiId) : null;
         
         if (masterPOI) {
@@ -208,7 +208,7 @@ export const poiRouter = createTRPCRouter({
       // 3. Night 2 Circle
       if (layoutData["Night 2 Circle"] && layoutData["Night 2 Circle"] !== "empty") {
         const night2Location = layoutData["Night 2 Circle"];
-        const poiId = getPOIIdForLocation(night2Location);
+        const poiId = getPOIIdForNightCircleLocation(night2Location);
         const masterPOI = poiId ? masterPOIData.find((poi: any) => poi.id === poiId) : null;
         
         if (masterPOI) {
@@ -229,7 +229,7 @@ export const poiRouter = createTRPCRouter({
       // 4. Scale-Bearing Merchant
       if (layoutData["Scale-Bearing Merchant"] && layoutData["Scale-Bearing Merchant"] !== "empty") {
         const merchantLocation = layoutData["Scale-Bearing Merchant"];
-        const poiId = getPOIIdForLocation(merchantLocation);
+        const poiId = getPOIIdForMerchantLocation(merchantLocation);
         const masterPOI = poiId ? masterPOIData.find((poi: any) => poi.id === poiId) : null;
         
         if (masterPOI) {
