@@ -1102,7 +1102,7 @@ const MapCanvas: React.FC<{ iconToggles: IconToggles, layoutNumber?: number }> =
     }
     
     return placed;
-  }, [poisToRender, dynamicPOIData, showTitles, mapWidth, mapHeight]);
+  }, [poisToRender, dynamicPOIData, showTitles]);
 
   // Debug logging for titlePlacements
   useEffect(() => {
