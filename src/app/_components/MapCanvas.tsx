@@ -205,7 +205,7 @@ const MapCanvas: React.FC<{ iconToggles: IconToggles, layoutNumber?: number }> =
   const mapHeight = tileSize.height * 6;
   const minScale = getMinScale(mapWidth, mapHeight, dimensions.width, dimensions.height);
 
-  // Center map in viewport on first load
+  // Center map in viewport on first load only (not on every resize)
   useEffect(() => {
     if (mapWidth > 0 && mapHeight > 0 && dimensions.width > 0 && dimensions.height > 0) {
       const scale = getMinScale(mapWidth, mapHeight, dimensions.width, dimensions.height);
@@ -215,7 +215,7 @@ const MapCanvas: React.FC<{ iconToggles: IconToggles, layoutNumber?: number }> =
         y: (dimensions.height - mapHeight * scale) / 2,
       });
     }
-  }, [mapWidth, mapHeight, dimensions.width, dimensions.height]);
+  }, [mapWidth, mapHeight]); // Removed dimensions dependencies - only center when map size changes
 
   // Pan logic
   const handleMouseDown = (e: KonvaEventObject<MouseEvent>) => {
