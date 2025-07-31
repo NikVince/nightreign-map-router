@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+// @ts-nocheck
 
 import fs from 'fs';
 import path from 'path';
@@ -154,4 +155,4 @@ function completeAnalysis() {
 }
 
 // Run the analysis
-completeAnalysis(); 
+completeAnalysis();
