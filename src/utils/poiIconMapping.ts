@@ -167,11 +167,13 @@ export function getIconForPOIWithContext(key: string, value: string, specialEven
     const isMeteorStrike = specialEvent.includes("Meteor Strike");
     const isFrenzyTower = specialEvent.includes("Frenzy Tower");
     
-    // If this is a Map Event POI and we have a meteor strike or frenzy tower event,
+    // If this is a Map Event POI and we have a meteor strike event,
     // override the icon to Event.png
-    if ((isMeteorStrike || isFrenzyTower) && value.startsWith("Map Event -")) {
+    if (isMeteorStrike && value.startsWith("Map Event -")) {
       return "Event.png";
     }
+    
+    // For frenzy towers, they have their own POI entries, so no override needed here
   }
   
   // For other cases, use the existing mapping logic
