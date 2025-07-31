@@ -936,6 +936,11 @@ const MapCanvas: React.FC<{ iconToggles: IconToggles, layoutNumber?: number }> =
         scaledX += 40;
       }
       
+      // Special offset for POI 84 (Lake Field Boss) - 20px to the left to avoid overlap
+      if (id === 84) {
+        scaledX -= 20;
+      }
+      
       // Check for hardcoded titles based on map layout
       let hardcodedTitle: string | undefined;
       
@@ -1289,6 +1294,11 @@ const MapCanvas: React.FC<{ iconToggles: IconToggles, layoutNumber?: number }> =
                 // Special offset for POI 23 in noklateo layout (40px to the right)
                 if (id === 23 && effectiveMapLayout === "noklateo_shifted") {
                   scaledX += 40;
+                }
+                
+                // Special offset for POI 84 (Lake Field Boss) - 20px to the left to avoid overlap
+                if (id === 84) {
+                  scaledX -= 20;
                 }
 
               // Special handling for POI 159 (central castle) - show text instead of icon
