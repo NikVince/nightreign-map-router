@@ -264,72 +264,62 @@ const MapCanvas: React.FC<{ iconToggles: IconToggles, layoutNumber?: number }> =
     }
   };
 
-  // Add requestAnimationFrame throttling for touchmove
-  const rafRef = useRef<number | null>(null);
-  const latestTouchMoveEvent = useRef<KonvaEventObject<TouchEvent> | null>(null);
-
-  const processTouchMove = () => {
-    if (!latestTouchMoveEvent.current) return;
-    const e = latestTouchMoveEvent.current;
+  // OPTIMIZED: Simplified touch handling for better mobile performance
+  const handleTouchMove = (e: KonvaEventObject<TouchEvent>) => {
     const touches = e.evt.touches;
+    
+    // Single finger pan (optimized)
     if (touches.length === 1 && isDragging && lastPointerPos) {
       const t0 = touches[0];
       if (!t0) return;
+      
       const dx = t0.clientX - lastPointerPos.x;
       const dy = t0.clientY - lastPointerPos.y;
+      
       setStagePos(pos => {
         const newPos = { x: pos.x + dx, y: pos.y + dy };
         return clampStagePos(newPos, stageScaleRef.current, mapWidth, mapHeight, dimensions.width, dimensions.height);
       });
       setLastPointerPos({ x: t0.clientX, y: t0.clientY });
-    } else if (touches.length === 2 && lastDistRef.current && lastMidRef.current) {
+    } 
+    // Two finger pinch (optimized)
+    else if (touches.length === 2 && lastDistRef.current && lastMidRef.current) {
       const t0 = touches[0], t1 = touches[1];
       if (!t0 || !t1) return;
-      const prevDist = lastDistRef.current;
-      const prevMid = lastMidRef.current;
-      const prevScale = stageScaleRef.current;
-      const prevPos = stagePosRef.current;
+      
+      // Simplified distance calculation
       const dx = t0.clientX - t1.clientX;
       const dy = t0.clientY - t1.clientY;
       const dist = Math.sqrt(dx * dx + dy * dy);
+      
+      // Simplified scale calculation
+      const scaleBy = dist / lastDistRef.current;
+      let newScale = stageScaleRef.current * scaleBy;
+      newScale = clamp(newScale, minScale, 4);
+      
+      // Simplified position calculation
       const mid = {
         x: (t0.clientX + t1.clientX) / 2,
         y: (t0.clientY + t1.clientY) / 2,
       };
-      const scaleBy = dist / prevDist;
-      let newScale = prevScale * scaleBy;
-      newScale = clamp(newScale, minScale, 4);
+      
       const pointTo = {
-        x: (prevMid.x - prevPos.x) / prevScale,
-        y: (prevMid.y - prevPos.y) / prevScale,
+        x: (lastMidRef.current.x - stagePosRef.current.x) / stageScaleRef.current,
+        y: (lastMidRef.current.y - stagePosRef.current.y) / stageScaleRef.current,
       };
+      
       const newPos = {
         x: mid.x - pointTo.x * newScale,
         y: mid.y - pointTo.y * newScale,
       };
+      
       setStageScale(newScale);
       setStagePos(clampStagePos(newPos, newScale, mapWidth, mapHeight, dimensions.width, dimensions.height));
+      
       lastDistRef.current = dist;
       lastMidRef.current = mid;
     }
-    latestTouchMoveEvent.current = null;
-    rafRef.current = null;
   };
-
-  const handleTouchMove = (e: KonvaEventObject<TouchEvent>) => {
-    latestTouchMoveEvent.current = e;
-    if (rafRef.current === null) {
-      rafRef.current = requestAnimationFrame(processTouchMove);
-    }
-  };
-
-  useEffect(() => {
-    return () => {
-      if (rafRef.current !== null) {
-        cancelAnimationFrame(rafRef.current);
-      }
-    };
-  }, []);
 
   const handleTouchEnd = (e: KonvaEventObject<TouchEvent>) => {
     const touches = e.evt.touches;
