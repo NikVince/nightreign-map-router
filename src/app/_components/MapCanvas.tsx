@@ -738,6 +738,23 @@ const MapCanvas: React.FC<{ iconToggles: IconToggles, layoutNumber?: number }> =
       if (effectiveMapLayout === "the_crater_shifted") {
         filtered = filtered.filter(poi => poi.id !== 88);
       }
+      
+      // Special handling for POI 23 in noklateo layouts - add it if not present
+      if (effectiveMapLayout === "noklateo_shifted") {
+        const poi23Exists = filtered.some(poi => poi.id === 23);
+        if (!poi23Exists) {
+          // Add POI 23 as a Field Boss in noklateo layout
+          const poi23Info = poiMasterList.find(p => p.id === 23);
+          if (poi23Info) {
+            filtered.push({
+              id: 23,
+              x: poi23Info.coordinates[0],
+              y: poi23Info.coordinates[1],
+              poiType: "Field_Bosses",
+            });
+          }
+        }
+      }
 
       // Filter by icon category toggles
       const categoryMap = {
@@ -859,8 +876,13 @@ const MapCanvas: React.FC<{ iconToggles: IconToggles, layoutNumber?: number }> =
       if (id === 159) return; // skip castle
       
       // Apply the same coordinate transformation as used for POI icons
-      const scaledX = ((x - leftBound) / activeWidth) * mapWidth;
-      const scaledY = (y / 1690) * mapHeight;
+      let scaledX = ((x - leftBound) / activeWidth) * mapWidth;
+      let scaledY = (y / 1690) * mapHeight;
+      
+      // Special offset for POI 23 in noklateo layout (40px to the right)
+      if (id === 23 && effectiveMapLayout === "noklateo_shifted") {
+        scaledX += 40;
+      }
       
       // Check for hardcoded titles based on map layout
       let hardcodedTitle: string | undefined;
@@ -1202,8 +1224,13 @@ const MapCanvas: React.FC<{ iconToggles: IconToggles, layoutNumber?: number }> =
                 const leftBound = 507;
                 const activeWidth = 1690;
 
-                  const scaledX = ((x - leftBound) / activeWidth) * mapWidth;
-                  const scaledY = (y / 1690) * mapHeight;
+                let scaledX = ((x - leftBound) / activeWidth) * mapWidth;
+                let scaledY = (y / 1690) * mapHeight;
+                
+                // Special offset for POI 23 in noklateo layout (40px to the right)
+                if (id === 23 && effectiveMapLayout === "noklateo_shifted") {
+                  scaledX += 40;
+                }
 
               // Special handling for POI 159 (central castle) - show text instead of icon
               if (id === 159) {
