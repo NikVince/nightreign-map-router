@@ -654,9 +654,9 @@ const MapCanvas: React.FC<{ iconToggles: IconToggles, layoutNumber?: number }> =
       });
   }, [effectiveMapLayout]);
 
-  // DERIVED STATE: Create a clean, unique list of POIs to render for the current map layout.
-  // This combines both dynamic POIs (from layout files) and fixed POIs (from coordinate files)
-  const poisToRender = useMemo((): RenderedPOI[] => {
+  // OPTIMIZATION: Split heavy POI processing from light icon filtering
+  // Heavy processing: coordinate matching, deduplication, layout-specific filtering
+  const allPOIs = useMemo((): RenderedPOI[] => {
     const allPOIs: RenderedPOI[] = [];
     
     // 1. Add dynamic POIs from layout files (if available)
@@ -760,23 +760,6 @@ const MapCanvas: React.FC<{ iconToggles: IconToggles, layoutNumber?: number }> =
           }
         }
       }
-
-      // Filter by icon category toggles
-      const categoryMap = {
-        sitesOfGrace: "Sites_of_grace",
-        spiritStreams: "Spiritstreams",
-        spiritHawkTrees: "Spectral_Hawk_Trees",
-        scarabs: "Scarabs",
-        buriedTreasures: "Buried_Treasures",
-      };
-      filtered = filtered.filter(poi => {
-        if (poi.poiType === categoryMap.sitesOfGrace && !iconToggles.sitesOfGrace) return false;
-        if (poi.poiType === categoryMap.spiritStreams && !iconToggles.spiritStreams) return false;
-        if (poi.poiType === categoryMap.spiritHawkTrees && !iconToggles.spiritHawkTrees) return false;
-        if (poi.poiType === categoryMap.scarabs && !iconToggles.scarabs) return false;
-        if (poi.poiType === categoryMap.buriedTreasures && !iconToggles.buriedTreasures) return false;
-        return true;
-      });
       
       // Add fixed POIs to the combined list
       allPOIs.push(...filtered);
@@ -835,7 +818,28 @@ const MapCanvas: React.FC<{ iconToggles: IconToggles, layoutNumber?: number }> =
     }
 
     return finalPOIs;
-  }, [poiData, poiMasterList, iconToggles, dynamicPOIData]);
+  }, [poiData, poiMasterList, dynamicPOIData, effectiveMapLayout]);
+
+  // Light filtering: Only filter by icon toggles (fast operation)
+  const poisToRender = useMemo((): RenderedPOI[] => {
+    // Filter by icon category toggles
+    const categoryMap = {
+      sitesOfGrace: "Sites_of_grace",
+      spiritStreams: "Spiritstreams",
+      spiritHawkTrees: "Spectral_Hawk_Trees",
+      scarabs: "Scarabs",
+      buriedTreasures: "Buried_Treasures",
+    };
+    
+    return allPOIs.filter(poi => {
+      if (poi.poiType === categoryMap.sitesOfGrace && !iconToggles.sitesOfGrace) return false;
+      if (poi.poiType === categoryMap.spiritStreams && !iconToggles.spiritStreams) return false;
+      if (poi.poiType === categoryMap.spiritHawkTrees && !iconToggles.spiritHawkTrees) return false;
+      if (poi.poiType === categoryMap.scarabs && !iconToggles.scarabs) return false;
+      if (poi.poiType === categoryMap.buriedTreasures && !iconToggles.buriedTreasures) return false;
+      return true;
+    });
+  }, [allPOIs, iconToggles]);
 
   // Debug logging for poisToRender
   useEffect(() => {
