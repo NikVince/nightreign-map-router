@@ -128,7 +128,7 @@ export const poiRouter = createTRPCRouter({
           const masterPOI = poiId ? masterPOIData.find((poi: any) => poi.id === poiId) : null;
           
           if (masterPOI) {
-            const icon = getIconForPOIWithContext(key, poiValue);
+            const icon = getIconForPOIWithContext(key, poiValue, layoutData["Special Event"]);
             // Only add POI if it has a valid icon (skip Small Camps and other unmapped types)
             if (icon) {
               dynamicPOIs.push({
