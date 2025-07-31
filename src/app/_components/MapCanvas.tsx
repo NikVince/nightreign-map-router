@@ -679,11 +679,35 @@ const MapCanvas: React.FC<{ iconToggles: IconToggles, layoutNumber?: number }> =
       const uniquePois = new Map<string, { id: number; x: number; y: number; poiType: string }>();
       const epsilon = 0.01;
 
-      Object.entries(poiData).forEach(([poiType, coords]) => {
-        // Skip the new POI types that should only appear when specified in layout JSON
-        if (poiType === "Spawn_Locations" || poiType === "Event_Locations" || poiType === "Scale_Bearing_Merchant_Locations" || poiType === "Circle_Locations" || poiType === "Minor_Locations" || poiType === "Major_Locations" || poiType === "Merchants" || poiType === "Smithing_Tables") {
-          return;
-        }
+              Object.entries(poiData).forEach(([poiType, coords]) => {
+          // Skip the new POI types that should only appear when specified in layout JSON
+          if (poiType === "Spawn_Locations" || poiType === "Event_Locations" || poiType === "Scale_Bearing_Merchant_Locations" || poiType === "Circle_Locations" || poiType === "Merchants" || poiType === "Smithing_Tables") {
+            return;
+          }
+          
+          // Special handling for Minor_Locations - only render POI 131 (Church) in crater layouts
+          if (poiType === "Minor_Locations") {
+            if (effectiveMapLayout === "the_crater_shifted") {
+              // Only include POI 131 (Church) from Minor_Locations in crater
+              coords.forEach(([x, y]) => {
+                const poiInfo = poiMasterList.find(
+                  p => Math.abs(p.coordinates[0] - x) < epsilon && Math.abs(p.coordinates[1] - y) < epsilon
+                );
+                if (poiInfo && poiInfo.id === 131) {
+                  const coordKey = `${poiInfo.coordinates[0]},${poiInfo.coordinates[1]}`;
+                  if (!uniquePois.has(coordKey)) {
+                    uniquePois.set(coordKey, {
+                      id: poiInfo.id,
+                      x: poiInfo.coordinates[0],
+                      y: poiInfo.coordinates[1],
+                      poiType: poiType,
+                    });
+                  }
+                }
+              });
+            }
+            return; // Skip other Minor_Locations processing
+          }
 
         coords.forEach(([x, y]) => {
           // Find the canonical POI info from the master list using a tolerance check
@@ -709,6 +733,11 @@ const MapCanvas: React.FC<{ iconToggles: IconToggles, layoutNumber?: number }> =
       // Filter out POIs with id 24, 25, and 26 so they do not appear on the map.
       // IMPORTANT: These should also be ignored by the route algorithm when implemented.
       let filtered = Array.from(uniquePois.values()).filter(poi => ![24, 25, 26].includes(poi.id));
+      
+      // Filter out POI 88 from crater layouts (it should not appear in crater)
+      if (effectiveMapLayout === "the_crater_shifted") {
+        filtered = filtered.filter(poi => poi.id !== 88);
+      }
 
       // Filter by icon category toggles
       const categoryMap = {
@@ -785,6 +814,32 @@ const MapCanvas: React.FC<{ iconToggles: IconToggles, layoutNumber?: number }> =
     const activeWidth = 1690;
     const maxMovementDistance = 48; // Maximum pixels a text can move from its icon center
     
+    // Hardcoded titles for mountaintops field bosses and major locations
+    const mountaintopsHardcodedTitles: Record<number, string> = {
+      140: "Flying Dragon",
+      141: "Mountaintop Ice Dragon",
+      142: "Mountaintop Ice Dragon", 
+      143: "Demi-Human Swordmaster",
+      144: "Giant Crows",
+      145: "Mountaintop Ice Dragon",
+      146: "Demi-Human Swordmaster",
+      147: "Mountaintop Ice Dragon",
+      148: "Snowfield Trolls",
+      149: "Albinauric Archers"
+    };
+    
+    // Hardcoded titles for crater field bosses and special cases
+    const craterHardcodedTitles: Record<number, string> = {
+      132: "Red Wolf",
+      133: "Demi-Human Queen",
+      134: "Fire Prelates",
+      135: "Demi-Human Queen",
+      136: "Magma Wyrm",
+      137: "Fallingstar Beast",
+      138: "Valiant Gargoyle",
+      91: "Flying Dragon" // Special case: POI 91 is Flying Dragon only in crater layouts
+    };
+    
     // Gather all titles (Evergaols, Field Bosses, etc.)
     poisToRender.forEach((poi) => {
       const { id, x, y, poiType, icon } = poi;
@@ -793,6 +848,20 @@ const MapCanvas: React.FC<{ iconToggles: IconToggles, layoutNumber?: number }> =
       // Apply the same coordinate transformation as used for POI icons
       const scaledX = ((x - leftBound) / activeWidth) * mapWidth;
       const scaledY = (y / 1690) * mapHeight;
+      
+      // Check for hardcoded titles based on map layout
+      let hardcodedTitle: string | undefined;
+      
+      if (effectiveMapLayout === "the_mountaintop_shifted" && mountaintopsHardcodedTitles[id]) {
+        hardcodedTitle = mountaintopsHardcodedTitles[id];
+      } else if (effectiveMapLayout === "the_crater_shifted" && craterHardcodedTitles[id]) {
+        hardcodedTitle = craterHardcodedTitles[id];
+      }
+      
+      if (hardcodedTitle) {
+        allTitles.push({ id, x: scaledX, y: scaledY, text: formatBossName(hardcodedTitle), priority: 2 });
+        return; // Skip dynamic title assignment for hardcoded POIs
+      }
       
       // Evergaol
       if ((icon === "Evergaol.png" || poiType === "Evergaols") && dynamicPOIData?.evergaolBosses) {
@@ -1072,7 +1141,23 @@ const MapCanvas: React.FC<{ iconToggles: IconToggles, layoutNumber?: number }> =
               }
 
               // Determine icon based on dynamic data or fallback to poiType
-              const iconFile = icon || POI_TYPE_ICON_MAP[poiType] || POI_TYPE_ICON_MAP.Default;
+              let iconFile = icon || POI_TYPE_ICON_MAP[poiType] || POI_TYPE_ICON_MAP.Default;
+              
+              // Special case for POI 149 (Major Location with Ruins)
+              if (id === 149 && poiType === "Major_Locations") {
+                iconFile = "Ruins.png";
+              }
+              
+              // Special case for POI 131 (Minor Location that should be Church in crater)
+              if (id === 131 && poiType === "Minor_Locations" && effectiveMapLayout === "the_crater_shifted") {
+                iconFile = "Church.png";
+              }
+              
+              // Special case for POI 91 (Flying Dragon only in crater layouts)
+              if (id === 91 && effectiveMapLayout === "the_crater_shifted") {
+                iconFile = "Field_Boss.png";
+              }
+              
               if (!iconFile) return null;
 
               const iconIndex = POI_ICONS.indexOf(iconFile);
