@@ -25,6 +25,22 @@ interface RenderedPOI {
   value?: string;
 }
 
+// Type for pre-calculated POI render data
+interface POIRenderData {
+  id: number;
+  isCastle?: boolean;
+  castleEnemyType?: string;
+  iconFile?: string;
+  img?: HTMLImageElement;
+  displayWidth?: number;
+  displayHeight?: number;
+  scaledX: number;
+  scaledY: number;
+  titlePlacement?: { id: number; x: number; y: number; text: string; priority: number };
+  poiType: string;
+  value?: string;
+}
+
 function getTileGridUrls(mapLayout: string) {
   // 6x6 grid for L0 (surface) tiles
   const rows = 6;
@@ -1107,6 +1123,115 @@ const MapCanvas: React.FC<{ iconToggles: IconToggles, layoutNumber?: number }> =
     return allTitlePlacements.filter(title => visiblePOIIds.has(title.id));
   }, [allTitlePlacements, poisToRender]);
 
+  // OPTIMIZATION: Pre-calculate POI rendering data to avoid recalculations during pan/zoom
+  const poiRenderData = useMemo(() => {
+    return poisToRender.map((poi) => {
+      const { id, x, y, poiType, icon, value } = poi;
+      
+      // Special handling for POI 159 (central castle) - show text instead of icon
+      if (id === 159) {
+        const castleEnemyType = dynamicPOIData?.castleEnemyType;
+        if (!castleEnemyType) return null; // Don't render if no enemy type data
+
+        const leftBound = 507;
+        const activeWidth = 1690;
+        const scaledX = ((x - leftBound) / activeWidth) * mapWidth;
+        const scaledY = (y / 1690) * mapHeight;
+
+        return {
+          id,
+          isCastle: true,
+          castleEnemyType,
+          scaledX,
+          scaledY,
+          poiType,
+          value
+        };
+      }
+      
+      // Determine icon based on dynamic data or fallback to poiType
+      let iconFile = icon || POI_TYPE_ICON_MAP[poiType] || POI_TYPE_ICON_MAP.Default;
+      
+      // Special case for POI 149 (Major Location with Ruins)
+      if (id === 149 && poiType === "Major_Locations") {
+        iconFile = "Ruins.png";
+      }
+      
+      // Special case for POI 131 (Minor Location that should be Church in crater)
+      if (id === 131 && poiType === "Minor_Locations" && effectiveMapLayout === "the_crater_shifted") {
+        iconFile = "Church.png";
+      }
+      
+      // Special case for POI 91 (Flying Dragon only in crater layouts)
+      if (id === 91 && effectiveMapLayout === "the_crater_shifted") {
+        iconFile = "Field_Boss.png";
+      }
+      
+      // Special case for POI 23 (Golden Hippopotamus only in noklateo layouts)
+      if (id === 23 && effectiveMapLayout === "noklateo_shifted") {
+        iconFile = "Field_Boss.png";
+      }
+      
+      // Special case for POI 156 (Lordsworn Captain - Fort icon in rotten woods layouts)
+      if (id === 156 && effectiveMapLayout === "the_rotten_woods_shifted") {
+        iconFile = "Fort.png";
+      }
+      
+      if (!iconFile) return null;
+
+      const iconIndex = POI_ICONS.indexOf(iconFile);
+      const img = iconIndex >= 0 ? poiImages[iconIndex] : poiImages[0];
+      if (!img) return null;
+
+      const size = POI_ICON_SIZES[iconFile] ?? {};
+      
+      let displayWidth = img.width || 32;
+      let displayHeight = img.height || 32;
+      if (size.width && !size.height) {
+        displayWidth = size.width;
+        displayHeight = img ? (img.height / img.width) * size.width : size.width;
+      } else if (!size.width && size.height) {
+        displayHeight = size.height;
+        displayWidth = img ? (img.width / img.height) * size.height : size.height;
+      } else if (size.width && size.height) {
+        displayWidth = size.width;
+        displayHeight = size.height;
+      }
+
+      const leftBound = 507;
+      const activeWidth = 1690;
+
+      let scaledX = ((x - leftBound) / activeWidth) * mapWidth;
+      let scaledY = (y / 1690) * mapHeight;
+      
+      // Special offset for POI 23 in noklateo layout (40px to the right)
+      if (id === 23 && effectiveMapLayout === "noklateo_shifted") {
+        scaledX += 40;
+      }
+      
+      // Special offset for POI 84 (Lake Field Boss) - 20px to the left to avoid overlap
+      if (id === 84) {
+        scaledX -= 20;
+      }
+
+      // Find title placement
+      const titlePlacement = titlePlacements.find(t => t.id === id);
+
+      return {
+        id,
+        iconFile,
+        img,
+        displayWidth,
+        displayHeight,
+        scaledX,
+        scaledY,
+        titlePlacement,
+        poiType,
+        value
+      };
+    }).filter(Boolean);
+  }, [poisToRender, poiImages, mapWidth, mapHeight, effectiveMapLayout, titlePlacements, dynamicPOIData]);
+
   // Debug logging for titlePlacements
   useEffect(() => {
     if (titlePlacements.length > 0) {
@@ -1230,95 +1355,20 @@ const MapCanvas: React.FC<{ iconToggles: IconToggles, layoutNumber?: number }> =
         {/* Landmark Layer */}
         {(showIcons || showNumbers) && (
           <Layer listening={false}>
-            {/* Render every POI from our clean, processed list */}
-            {poisToRender.map((poi) => {
-              const { id, x, y, poiType, icon, value } = poi;
+            {/* OPTIMIZED: Use pre-calculated POI rendering data */}
+            {poiRenderData.map((poiData) => {
+              if (!poiData) return null;
               
-              // Debug logging for Sorcerer's Rise POIs
-              if (icon === "Sorcerer's_Rise.png") {
-                console.log('Rendering Sorcerer\'s Rise POI:', { id, x, y, poiType, icon, value });
-              }
-
-              // Determine icon based on dynamic data or fallback to poiType
-              let iconFile = icon || POI_TYPE_ICON_MAP[poiType] || POI_TYPE_ICON_MAP.Default;
+              const { id, scaledX, scaledY } = poiData;
               
-              // Special case for POI 149 (Major Location with Ruins)
-              if (id === 149 && poiType === "Major_Locations") {
-                iconFile = "Ruins.png";
-              }
-              
-              // Special case for POI 131 (Minor Location that should be Church in crater)
-              if (id === 131 && poiType === "Minor_Locations" && effectiveMapLayout === "the_crater_shifted") {
-                iconFile = "Church.png";
-              }
-              
-              // Special case for POI 91 (Flying Dragon only in crater layouts)
-              if (id === 91 && effectiveMapLayout === "the_crater_shifted") {
-                iconFile = "Field_Boss.png";
-              }
-              
-              // Special case for POI 23 (Golden Hippopotamus only in noklateo layouts)
-              if (id === 23 && effectiveMapLayout === "noklateo_shifted") {
-                iconFile = "Field_Boss.png";
-              }
-              
-              // Special case for POI 156 (Lordsworn Captain - Fort icon in rotten woods layouts)
-              if (id === 156 && effectiveMapLayout === "the_rotten_woods_shifted") {
-                iconFile = "Fort.png";
-              }
-              
-              if (!iconFile) return null;
-
-              const iconIndex = POI_ICONS.indexOf(iconFile);
-              const img = iconIndex >= 0 ? poiImages[iconIndex] : poiImages[0];
-              if (!img) return null;
-
-              const size = POI_ICON_SIZES[iconFile] ?? {};
-              
-              let displayWidth = img.width || 32;
-              let displayHeight = img.height || 32;
-                if (size.width && !size.height) {
-                  displayWidth = size.width;
-                  displayHeight = img ? (img.height / img.width) * size.width : size.width;
-                } else if (!size.width && size.height) {
-                  displayHeight = size.height;
-                  displayWidth = img ? (img.width / img.height) * size.height : size.height;
-                } else if (size.width && size.height) {
-                  displayWidth = size.width;
-                  displayHeight = size.height;
-                }
-
-                const leftBound = 507;
-                const activeWidth = 1690;
-
-                let scaledX = ((x - leftBound) / activeWidth) * mapWidth;
-                let scaledY = (y / 1690) * mapHeight;
-                
-                // Special offset for POI 23 in noklateo layout (40px to the right)
-                if (id === 23 && effectiveMapLayout === "noklateo_shifted") {
-                  scaledX += 40;
-                }
-                
-                // Special offset for POI 84 (Lake Field Boss) - 20px to the left to avoid overlap
-                if (id === 84) {
-                  scaledX -= 20;
-                }
-
               // Special handling for POI 159 (central castle) - show text instead of icon
-              if (id === 159) {
-                const castleEnemyType = dynamicPOIData?.castleEnemyType;
-                if (!castleEnemyType) return null; // Don't render if no enemy type data
-
-                const leftBound = 507;
-                const activeWidth = 1690;
-                const scaledX = ((x - leftBound) / activeWidth) * mapWidth;
-                const scaledY = (y / 1690) * mapHeight;
-
+              if ('isCastle' in poiData && poiData.isCastle) {
+                const { castleEnemyType } = poiData;
                 return (
                   <React.Fragment key={id}>
                     {showIcons && (
                       <KonvaText
-                        text={formatBossName(castleEnemyType)}
+                        text={formatBossName(castleEnemyType!)}
                         x={scaledX}
                         y={scaledY}
                         fontSize={21}
@@ -1370,8 +1420,9 @@ const MapCanvas: React.FC<{ iconToggles: IconToggles, layoutNumber?: number }> =
                 );
               }
 
-              // Overlay boss name on Evergaol and Field Boss icons using precomputed positions
-              const titlePlacement = titlePlacements.find(t => t.id === id);
+              // Regular POI rendering
+              const { img, displayWidth, displayHeight, titlePlacement } = poiData;
+              if (!img) return null;
 
               return (
                 <React.Fragment key={id}>
@@ -1379,10 +1430,10 @@ const MapCanvas: React.FC<{ iconToggles: IconToggles, layoutNumber?: number }> =
                     <>
                       <KonvaImage
                         image={img}
-                        x={scaledX - displayWidth / 2}
-                        y={scaledY - displayHeight / 2}
-                        width={displayWidth}
-                        height={displayHeight}
+                        x={scaledX - displayWidth! / 2}
+                        y={scaledY - displayHeight! / 2}
+                        width={displayWidth!}
+                        height={displayHeight!}
                       />
                       {showTitles && titlePlacement && (
                         <TextOverlay

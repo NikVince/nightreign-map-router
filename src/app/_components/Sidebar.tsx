@@ -27,7 +27,9 @@ export function Sidebar({ isOpen, onClose, iconToggles, onToggleChange, layoutNu
   return (
     <aside className="elden-panel flex flex-col h-full flex-1 p-6 bg-[var(--elden-background)]" style={{ fontFamily: "var(--elden-ui-font)" }}>
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xl" style={{ color: "var(--elden-accent)" }}>Objectives</h2>
+        <h2 className="text-xl" style={{ color: "var(--elden-accent)" }}>
+          {layoutData?.Nightlord ? `Target: ${layoutData.Nightlord}` : "Objectives"}
+        </h2>
         {onClose && (
           <button className="elden-button px-2 py-1 text-sm sm:hidden" onClick={onClose} aria-label="Close objectives">
             ✕
