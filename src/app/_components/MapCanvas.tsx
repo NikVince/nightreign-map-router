@@ -510,7 +510,7 @@ const MapCanvas: React.FC<{ iconToggles: IconToggles, layoutNumber?: number }> =
     return words.slice(0, midPoint).join(' ') + '\n' + words.slice(midPoint).join(' ');
   };
 
-  // Unified text overlay system with collision detection
+  // OPTIMIZED: Simple text overlay without unnecessary useEffect
   const TextOverlay: React.FC<{
     text: string;
     x: number;
@@ -518,48 +518,12 @@ const MapCanvas: React.FC<{ iconToggles: IconToggles, layoutNumber?: number }> =
     priority: number;
     id: string;
   }> = ({ text, x, y, priority, id }) => {
-    const [offsetX, setOffsetX] = useState(0);
-    const [offsetY, setOffsetY] = useState(0);
-    
-    // Calculate text bounds (approximate)
-    const fontSize = 21;
-    const lineHeight = fontSize * 1.2;
-    const lines = text.split('\n').length;
-    const textHeight = lines * lineHeight;
-    const textWidth = Math.max(...text.split('\n').map(line => line.length * fontSize * 0.6)) || 0;
-    
-    // Collision detection and repositioning
-    useEffect(() => {
-      // This is a simplified collision detection
-      // In a full implementation, you'd compare with all other text bounds
-      const baseX = x;
-      const baseY = y;
-      
-      // Try different offset positions in order of preference
-      const offsetPositions = [
-        { x: 0, y: 0 },      // Original position
-        { x: 0, y: -textHeight - 10 }, // Above
-        { x: 0, y: textHeight + 10 },  // Below
-        { x: -textWidth - 10, y: 0 },  // Left
-        { x: textWidth + 10, y: 0 },   // Right
-        { x: -textWidth - 10, y: -textHeight - 10 }, // Top-left
-        { x: textWidth + 10, y: -textHeight - 10 },  // Top-right
-        { x: -textWidth - 10, y: textHeight + 10 },  // Bottom-left
-        { x: textWidth + 10, y: textHeight + 10 },   // Bottom-right
-      ];
-      
-      // For now, use the first position (original)
-      // TODO: Implement full collision detection with other text elements
-      setOffsetX(offsetPositions[0]?.x || 0);
-      setOffsetY(offsetPositions[0]?.y || 0);
-    }, [x, y, textWidth, textHeight]);
-    
     return (
       <KonvaText
         text={text}
-        x={x + offsetX}
-        y={y + offsetY}
-        fontSize={fontSize}
+        x={x}
+        y={y}
+        fontSize={21}
         fontFamily="Arial"
         fill="#000000"
         align="center"
