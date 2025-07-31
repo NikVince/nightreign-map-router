@@ -834,13 +834,21 @@ const MapCanvas: React.FC<{ iconToggles: IconToggles, layoutNumber?: number }> =
         const specialEvent = dynamicPOIData.layoutData["Special Event"];
         if (specialEvent && specialEvent !== "empty") {
           // Extract day and event type from special event string
-          // Format: "Day X Event Type" (e.g., "Day 2 Meteor Strike")
+          // Format: "Day X Event Type" (e.g., "Day 2 Meteor Strike", "Day 2 Frenzy Tower")
           const eventMatch = specialEvent.match(/Day (\d+) (.+)/);
           if (eventMatch) {
             const day = eventMatch[1];
             const eventType = eventMatch[2];
-            const eventText = `Day ${day}\n${eventType}`;
-            allTitles.push({ id, x: scaledX, y: scaledY, text: eventText, priority: 1 }); // Priority 1 for special events
+            
+            // For frenzy towers, they are present from the start, so don't specify day
+            if (eventType === "Frenzy Tower") {
+              const eventText = `Frenzy Tower`;
+              allTitles.push({ id, x: scaledX, y: scaledY, text: eventText, priority: 1 }); // Priority 1 for special events
+            } else {
+              // For meteor strikes, they happen on a specific day
+              const eventText = `Day ${day}\n${eventType}`;
+              allTitles.push({ id, x: scaledX, y: scaledY, text: eventText, priority: 1 }); // Priority 1 for special events
+            }
           }
         }
       }
