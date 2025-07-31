@@ -121,7 +121,7 @@ export const POI_ICON_SIZES: Record<string, { width?: number; height?: number }>
   "Scarab.png": { width: 32 },
   "Ruins.png": { width: 96 },
   // --- New sizes ---
-  "Event.png": { width: 64 },
+  "Event.png": { width: 96 },
   "Night_Location.png": { width: 96 },
   "Scale_Bearing_Merchant.png": { width: 48 },
   // --- Add spawn location icon size ---
@@ -827,6 +827,21 @@ const MapCanvas: React.FC<{ iconToggles: IconToggles, layoutNumber?: number }> =
           allTitles.push({ id, x: scaledX, y: scaledY, text: formatBossName(found.location), priority: 4 }); // Priority 4 for sorcerer's rise
         } else {
           console.log('Sorcerer\'s Rise icon found but no matching data:', { id, icon, sorcerersRiseLocations: dynamicPOIData.sorcerersRiseLocations });
+        }
+      }
+      // Special Events (Meteor Strike, Frenzy Tower, etc.)
+      if (icon === "Event.png" && dynamicPOIData?.layoutData?.["Special Event"]) {
+        const specialEvent = dynamicPOIData.layoutData["Special Event"];
+        if (specialEvent && specialEvent !== "empty") {
+          // Extract day and event type from special event string
+          // Format: "Day X Event Type" (e.g., "Day 2 Meteor Strike")
+          const eventMatch = specialEvent.match(/Day (\d+) (.+)/);
+          if (eventMatch) {
+            const day = eventMatch[1];
+            const eventType = eventMatch[2];
+            const eventText = `Day ${day}\n${eventType}`;
+            allTitles.push({ id, x: scaledX, y: scaledY, text: eventText, priority: 1 }); // Priority 1 for special events
+          }
         }
       }
     });
