@@ -739,6 +739,11 @@ const MapCanvas: React.FC<{ iconToggles: IconToggles, layoutNumber?: number }> =
         filtered = filtered.filter(poi => poi.id !== 88);
       }
       
+      // Filter out POI 92 from rotten woods layouts (it should not appear in rotten woods)
+      if (effectiveMapLayout === "the_rotten_woods_shifted") {
+        filtered = filtered.filter(poi => poi.id !== 92);
+      }
+      
       // Special handling for POI 23 in noklateo layouts - add it if not present
       if (effectiveMapLayout === "noklateo_shifted") {
         const poi23Exists = filtered.some(poi => poi.id === 23);
@@ -787,7 +792,49 @@ const MapCanvas: React.FC<{ iconToggles: IconToggles, layoutNumber?: number }> =
       }
     });
 
-    return Array.from(uniquePOIs.values());
+    let finalPOIs = Array.from(uniquePOIs.values());
+    
+    // 4. Filter out "Putrid Ancestral Followers" from field bosses in rotten woods layout
+    if (effectiveMapLayout === "the_rotten_woods_shifted" && dynamicPOIData?.fieldBosses) {
+      finalPOIs = finalPOIs.filter(poi => {
+        // Check if this POI is a field boss
+        if (poi.poiType === "Field_Bosses" || poi.icon === "Field_Boss.png") {
+          // Look up the field boss data for this POI
+          const fieldBossData = dynamicPOIData.fieldBosses.find((b: { id: number; boss: string }) => b.id === poi.id);
+          // If the boss is "Putrid Ancestral Followers", filter it out
+          if (fieldBossData && fieldBossData.boss === "Putrid Ancestral Followers") {
+            return false;
+          }
+        }
+        return true;
+      });
+    }
+    
+    // 5. Filter Rot Blessing POIs (164, 165, 166) - only render the one specified in layout data
+    if (effectiveMapLayout === "the_rotten_woods_shifted" && dynamicPOIData?.layoutData?.["Rot Blessing"]) {
+      const rotBlessingLocation = dynamicPOIData.layoutData["Rot Blessing"];
+      
+      // Map location names to POI IDs
+      const rotBlessingPOIMap: Record<string, number> = {
+        "Southwest": 164,
+        "Northeast": 165, 
+        "West": 166
+      };
+      
+      const targetPOIId = rotBlessingPOIMap[rotBlessingLocation];
+      
+      if (targetPOIId) {
+        // Only keep the POI that matches the Rot Blessing location
+        finalPOIs = finalPOIs.filter(poi => {
+          if ([164, 165, 166].includes(poi.id)) {
+            return poi.id === targetPOIId;
+          }
+          return true; // Keep all other POIs
+        });
+      }
+    }
+
+    return finalPOIs;
   }, [poiData, poiMasterList, iconToggles, dynamicPOIData]);
 
   // Debug logging for poisToRender
@@ -870,6 +917,11 @@ const MapCanvas: React.FC<{ iconToggles: IconToggles, layoutNumber?: number }> =
       23: "Golden Hippopotamus" // Only in noklateo_shifted
     };
     
+    // Hardcoded titles for rotten woods special cases
+    const rottenWoodsHardcodedTitles: Record<number, string> = {
+      156: "Lordsworn Captain" // Fixed title in rotten woods layouts
+    };
+    
     // Gather all titles (Evergaols, Field Bosses, etc.)
     poisToRender.forEach((poi) => {
       const { id, x, y, poiType, icon } = poi;
@@ -893,6 +945,8 @@ const MapCanvas: React.FC<{ iconToggles: IconToggles, layoutNumber?: number }> =
         hardcodedTitle = craterHardcodedTitles[id];
       } else if (effectiveMapLayout === "noklateo_shifted" && noklateoHardcodedTitles[id]) {
         hardcodedTitle = noklateoHardcodedTitles[id];
+      } else if (effectiveMapLayout === "the_rotten_woods_shifted" && rottenWoodsHardcodedTitles[id]) {
+        hardcodedTitle = rottenWoodsHardcodedTitles[id];
       }
       
       if (hardcodedTitle) {
@@ -1198,6 +1252,11 @@ const MapCanvas: React.FC<{ iconToggles: IconToggles, layoutNumber?: number }> =
               // Special case for POI 23 (Golden Hippopotamus only in noklateo layouts)
               if (id === 23 && effectiveMapLayout === "noklateo_shifted") {
                 iconFile = "Field_Boss.png";
+              }
+              
+              // Special case for POI 156 (Lordsworn Captain - Fort icon in rotten woods layouts)
+              if (id === 156 && effectiveMapLayout === "the_rotten_woods_shifted") {
+                iconFile = "Fort.png";
               }
               
               if (!iconFile) return null;
