@@ -861,8 +861,9 @@ const MapCanvas: React.FC<{ iconToggles: IconToggles, layoutNumber?: number }> =
     };
   }
 
-  // Precompute all POI title positions (except castle)
-  const titlePlacements = useMemo(() => {
+  // OPTIMIZATION: Split title collision detection from icon filtering
+  // Heavy processing: title generation and collision detection (runs only when POI data changes)
+  const allTitlePlacements = useMemo(() => {
     if (!showTitles) return [];
     const placed: { id: number, x: number, y: number, text: string, priority: number }[] = [];
     const allTitles: { id: number, x: number, y: number, text: string, priority: number }[] = [];
@@ -917,7 +918,8 @@ const MapCanvas: React.FC<{ iconToggles: IconToggles, layoutNumber?: number }> =
     };
     
     // Gather all titles (Evergaols, Field Bosses, etc.)
-    poisToRender.forEach((poi) => {
+    // Use allPOIs instead of poisToRender to avoid icon toggle dependencies
+    allPOIs.forEach((poi) => {
       const { id, x, y, poiType, icon } = poi;
       if (id === 159) return; // skip castle
       
@@ -1096,7 +1098,14 @@ const MapCanvas: React.FC<{ iconToggles: IconToggles, layoutNumber?: number }> =
     }
     
     return placed;
-  }, [poisToRender, dynamicPOIData, showTitles]);
+  }, [allPOIs, dynamicPOIData, showTitles, mapWidth, mapHeight, effectiveMapLayout]);
+
+  // Light filtering: Only filter titles by visible POIs (fast operation)
+  const titlePlacements = useMemo(() => {
+    // Only show titles for POIs that are currently visible (filtered by icon toggles)
+    const visiblePOIIds = new Set(poisToRender.map(poi => poi.id));
+    return allTitlePlacements.filter(title => visiblePOIIds.has(title.id));
+  }, [allTitlePlacements, poisToRender]);
 
   // Debug logging for titlePlacements
   useEffect(() => {
