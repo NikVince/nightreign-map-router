@@ -243,6 +243,30 @@ export const poiRouter = createTRPCRouter({
           });
         }
       }
+
+      // 5. Frenzy Tower
+      if (layoutData["Frenzy Tower"] && layoutData["Frenzy Tower"] !== "empty") {
+        const frenzyTowerLocation = layoutData["Frenzy Tower"];
+        // Map frenzy tower locations to POI IDs
+        const frenzyTowerMapping: { [key: string]: number } = {
+          "South": 196, // Frenzy Tower South
+          "North": 199,  // Frenzy Tower North
+        };
+        
+        const poiId = frenzyTowerMapping[frenzyTowerLocation];
+        const masterPOI = poiId ? masterPOIData.find((poi: any) => poi.id === poiId) : null;
+        
+        if (masterPOI) {
+          dynamicPOIs.push({
+            id: masterPOI.id,
+            coordinates: masterPOI.coordinates,
+            location: frenzyTowerLocation,
+            value: "Frenzy Tower",
+            icon: "Event.png",
+            type: "Frenzy Tower",
+          });
+        }
+      }
       
       const shiftingEarth = layoutData["Shifting Earth"] || "Default";
       const mapLayout = getMapLayoutFromShiftingEarth(shiftingEarth);
