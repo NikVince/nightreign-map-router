@@ -840,6 +840,19 @@ const MapCanvas: React.FC<{ iconToggles: IconToggles, layoutNumber?: number }> =
       91: "Flying Dragon" // Special case: POI 91 is Flying Dragon only in crater layouts
     };
     
+    // Hardcoded titles for noklateo field bosses and special cases
+    const noklateoHardcodedTitles: Record<number, string> = {
+      123: "Royal Carian Knight",
+      124: "Flying Dragon",
+      125: "Black Knife Assassin",
+      126: "Headless Troll",
+      127: "Dragonkin Soldier",
+      128: "Royal Revenant",
+      129: "Black Knife Assassin",
+      130: "Astel",
+      23: "Golden Hippopotamus" // Only in noklateo_shifted
+    };
+    
     // Gather all titles (Evergaols, Field Bosses, etc.)
     poisToRender.forEach((poi) => {
       const { id, x, y, poiType, icon } = poi;
@@ -856,6 +869,8 @@ const MapCanvas: React.FC<{ iconToggles: IconToggles, layoutNumber?: number }> =
         hardcodedTitle = mountaintopsHardcodedTitles[id];
       } else if (effectiveMapLayout === "the_crater_shifted" && craterHardcodedTitles[id]) {
         hardcodedTitle = craterHardcodedTitles[id];
+      } else if (effectiveMapLayout === "noklateo_shifted" && noklateoHardcodedTitles[id]) {
+        hardcodedTitle = noklateoHardcodedTitles[id];
       }
       
       if (hardcodedTitle) {
@@ -1155,6 +1170,11 @@ const MapCanvas: React.FC<{ iconToggles: IconToggles, layoutNumber?: number }> =
               
               // Special case for POI 91 (Flying Dragon only in crater layouts)
               if (id === 91 && effectiveMapLayout === "the_crater_shifted") {
+                iconFile = "Field_Boss.png";
+              }
+              
+              // Special case for POI 23 (Golden Hippopotamus only in noklateo layouts)
+              if (id === 23 && effectiveMapLayout === "noklateo_shifted") {
                 iconFile = "Field_Boss.png";
               }
               
