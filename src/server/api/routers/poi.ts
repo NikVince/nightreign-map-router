@@ -4,7 +4,7 @@ import { LandmarkType } from "@prisma/client";
 import fs from "fs";
 import path from "path";
 import { getIconForPOIValue, getIconForPOIWithContext, shouldShowPOI } from "~/utils/poiIconMapping";
-import { getPOIIdForLocation, getPOIIdForLocationWithContext } from "~/utils/poiLocationMapping";
+import { getPOIIdForLocation, getPOIIdForLocationWithContext, getPOIIdForSpawnLocation } from "~/utils/poiLocationMapping";
 
 // Helper function to map "Shifting Earth" values to map tile directories
 function getMapLayoutFromShiftingEarth(shiftingEarth: string): string {
@@ -169,7 +169,7 @@ export const poiRouter = createTRPCRouter({
       // 1. Spawn Point
       if (layoutData["Spawn Point"] && layoutData["Spawn Point"] !== "empty") {
         const spawnLocation = layoutData["Spawn Point"];
-        const poiId = getPOIIdForLocation(spawnLocation);
+        const poiId = getPOIIdForSpawnLocation(spawnLocation);
         const masterPOI = poiId ? masterPOIData.find((poi: any) => poi.id === poiId) : null;
         
         if (masterPOI) {

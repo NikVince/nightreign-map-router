@@ -144,3 +144,21 @@ export function getPOIIdsForLocations(locations: string[]): number[] {
     .map(location => getPOIIdForLocation(location))
     .filter((id): id is number => id !== null);
 } 
+
+// Function to get POI ID for a spawn point location
+export function getPOIIdForSpawnLocation(location: string): number | null {
+  // Special mapping for spawn points - they use different POI IDs than regular locations
+  const spawnPointMapping: { [key: string]: number } = {
+    "Above Stormhill Tunnel Entrance": 202,
+    "Below Summonwater Hawk": 204,
+    "East of Cavalry Bridge": 201,
+    "Far Southwest": 207,
+    "Minor Erdtree": 206, // Spawn Point Minor Erdtree
+    "Northeast of Saintsbridge": 208,
+    "Southeast of Lake": 205,
+    "Stormhill South of Gate": 203,
+    "West of Warmaster's Shack": 209,
+  };
+  
+  return spawnPointMapping[location] || null;
+} 
