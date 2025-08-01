@@ -180,7 +180,6 @@ const MapCanvas: React.FC<{ iconToggles: IconToggles, layoutNumber?: number }> =
   const containerRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<KonvaStageType>(null);
   const [dimensions, setDimensions] = useState({ width: 300, height: 300 });
-  const [images, setImages] = useState<(HTMLImageElement | null)[][]>([]);
   const [tileSize, setTileSize] = useState<{ width: number; height: number }>({ width: 0, height: 0 });
   const [stageScale, setStageScale] = useState(1);
   const [stagePos, setStagePos] = useState({ x: 0, y: 0 });
@@ -420,55 +419,78 @@ const MapCanvas: React.FC<{ iconToggles: IconToggles, layoutNumber?: number }> =
     Konva.pixelRatio = 1; // For better performance on retina
   }, []);
 
-  // Individual useImage calls for each POI icon (must be at top level, not in a loop)
-  const missionObjectiveImg = useImage("/POI_icons/Mission_Objective.png")[0];
-  const mainEncampmentImg = useImage("/POI_icons/Main_Encampment.png")[0];
-  const greatChurchImg = useImage("/POI_icons/Great_Church.png")[0];
-  const fortImg = useImage("/POI_icons/Fort.png")[0];
-  const fieldBossImg = useImage("/POI_icons/Field_Boss.png")[0];
-  const evergaolImg = useImage("/POI_icons/Evergaol.png")[0];
-  const churchImg = useImage("/POI_icons/Church.png")[0];
-  const castleImg = useImage("/POI_icons/Castle.png")[0];
-  const buriedTreasureImg = useImage("/POI_icons/Buried_Treasure.png")[0];
-  const tunnelEntranceImg = useImage("/POI_icons/Tunnel_Entrance.png")[0];
-  const townshipImg = useImage("/POI_icons/Township.png")[0];
-  const spiritstreamImg = useImage("/POI_icons/Spiritstream.png")[0];
-  const spectralHawkTreeImg = useImage("/POI_icons/Spectral_Hawk_Tree.png")[0];
-  const sorcerersRiseImg = useImage("/POI_icons/Sorcerer's_Rise.png")[0];
-  const siteOfGraceImg = useImage("/POI_icons/Site_of_Grace.png")[0];
-  const scarabImg = useImage("/POI_icons/Scarab.png")[0];
-  const ruinsImg = useImage("/POI_icons/Ruins.png")[0];
-  const eventImg = useImage("/POI_icons/Event.png")[0];
-  const nightLocationImg = useImage("/POI_icons/Night_Location.png")[0];
-  const scaleBearingMerchantImg = useImage("/POI_icons/Scale_Bearing_Merchant.png")[0];
-  // --- Add spawn location image ---
-  const spawnLocationImg = useImage("/POI_icons/Spawn_Location.png")[0];
+  // OPTIMIZATION: Centralized image preloading system
+  const [poiImages, setPoiImages] = useState<(HTMLImageElement | null)[]>([]);
+  const [imagesLoaded, setImagesLoaded] = useState(false);
+  const [images, setImages] = useState<(HTMLImageElement | null)[][]>([]);
 
-  // Assemble in the same order as POI_ICONS
-  const poiImages = [
-    missionObjectiveImg,
-    mainEncampmentImg,
-    greatChurchImg,
-    fortImg,
-    fieldBossImg,
-    evergaolImg,
-    churchImg,
-    castleImg,
-    buriedTreasureImg,
-    tunnelEntranceImg,
-    townshipImg,
-    spiritstreamImg,
-    spectralHawkTreeImg,
-    sorcerersRiseImg,
-    siteOfGraceImg,
-    scarabImg,
-    ruinsImg,
-    eventImg,
-    nightLocationImg,
-    scaleBearingMerchantImg,
-    // --- Add spawn location image to array ---
-    spawnLocationImg,
-  ];
+  // Preload all POI icons once at startup
+  useEffect(() => {
+    const imageUrls = [
+      "/POI_icons/Mission_Objective.png",
+      "/POI_icons/Main_Encampment.png",
+      "/POI_icons/Great_Church.png",
+      "/POI_icons/Fort.png",
+      "/POI_icons/Field_Boss.png",
+      "/POI_icons/Evergaol.png",
+      "/POI_icons/Church.png",
+      "/POI_icons/Castle.png",
+      "/POI_icons/Buried_Treasure.png",
+      "/POI_icons/Tunnel_Entrance.png",
+      "/POI_icons/Township.png",
+      "/POI_icons/Spiritstream.png",
+      "/POI_icons/Spectral_Hawk_Tree.png",
+      "/POI_icons/Sorcerer's_Rise.png",
+      "/POI_icons/Site_of_Grace.png",
+      "/POI_icons/Scarab.png",
+      "/POI_icons/Ruins.png",
+      "/POI_icons/Event.png",
+      "/POI_icons/Night_Location.png",
+      "/POI_icons/Scale_Bearing_Merchant.png",
+      "/POI_icons/Spawn_Location.png",
+    ];
+
+    let loadedCount = 0;
+    const totalImages = imageUrls.length;
+    const loadedImages: (HTMLImageElement | null)[] = new Array(totalImages).fill(null);
+
+    const loadImage = (url: string, index: number) => {
+      const img = new Image();
+      img.onload = () => {
+        loadedImages[index] = img;
+        loadedCount++;
+        if (loadedCount === totalImages) {
+          setPoiImages(loadedImages);
+          setImagesLoaded(true);
+        }
+      };
+      img.onerror = () => {
+        console.warn(`Failed to load image: ${url}`);
+        loadedCount++;
+        if (loadedCount === totalImages) {
+          setPoiImages(loadedImages);
+          setImagesLoaded(true);
+        }
+      };
+      img.src = url;
+    };
+
+    // Load all images in parallel
+    imageUrls.forEach((url, index) => {
+      loadImage(url, index);
+    });
+
+    // Cleanup function
+    return () => {
+      // Cleanup loaded images to prevent memory leaks
+      loadedImages.forEach(img => {
+        if (img) {
+          img.onload = null;
+          img.onerror = null;
+        }
+      });
+    };
+  }, []);
 
   // State for loaded POI coordinates
   const [poiData, setPoiData] = useState<POICoordinates | null>(null);
@@ -564,13 +586,13 @@ const MapCanvas: React.FC<{ iconToggles: IconToggles, layoutNumber?: number }> =
             firstImgLoaded = true;
           }
           if (loaded === total) {
-            setImages(imgGrid);
+            setImages(imgGrid); // This line is no longer needed as images are preloaded
           }
         };
         img.onerror = () => {
           loaded++;
           if (loaded === total) {
-            setImages(imgGrid);
+            setImages(imgGrid); // This line is no longer needed as images are preloaded
           }
         };
       });
@@ -1398,6 +1420,7 @@ const MapCanvas: React.FC<{ iconToggles: IconToggles, layoutNumber?: number }> =
                         y={scaledY - displayHeight! / 2}
                         width={displayWidth!}
                         height={displayHeight!}
+                        perfectDrawEnabled={false}
                       />
                       {showTitles && titlePlacement && (
                         <TextOverlay
