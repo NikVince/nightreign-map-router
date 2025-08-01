@@ -189,7 +189,7 @@ const MapCanvas: React.FC<{ iconToggles: IconToggles, layoutNumber?: number }> =
   // Add a toggle for showing all POI titles (except central castle)
   const [showTitles, setShowTitles] = useState(true);
   const [showNumbers, setShowNumbers] = useState(false); // Start with numbers hidden by default
-  const [optimizeTextRendering, setOptimizeTextRendering] = useState(false); // Toggle for text rendering optimization
+  const [optimizeTextRendering, setOptimizeTextRendering] = useState(true); // Toggle for text rendering optimization
 
   // Add refs for scale and position
   const stageScaleRef = useRef(stageScale);
@@ -1022,7 +1022,7 @@ const MapCanvas: React.FC<{ iconToggles: IconToggles, layoutNumber?: number }> =
           console.log('Sorcerer\'s Rise icon found but no matching data:', { id, icon, sorcerersRiseLocations: dynamicPOIData.sorcerersRiseLocations });
         }
       }
-      // Special Events (Meteor Strike, Frenzy Tower, etc.)
+      // Special Events (Meteor Strike, Frenzy Tower, Walking Mausoleum, etc.)
       if (icon === "Event.png" && dynamicPOIData?.layoutData?.["Special Event"]) {
         const specialEvent = dynamicPOIData.layoutData["Special Event"];
         if (specialEvent && specialEvent !== "empty") {
@@ -1040,6 +1040,12 @@ const MapCanvas: React.FC<{ iconToggles: IconToggles, layoutNumber?: number }> =
             } else {
               // For meteor strikes, they happen on a specific day
               const eventText = `Day ${day}\n${eventType}`;
+              allTitles.push({ id, x: scaledX, y: scaledY, text: eventText, priority: 1 }); // Priority 1 for special events
+            }
+          } else {
+            // Handle events without day prefix (like Walking Mausoleum)
+            if (specialEvent === "Walking Mausoleum") {
+              const eventText = `Walking Mausoleum`;
               allTitles.push({ id, x: scaledX, y: scaledY, text: eventText, priority: 1 }); // Priority 1 for special events
             }
           }

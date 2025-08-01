@@ -161,15 +161,16 @@ export function getIconForPOIWithContext(key: string, value: string, specialEven
     }
   }
   
-  // Special handling for meteor strikes and frenzy towers
+  // Special handling for meteor strikes, frenzy towers, and walking mausoleum
   if (specialEvent) {
-    // Check if this is a meteor strike or frenzy tower event
+    // Check if this is a meteor strike, frenzy tower, or walking mausoleum event
     const isMeteorStrike = specialEvent.includes("Meteor Strike");
     const isFrenzyTower = specialEvent.includes("Frenzy Tower");
+    const isWalkingMausoleum = specialEvent.includes("Walking Mausoleum");
     
-    // If this is a Map Event POI and we have a meteor strike event,
+    // If this is a Map Event POI and we have a meteor strike or walking mausoleum event,
     // override the icon to Event.png
-    if (isMeteorStrike && value.startsWith("Map Event -")) {
+    if ((isMeteorStrike || isWalkingMausoleum) && value.startsWith("Map Event -")) {
       return "Event.png";
     }
     
