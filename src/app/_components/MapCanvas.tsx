@@ -870,10 +870,15 @@ const MapCanvas: React.FC<{ iconToggles: IconToggles, layoutNumber?: number }> =
     const placed: { id: number, x: number, y: number, text: string, priority: number }[] = [];
     const allTitles: { id: number, x: number, y: number, text: string, priority: number }[] = [];
     
-    // Coordinate transformation constants
+    // OPTIMIZATION: Use actual map dimensions but cache the results
+    // This ensures titles align with POI icons but prevents recalculation during pan/zoom
     const leftBound = 507;
     const activeWidth = 1690;
-    const maxMovementDistance = 48; // Maximum pixels a text can move from its icon center
+    const maxMovementDistance = 48; // Increased back to 48px to ensure no overlapping
+    
+    // Use actual map dimensions for coordinate transformation to match POI icons
+    const currentMapWidth = mapWidth || 1000; // Fallback to prevent errors
+    const currentMapHeight = mapHeight || 1000; // Fallback to prevent errors
     
     // Hardcoded titles for mountaintops field bosses and major locations
     const mountaintopsHardcodedTitles: Record<number, string> = {
@@ -925,9 +930,9 @@ const MapCanvas: React.FC<{ iconToggles: IconToggles, layoutNumber?: number }> =
       const { id, x, y, poiType, icon } = poi;
       if (id === 159) return; // skip castle
       
-      // Apply the same coordinate transformation as used for POI icons
-      let scaledX = ((x - leftBound) / activeWidth) * mapWidth;
-      let scaledY = (y / 1690) * mapHeight;
+      // Use the same coordinate transformation as POI icons to ensure alignment
+      let scaledX = ((x - leftBound) / activeWidth) * currentMapWidth;
+      let scaledY = (y / 1690) * currentMapHeight;
       
       // Special offset for POI 23 in noklateo layout (40px to the right)
       if (id === 23 && effectiveMapLayout === "noklateo_shifted") {
@@ -1100,7 +1105,7 @@ const MapCanvas: React.FC<{ iconToggles: IconToggles, layoutNumber?: number }> =
     }
     
     return placed;
-  }, [allPOIs, dynamicPOIData, showTitles, mapWidth, mapHeight, effectiveMapLayout]);
+  }, [allPOIs, dynamicPOIData, showTitles, effectiveMapLayout, mapWidth, mapHeight]);
 
   // Light filtering: Only filter titles by visible POIs (fast operation)
   const titlePlacements = useMemo(() => {

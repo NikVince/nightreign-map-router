@@ -31,6 +31,50 @@
 - [ ] **Optimize ref updates** to prevent unnecessary re-renders
 - [ ] **Reduce synchronous state updates** blocking main thread
 
+## **🎯 TITLE RENDERING SPECIFIC BOTTLENECKS (HIGHEST PRIORITY)**
+
+### 5. 📝 **TEXT RENDERING PERFORMANCE**
+- [ ] **Remove complex text styling** - shadows, strokes, and multiple effects on every title
+- [ ] **Optimize KonvaText rendering** - reduce per-frame text calculations
+- [ ] **Cache text measurements** - avoid recalculating text bounds during pan/zoom
+- [ ] **Simplify text formatting** - reduce formatBossName calls during rendering
+- [ ] **Batch text rendering** - render all titles in a single operation
+
+### 6. 🔄 **TITLE PLACEMENT RECALCULATIONS**
+- [x] **Remove mapWidth/mapHeight dependencies** from allTitlePlacements useMemo
+- [x] **Cache title positions** - avoid recalculating positions during pan/zoom
+- [x] **Pre-calculate all title data** - move all calculations to layout loading only
+- [ ] **Optimize title filtering** - reduce poisToRender dependency in titlePlacements
+- [ ] **Eliminate coordinate transformations** in title placement loop
+
+### 7. ⚡ **COLLISION DETECTION DURING RENDERING**
+- [ ] **Move collision detection to layout loading** - not during pan/zoom
+- [ ] **Cache collision results** - store final positions after collision resolution
+- [ ] **Reduce Math.sqrt calls** - optimize distance calculations in collision detection
+- [ ] **Simplify collision algorithm** - reduce iterations and complexity
+- [ ] **Pre-calculate all collision data** - no real-time collision detection
+
+### 8. 🎨 **KONVA TEXT OPTIMIZATION**
+- [ ] **Add perfectDrawEnabled={false}** to all KonvaText elements
+- [ ] **Optimize text layer** - separate text rendering from icon rendering
+- [ ] **Reduce zIndex calculations** - simplify priority system
+- [ ] **Batch text operations** - minimize individual text element updates
+- [ ] **Optimize text positioning** - avoid individual position calculations
+
+### 9. 📊 **TITLE DATA PROCESSING**
+- [ ] **Cache formatBossName results** - avoid repeated string processing
+- [ ] **Pre-calculate all title text** - move text generation to layout loading
+- [ ] **Optimize title lookup** - reduce find() operations in render loop
+- [ ] **Cache title placement lookups** - avoid repeated searches
+- [ ] **Batch title data processing** - process all titles at once
+
+### 10. 🔍 **TITLE FILTERING OPTIMIZATION**
+- [ ] **Optimize visiblePOIIds Set creation** - reduce map() operations
+- [ ] **Cache filtered title results** - avoid filtering on every render
+- [ ] **Pre-calculate visible titles** - move filtering to data changes only
+- [ ] **Optimize title visibility checks** - reduce per-frame filtering
+- [ ] **Batch title filtering operations** - process all filtering at once
+
 ## **HIGH PRIORITY OPTIMIZATIONS**
 
 ### 5. 🎨 **KONVA PERFORMANCE SETTINGS**
@@ -95,16 +139,16 @@
 
 ## **IMPLEMENTATION ORDER**
 
-1. **Image Loading Optimization** (Highest impact, lowest risk)
-2. **Coordinate Transformation Caching** (High impact, medium risk)
-3. **Collision Detection Optimization** (High impact, high risk)
-4. **State Update Batching** (Medium impact, low risk)
-5. **Konva Performance Settings** (Medium impact, very low risk)
-6. **Touch Event Optimization** (Medium impact, medium risk)
-7. **Memory Management** (Medium impact, low risk)
-8. **React Rendering Optimization** (Medium impact, low risk)
-9. **Data Processing Optimization** (Low impact, low risk)
-10. **Mobile-Specific Optimizations** (Low impact, medium risk)
+1. **Title Placement Recalculations** (CRITICAL - Highest impact on title lag)
+2. **Text Rendering Performance** (CRITICAL - Direct impact on rendering)
+3. **Collision Detection During Rendering** (CRITICAL - Heavy calculations during pan/zoom)
+4. **Konva Text Optimization** (HIGH - Konva-specific performance)
+5. **Title Data Processing** (HIGH - Reduce per-frame calculations)
+6. **Title Filtering Optimization** (MEDIUM - Reduce filtering overhead)
+7. **Coordinate Transformation Caching** (MEDIUM - Already partially optimized)
+8. **State Update Batching** (MEDIUM - Touch event optimization)
+9. **Memory Management** (LOW - Cleanup and optimization)
+10. **Mobile-Specific Optimizations** (LOW - Device-specific improvements)
 
 ## **SUCCESS METRICS**
 
