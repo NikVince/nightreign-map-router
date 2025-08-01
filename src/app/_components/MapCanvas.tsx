@@ -189,7 +189,7 @@ const MapCanvas: React.FC<{ iconToggles: IconToggles, layoutNumber?: number }> =
   // Add a toggle for showing all POI titles (except central castle)
   const [showTitles, setShowTitles] = useState(true);
   const [showNumbers, setShowNumbers] = useState(false); // Start with numbers hidden by default
-  const [optimizeTextRendering, setOptimizeTextRendering] = useState(true); // Toggle for text rendering optimization
+  const [optimizeTextRendering, setOptimizeTextRendering] = useState(false); // Toggle for text rendering optimization
 
   // Add refs for scale and position
   const stageScaleRef = useRef(stageScale);
