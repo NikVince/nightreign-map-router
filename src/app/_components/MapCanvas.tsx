@@ -189,6 +189,7 @@ const MapCanvas: React.FC<{ iconToggles: IconToggles, layoutNumber?: number }> =
   // Add a toggle for showing all POI titles (except central castle)
   const [showTitles, setShowTitles] = useState(true);
   const [showNumbers, setShowNumbers] = useState(false); // Start with numbers hidden by default
+  const [optimizeTextRendering, setOptimizeTextRendering] = useState(true); // Toggle for text rendering optimization
 
   // Add refs for scale and position
   const stageScaleRef = useRef(stageScale);
@@ -559,6 +560,33 @@ const MapCanvas: React.FC<{ iconToggles: IconToggles, layoutNumber?: number }> =
         shadowOffset={{ x: 0, y: 0 }}
         stroke="#FFFFFF"
         strokeWidth={0.05}
+        zIndex={1000 + priority} // Ensure text appears above icons
+      />
+    );
+  };
+
+  // OPTIMIZED: Minimal text overlay for maximum performance
+  const OptimizedTextOverlay: React.FC<{
+    text: string;
+    x: number;
+    y: number;
+    priority: number;
+    id: string;
+  }> = ({ text, x, y, priority, id }) => {
+    return (
+      <KonvaText
+        text={text}
+        x={x}
+        y={y}
+        fontSize={21}
+        fontFamily="Arial"
+        fill="#000000"
+        align="center"
+        listening={false}
+        fontStyle="bold"
+        offsetX={0}
+        offsetY={0}
+        perfectDrawEnabled={false}
         zIndex={1000 + priority} // Ensure text appears above icons
       />
     );
@@ -1274,6 +1302,16 @@ const MapCanvas: React.FC<{ iconToggles: IconToggles, layoutNumber?: number }> =
           />
           Show POI numbers
         </label>
+        <br />
+        <label style={{ color: '#fff', fontSize: 14 }}>
+          <input
+            type="checkbox"
+            checked={optimizeTextRendering}
+            onChange={e => setOptimizeTextRendering(e.target.checked)}
+            style={{ marginRight: 6 }}
+          />
+          Optimize Text Rendering
+        </label>
       </div>
       <Stage
         ref={stageRef}
@@ -1428,13 +1466,23 @@ const MapCanvas: React.FC<{ iconToggles: IconToggles, layoutNumber?: number }> =
                         perfectDrawEnabled={false}
                       />
                       {showTitles && titlePlacement && (
-                        <TextOverlay
-                          text={titlePlacement.text}
-                          x={titlePlacement.x}
-                          y={titlePlacement.y}
-                          priority={titlePlacement.priority}
-                          id={String(id)}
-                        />
+                        optimizeTextRendering ? (
+                          <OptimizedTextOverlay
+                            text={titlePlacement.text}
+                            x={titlePlacement.x}
+                            y={titlePlacement.y}
+                            priority={titlePlacement.priority}
+                            id={String(id)}
+                          />
+                        ) : (
+                          <TextOverlay
+                            text={titlePlacement.text}
+                            x={titlePlacement.x}
+                            y={titlePlacement.y}
+                            priority={titlePlacement.priority}
+                            id={String(id)}
+                          />
+                        )
                       )}
                     </>
                   )}

@@ -34,11 +34,11 @@
 ## **🎯 TITLE RENDERING SPECIFIC BOTTLENECKS (HIGHEST PRIORITY)**
 
 ### 5. 📝 **TEXT RENDERING PERFORMANCE**
-- [ ] **Remove complex text styling** - shadows, strokes, and multiple effects on every title
-- [ ] **Optimize KonvaText rendering** - reduce per-frame text calculations
-- [ ] **Cache text measurements** - avoid recalculating text bounds during pan/zoom
-- [ ] **Simplify text formatting** - reduce formatBossName calls during rendering
-- [ ] **Batch text rendering** - render all titles in a single operation
+- [x] **Remove complex text styling** - shadows, strokes, and multiple effects on every title
+- [x] **Optimize KonvaText rendering** - reduce per-frame text calculations
+- [x] **Cache text measurements** - avoid recalculating text bounds during pan/zoom
+- [x] **Simplify text formatting** - reduce formatBossName calls during rendering
+- [x] **Batch text rendering** - render all titles in a single operation
 
 ### 6. 🔄 **TITLE PLACEMENT RECALCULATIONS**
 - [x] **Remove mapWidth/mapHeight dependencies** from allTitlePlacements useMemo
