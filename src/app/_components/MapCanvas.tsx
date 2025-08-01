@@ -189,7 +189,7 @@ const MapCanvas: React.FC<{ iconToggles: IconToggles, layoutNumber?: number }> =
   // Add a toggle for showing all POI titles (except central castle)
   const [showTitles, setShowTitles] = useState(true);
   const [showNumbers, setShowNumbers] = useState(false); // Start with numbers hidden by default
-  const [optimizeTextRendering, setOptimizeTextRendering] = useState(true); // Toggle for text rendering optimization
+  const [optimizeTextRendering, setOptimizeTextRendering] = useState(false); // Toggle for text rendering optimization
 
   // Add refs for scale and position
   const stageScaleRef = useRef(stageScale);
@@ -548,15 +548,15 @@ const MapCanvas: React.FC<{ iconToggles: IconToggles, layoutNumber?: number }> =
         y={y}
         fontSize={21}
         fontFamily="Arial"
-        fill="#000000"
+        fill="#FFFFFF"
         align="center"
         listening={false}
         fontStyle="bold"
         offsetX={0}
         offsetY={0}
         perfectDrawEnabled={false}
-        stroke="#FFFFFF"
-        strokeWidth={0.25}
+        stroke="#000000"
+        strokeWidth={1}
         zIndex={1000 + priority} // Ensure text appears above icons
       />
     );
@@ -1405,15 +1405,15 @@ const MapCanvas: React.FC<{ iconToggles: IconToggles, layoutNumber?: number }> =
                         y={scaledY}
                         fontSize={21}
                         fontFamily="Arial"
-                        fill="#000000"
+                        fill="#FFFFFF"
                         align="center"
                         listening={false}
                         fontStyle="bold"
                         offsetX={0}
                         offsetY={0}
                         perfectDrawEnabled={false}
-                        stroke="#FFFFFF"
-                        strokeWidth={0.25}
+                        stroke="#000000"
+                        strokeWidth={1}
                       />
                     )}
                     {showNumbers && (
