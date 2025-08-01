@@ -554,12 +554,9 @@ const MapCanvas: React.FC<{ iconToggles: IconToggles, layoutNumber?: number }> =
         fontStyle="bold"
         offsetX={0}
         offsetY={0}
-        shadowColor="#FFFFFF"
-        shadowBlur={8}
-        shadowOpacity={1}
-        shadowOffset={{ x: 0, y: 0 }}
+        perfectDrawEnabled={false}
         stroke="#FFFFFF"
-        strokeWidth={0.05}
+        strokeWidth={0.25}
         zIndex={1000 + priority} // Ensure text appears above icons
       />
     );
@@ -1408,12 +1405,9 @@ const MapCanvas: React.FC<{ iconToggles: IconToggles, layoutNumber?: number }> =
                         fontStyle="bold"
                         offsetX={0}
                         offsetY={0}
-                        shadowColor="#FFFFFF"
-                        shadowBlur={8}
-                        shadowOpacity={1}
-                        shadowOffset={{ x: 0, y: 0 }}
+                        perfectDrawEnabled={false}
                         stroke="#FFFFFF"
-                        strokeWidth={0.05}
+                        strokeWidth={0.25}
                       />
                     )}
                     {showNumbers && (
