@@ -466,7 +466,7 @@ const MapCanvas: React.FC<{ iconToggles: IconToggles, layoutNumber?: number }> =
         }
       };
       img.onerror = () => {
-        console.warn(`Failed to load image: ${url}`);
+        // Removed console.warn to prevent Lighthouse hanging
         loadedCount++;
         if (loadedCount === totalImages) {
           setPoiImages(loadedImages);
@@ -512,11 +512,7 @@ const MapCanvas: React.FC<{ iconToggles: IconToggles, layoutNumber?: number }> =
   // Debug logging for dynamic POI data
   useEffect(() => {
     if (dynamicPOIData) {
-      console.log('Dynamic POI data:', {
-        layoutNumber: dynamicPOIData.layoutNumber,
-        sorcerersRiseLocations: dynamicPOIData.sorcerersRiseLocations,
-        dynamicPOIs: dynamicPOIData.dynamicPOIs?.filter(poi => poi.icon === "Sorcerer's_Rise.png")
-      });
+      // Removed console.log to prevent Lighthouse hanging
     }
   }, [dynamicPOIData]);
 
@@ -863,10 +859,9 @@ const MapCanvas: React.FC<{ iconToggles: IconToggles, layoutNumber?: number }> =
     if (poisToRender.length > 0) {
       const sorcerersRisePOIs = poisToRender.filter(poi => poi.icon === "Sorcerer's_Rise.png");
       if (sorcerersRisePOIs.length > 0) {
-        console.log('Sorcerer\'s Rise POIs in poisToRender:', sorcerersRisePOIs);
+        // Removed console.log to prevent Lighthouse hanging
       } else {
-        console.log('No Sorcerer\'s Rise POIs found in poisToRender');
-        console.log('All POIs in poisToRender:', poisToRender.map(poi => ({ id: poi.id, icon: poi.icon, value: poi.value })));
+        // Removed console.log to prevent Lighthouse hanging
       }
     }
   }, [poisToRender]);
@@ -1016,10 +1011,10 @@ const MapCanvas: React.FC<{ iconToggles: IconToggles, layoutNumber?: number }> =
       if (icon === "Sorcerer's_Rise.png" && dynamicPOIData?.sorcerersRiseLocations) {
         const found = dynamicPOIData.sorcerersRiseLocations.find((s: { id: number; location: string }) => s.id === id);
         if (found) {
-          console.log('Found Sorcerer\'s Rise title:', { id, location: found.location, text: formatBossName(found.location) });
+          // Removed console.log to prevent Lighthouse hanging
           allTitles.push({ id, x: scaledX, y: scaledY, text: formatBossName(found.location), priority: 4 }); // Priority 4 for sorcerer's rise
         } else {
-          console.log('Sorcerer\'s Rise icon found but no matching data:', { id, icon, sorcerersRiseLocations: dynamicPOIData.sorcerersRiseLocations });
+          // Removed console.log to prevent Lighthouse hanging
         }
       }
       // Special Events (Meteor Strike, Frenzy Tower, Walking Mausoleum, etc.)
@@ -1262,10 +1257,9 @@ const MapCanvas: React.FC<{ iconToggles: IconToggles, layoutNumber?: number }> =
         return poi?.icon === "Sorcerer's_Rise.png";
       });
       if (sorcerersRiseTitles.length > 0) {
-        console.log('Sorcerer\'s Rise titles in titlePlacements:', sorcerersRiseTitles);
+        // Removed console.log to prevent Lighthouse hanging
       } else {
-        console.log('No Sorcerer\'s Rise titles found in titlePlacements');
-        console.log('All titles in titlePlacements:', titlePlacements);
+        // Removed console.log to prevent Lighthouse hanging
       }
     }
   }, [titlePlacements, poisToRender]);
