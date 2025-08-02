@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { Header } from "./_components/Header";
 import { Sidebar } from "./_components/Sidebar";
+import { type TeamMember } from "./_components/TeamComposition";
 import dynamic from "next/dynamic";
 
 const MainPanel = dynamic(() => import("./_components/MainPanel").then(mod => mod.MainPanel), { ssr: false });
@@ -10,6 +11,11 @@ export default function Home() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isDesktop, setIsDesktop] = useState(false);
   const [layoutNumber, setLayoutNumber] = useState(1);
+
+  // Team composition state
+  const [teamMembers, setTeamMembers] = useState<TeamMember[]>([
+    { id: 1, nightfarer: null }
+  ]);
 
   // Icon category toggles
   const [iconToggles, setIconToggles] = useState({
@@ -64,6 +70,7 @@ export default function Home() {
                 iconToggles={iconToggles}
                 onToggleChange={handleToggleChange}
                 layoutNumber={layoutNumber}
+                onTeamChange={setTeamMembers}
               />
             </div>
             {/* 8px gap between objectives and map */}
@@ -97,6 +104,7 @@ export default function Home() {
                     iconToggles={iconToggles}
                     onToggleChange={handleToggleChange}
                     layoutNumber={layoutNumber}
+                    onTeamChange={setTeamMembers}
                   />
                 </div>
               </>

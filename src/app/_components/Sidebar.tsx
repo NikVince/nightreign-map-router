@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import { api } from "~/trpc/react";
+import { TeamComposition, type TeamMember } from "./TeamComposition";
 
 export type SidebarProps = {
   isOpen: boolean;
@@ -13,10 +14,16 @@ export type SidebarProps = {
   };
   onToggleChange: (key: keyof SidebarProps['iconToggles']) => void;
   layoutNumber?: number;
+  onTeamChange?: (teamMembers: TeamMember[]) => void;
 };
 
-export function Sidebar({ isOpen, onClose, iconToggles, onToggleChange, layoutNumber }: SidebarProps) {
+export function Sidebar({ isOpen, onClose, iconToggles, onToggleChange, layoutNumber, onTeamChange }: SidebarProps) {
   if (!isOpen) return null;
+
+  // State for team composition
+  const [teamMembers, setTeamMembers] = useState<TeamMember[]>([
+    { id: 1, nightfarer: null }
+  ]);
 
   // Fetch layout data if layoutNumber is provided
   const { data: layoutData } = api.poi.getLayout.useQuery(
@@ -36,6 +43,15 @@ export function Sidebar({ isOpen, onClose, iconToggles, onToggleChange, layoutNu
           </button>
         )}
       </div>
+
+      {/* Team Composition */}
+      <TeamComposition 
+        teamMembers={teamMembers}
+        onTeamChange={(updatedTeam) => {
+          setTeamMembers(updatedTeam);
+          onTeamChange?.(updatedTeam);
+        }}
+      />
 
       {/* Layout Information */}
       {layoutData && (
