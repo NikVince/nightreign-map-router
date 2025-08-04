@@ -98,7 +98,7 @@
 - **Elemental Variants**: None
 - **Best Classes**: Ironeye
 
-### Township (Score: 80)
+### Township (Score: 90)
 - **Benefits**: Safe merchant, enhanced inventory, Smithing Stone (2)
 - **Drawbacks**: Runes needed before visiting
 - **Time**: 1-2 minutes
@@ -107,15 +107,22 @@
 - **Best Classes**: All 
 
 ### Field Boss (Score: Variable 30-90)
-- **Benefits**: Highest rune-per-minute potential
-- **Drawbacks**: Highly variable difficulty and time
-- **Time**: 3-15 minutes
-- **Runes**: 15,000-45,000+
-- **Elemental Variants**: Depends on boss type
-- **Best Classes**: THIS IS JUST A PLACEHOLDER, PRECISE INFO WILL BE ADDED
-  - High: Dragons (ranged classes)
-  - Medium: Crucible Knights (all)
-  - Low: Valiant Gargoyles (avoid)
+
+#### Weak Field Bosses (Score: 60-70)
+**Bosses**: Grafted Scion, Black Knife Assassin, Red Wolf of the King Consort, Ancient Hero of Zamor, Leonine Misbegotten, Elder Lion, Golden Hippopotamus, Demi-Human Queen, Miranda Blossom, Royal Revenant, Night's Cavalry
+- **Benefits**: Moderate rune rewards, manageable difficulty
+- **Drawbacks**: Lower rune rewards compared to strong bosses
+- **Time**: 1-3 minutes
+- **Runes**: 8,000-15,000
+- **Best Classes**: All 
+
+#### Strong Field Bosses (Score: 80-90)
+**Bosses**: Flying Dragon of the Hills, Ulcerated Tree Spirit, Bell Bearing Hunter, Erdtree Avatar, Ancestor Spirit, Tree Sentinel, Magma Wyrm, Royal Carian Knight, Death Rite Bird, Black Blade Kindred, Draconic Tree Sentinel
+- **Benefits**: Highest rune-per-minute potential, valuable rewards
+- **Drawbacks**: High difficulty, longer time investment
+- **Time**: 3-4 minutes
+- **Runes**: 20,000-45,000+
+- **Best Classes**: All
 
 ### Shifting Earth Events (Score: 95)
 - **Benefits**: Legendary weapons, unique rewards
