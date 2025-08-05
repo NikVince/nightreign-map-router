@@ -125,12 +125,34 @@
 - **Best Classes**: All
 
 ### Shifting Earth Events (Score: 95)
-- **Benefits**: Legendary weapons, unique rewards
-- **Drawbacks**: Requires high level, massive time investment
+
+#### The Crater (Score: 95)
+- **Benefits**: Legendary weapon upgrade (highest rarity, no level requirements), underground temple access
+- **Drawbacks**: High fire damage, challenging early-game area
+- **Time**: 8-12 minutes
+- **Runes**: ~100,000
+- **Best Classes**: All (requires fire resistance preparation)
+
+#### Mountaintop (Score: 90)
+- **Benefits**: Frostbite enhancement, dragon damage bonus, multiple boss encounters
+- **Drawbacks**: Perilous navigation, few Sites of Grace, environmental hazards
 - **Time**: 10-15 minutes
-- **Runes**: Variable
-- **Elemental Variants**: Event-specific
-- **Best Classes**: All (Day 2)
+- **Runes**: ~100,000
+- **Best Classes**: All (fire damage highly recommended)
+
+#### Rotted Woods (Score: 95)
+- **Benefits**: Favor of the Forest (nullifies scarlet rot, increases max HP), rally mechanic, excellent rune farming
+- **Drawbacks**: Passive Scarlet Rot buildup, hazardous environment
+- **Time**: 8-12 minutes
+- **Runes**: ~100,000
+- **Best Classes**: All (scarlet rot resistance essential)
+
+#### Noklateo, the Shrouded City (Score: 100)
+- **Benefits**: Revival passive (revive once from defeat, temporary empowerment), most powerful bonus in game
+- **Drawbacks**: Most complex navigation, requires significant exploration
+- **Time**: 12-18 minutes
+- **Runes**: ~100,000
+- **Best Classes**: All (requires patience and exploration)
 
 ## Priority Scoring Modifiers
 
