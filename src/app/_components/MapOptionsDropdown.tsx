@@ -9,8 +9,6 @@ interface MapOptionsDropdownProps {
   setShowTitles: (show: boolean) => void;
   showNumbers: boolean;
   setShowNumbers: (show: boolean) => void;
-  onLayoutChange: (layoutNumber: number) => void;
-  currentLayout: number;
   iconToggles: {
     sitesOfGrace: boolean;
     spiritStreams: boolean;
@@ -28,22 +26,11 @@ export const MapOptionsDropdown: React.FC<MapOptionsDropdownProps> = ({
   setShowTitles,
   showNumbers,
   setShowNumbers,
-  onLayoutChange,
-  currentLayout,
   iconToggles,
   onIconToggleChange
 }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [inputValue, setInputValue] = useState(currentLayout.toString());
   const [showDebugOptions, setShowDebugOptions] = useState(false);
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    const layoutNumber = parseInt(inputValue);
-    if (layoutNumber >= 1 && layoutNumber <= 320) {
-      onLayoutChange(layoutNumber);
-    }
-  };
 
   return (
     <div className="absolute top-4 left-4 z-20">
@@ -59,30 +46,6 @@ export const MapOptionsDropdown: React.FC<MapOptionsDropdownProps> = ({
         {isOpen && (
           <div className="absolute top-full left-0 mt-2 p-4 bg-black bg-opacity-90 border border-gray-600 rounded min-w-[280px] backdrop-blur-sm">
             <div className="space-y-4">
-              {/* Layout Section */}
-              <div>
-                <h3 className="text-sm font-semibold text-white mb-2" style={{ color: "var(--elden-accent)" }}>
-                  Layout
-                </h3>
-                <form onSubmit={handleSubmit} className="flex items-center gap-2">
-                  <input
-                    type="number"
-                    min="1"
-                    max="320"
-                    value={inputValue}
-                    onChange={(e) => setInputValue(e.target.value)}
-                    className="flex-1 px-2 py-1 text-sm bg-gray-700 text-white border border-gray-600 rounded"
-                    placeholder="1-320"
-                  />
-                  <button
-                    type="submit"
-                    className="px-3 py-1 text-sm bg-blue-600 text-white border border-blue-500 rounded hover:bg-blue-700"
-                  >
-                    Load
-                  </button>
-                </form>
-              </div>
-
               {/* Icon Categories Section */}
               <div>
                 <h3 className="text-sm font-semibold text-white mb-2" style={{ color: "var(--elden-accent)" }}>

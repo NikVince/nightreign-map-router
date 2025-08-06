@@ -69,6 +69,7 @@ export default function Home() {
                 isOpen={showSidebar}
                 onClose={() => setSidebarOpen(false)}
                 layoutNumber={layoutNumber}
+                onLayoutChange={setLayoutNumber}
                 onTeamChange={setTeamMembers}
               />
             </div>
@@ -80,6 +81,7 @@ export default function Home() {
                 iconToggles={iconToggles} 
                 onLayoutChange={setLayoutNumber}
                 onIconToggleChange={handleToggleChange}
+                layoutNumber={layoutNumber}
               />
             </div>
           </>
@@ -90,6 +92,7 @@ export default function Home() {
               iconToggles={iconToggles} 
               onLayoutChange={setLayoutNumber}
               onIconToggleChange={handleToggleChange}
+              layoutNumber={layoutNumber}
             />
             {sidebarOpen && (
               <>
@@ -109,6 +112,7 @@ export default function Home() {
                     isOpen={sidebarOpen}
                     onClose={() => setSidebarOpen(false)}
                     layoutNumber={layoutNumber}
+                    onLayoutChange={setLayoutNumber}
                     onTeamChange={setTeamMembers}
                   />
                 </div>

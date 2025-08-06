@@ -16,22 +16,17 @@ export type IconToggles = {
 export function MainPanel({ 
   iconToggles, 
   onLayoutChange, 
-  onIconToggleChange 
+  onIconToggleChange,
+  layoutNumber = 1
 }: { 
   iconToggles: IconToggles; 
   onLayoutChange?: (layoutNumber: number) => void;
   onIconToggleChange?: (key: string, value: boolean) => void;
+  layoutNumber?: number;
 }) {
-  const [layoutNumber, setLayoutNumber] = useState(1);
   const [showIcons, setShowIcons] = useState(true);
   const [showTitles, setShowTitles] = useState(true);
   const [showNumbers, setShowNumbers] = useState(false);
-
-  // Update parent when layout changes
-  const handleLayoutChange = (newLayoutNumber: number) => {
-    setLayoutNumber(newLayoutNumber);
-    onLayoutChange?.(newLayoutNumber);
-  };
 
   return (
     <main className="elden-panel flex-1 flex flex-col h-full w-full" style={{ fontFamily: "var(--elden-ui-font)" }}>
@@ -43,8 +38,6 @@ export function MainPanel({
           setShowTitles={setShowTitles}
           showNumbers={showNumbers}
           setShowNumbers={setShowNumbers}
-          onLayoutChange={handleLayoutChange}
-          currentLayout={layoutNumber}
           iconToggles={iconToggles}
           onIconToggleChange={onIconToggleChange || (() => {})}
         />
