@@ -50,8 +50,9 @@ export function Sidebar({ isOpen, onClose, layoutNumber, onLayoutChange, onTeamC
             max="320"
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
-            className="flex-1 px-2 py-1 text-sm bg-gray-700 text-white border border-gray-600 rounded"
+            className="flex-1 px-2 py-1 text-base bg-gray-700 text-white border border-gray-600 rounded"
             placeholder="1-320"
+            style={{ fontSize: '16px' }}
           />
           <button
             type="submit"
