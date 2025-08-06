@@ -178,7 +178,25 @@ const POI_TYPE_ICON_MAP: Record<string, string> = {
   "Spawn_Locations": "Spawn_Location.png",
 };
 
-const MapCanvas: React.FC<{ iconToggles: IconToggles, layoutNumber?: number }> = ({ iconToggles, layoutNumber }) => {
+const MapCanvas: React.FC<{ 
+  iconToggles: IconToggles, 
+  layoutNumber?: number,
+  showIcons?: boolean,
+  setShowIcons?: (show: boolean) => void,
+  showTitles?: boolean,
+  setShowTitles?: (show: boolean) => void,
+  showNumbers?: boolean,
+  setShowNumbers?: (show: boolean) => void
+}> = ({ 
+  iconToggles, 
+  layoutNumber,
+  showIcons = true,
+  setShowIcons = () => {},
+  showTitles = true,
+  setShowTitles = () => {},
+  showNumbers = false,
+  setShowNumbers = () => {}
+}) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<KonvaStageType>(null);
   const [dimensions, setDimensions] = useState({ width: 300, height: 300 });
@@ -187,10 +205,6 @@ const MapCanvas: React.FC<{ iconToggles: IconToggles, layoutNumber?: number }> =
   const [stagePos, setStagePos] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
   const [lastPointerPos, setLastPointerPos] = useState<{ x: number; y: number } | null>(null);
-  const [showIcons, setShowIcons] = useState(true); // Debug toggle for icons layer
-  // Add a toggle for showing all POI titles (except central castle)
-  const [showTitles, setShowTitles] = useState(true);
-  const [showNumbers, setShowNumbers] = useState(false); // Start with numbers hidden by default
   const [optimizeTextRendering, setOptimizeTextRendering] = useState(false); // Toggle for text rendering optimization
 
   // Add refs for scale and position
@@ -1270,49 +1284,7 @@ const MapCanvas: React.FC<{ iconToggles: IconToggles, layoutNumber?: number }> =
 
   return (
     <div ref={containerRef} className="w-full h-full flex-1" style={{ position: 'relative' }}>
-      {/* Debug toggle for icons layer */}
-      <div style={{ position: 'absolute', top: 8, left: 8, zIndex: 20, background: 'rgba(0,0,0,0.7)', padding: '4px 8px', borderRadius: 4 }}>
-        <label style={{ color: '#fff', fontSize: 14 }}>
-          <input
-            type="checkbox"
-            checked={showIcons}
-            onChange={e => setShowIcons(e.target.checked)}
-            style={{ marginRight: 6 }}
-          />
-          Show icons layer
-        </label>
-        <br />
-        {/* Toggle for showing all POI titles */}
-        <label style={{ color: '#fff', fontSize: 14 }}>
-          <input
-            type="checkbox"
-            checked={showTitles}
-            onChange={e => setShowTitles(e.target.checked)}
-            style={{ marginRight: 6 }}
-          />
-          Show POI titles
-        </label>
-        <br />
-        <label style={{ color: '#fff', fontSize: 14 }}>
-          <input
-            type="checkbox"
-            checked={showNumbers}
-            onChange={e => setShowNumbers(e.target.checked)}
-            style={{ marginRight: 6 }}
-          />
-          Show POI numbers
-        </label>
-        <br />
-        <label style={{ color: '#fff', fontSize: 14 }}>
-          <input
-            type="checkbox"
-            checked={optimizeTextRendering}
-            onChange={e => setOptimizeTextRendering(e.target.checked)}
-            style={{ marginRight: 6 }}
-          />
-          Optimize Text Rendering
-        </label>
-      </div>
+
       <Stage
         ref={stageRef}
         width={dimensions.width}

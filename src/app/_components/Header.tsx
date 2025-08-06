@@ -1,6 +1,10 @@
 import React from "react";
 
-export function Header({ onOpenObjectives }: { onOpenObjectives?: () => void }) {
+export function Header({ 
+  onOpenObjectives
+}: { 
+  onOpenObjectives?: () => void;
+}) {
   return (
     <header className="elden-panel w-full flex items-center justify-between px-4 py-3 sm:px-8 sm:py-4 fixed top-0 left-0 z-50" style={{ fontFamily: "var(--elden-title-font)", background: '#141414' }}>
       <div className="flex items-center gap-2">

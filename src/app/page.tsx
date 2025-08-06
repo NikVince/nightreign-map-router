@@ -26,8 +26,8 @@ export default function Home() {
     buriedTreasures: false,
   });
 
-  const handleToggleChange = (key: keyof typeof iconToggles) => {
-    setIconToggles(toggles => ({ ...toggles, [key]: !toggles[key] }));
+  const handleToggleChange = (key: string, value: boolean) => {
+    setIconToggles(toggles => ({ ...toggles, [key]: value }));
   };
 
   useEffect(() => {
@@ -43,7 +43,7 @@ export default function Home() {
 
   return (
     <div className="w-screen bg-[var(--elden-background)] text-[var(--elden-text)] flex flex-col overflow-hidden" style={{ height: '100dvh', minHeight: '100vh' }}>
-      <Header onOpenObjectives={() => setSidebarOpen(true)} />
+              <Header onOpenObjectives={() => setSidebarOpen(true)} />
       <div style={{ height: 8 }} />
       <div
         className="flex flex-row min-h-0 w-full"
@@ -67,8 +67,6 @@ export default function Home() {
               <Sidebar
                 isOpen={showSidebar}
                 onClose={() => setSidebarOpen(false)}
-                iconToggles={iconToggles}
-                onToggleChange={handleToggleChange}
                 layoutNumber={layoutNumber}
                 onTeamChange={setTeamMembers}
               />
@@ -77,13 +75,21 @@ export default function Home() {
             <div style={{ width: 8 }} />
             {/* Map panel, no border */}
             <div className="h-full flex-1 flex flex-col w-full sm:w-3/4 min-h-0">
-              <MainPanel iconToggles={iconToggles} onLayoutChange={setLayoutNumber} />
+              <MainPanel 
+                iconToggles={iconToggles} 
+                onLayoutChange={setLayoutNumber}
+                onIconToggleChange={handleToggleChange}
+              />
             </div>
           </>
         ) : (
           // Mobile: map canvas fills width, objectives overlays as before
           <div className="h-full flex-1 flex flex-col w-full min-h-0">
-            <MainPanel iconToggles={iconToggles} onLayoutChange={setLayoutNumber} />
+            <MainPanel 
+              iconToggles={iconToggles} 
+              onLayoutChange={setLayoutNumber}
+              onIconToggleChange={handleToggleChange}
+            />
             {sidebarOpen && (
               <>
                 {/* Overlay for closing */}
@@ -101,8 +107,6 @@ export default function Home() {
                   <Sidebar
                     isOpen={sidebarOpen}
                     onClose={() => setSidebarOpen(false)}
-                    iconToggles={iconToggles}
-                    onToggleChange={handleToggleChange}
                     layoutNumber={layoutNumber}
                     onTeamChange={setTeamMembers}
                   />
