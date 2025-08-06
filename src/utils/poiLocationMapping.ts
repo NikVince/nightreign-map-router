@@ -184,8 +184,8 @@ export function getPOIIdForNightCircleLocation(location: string): number | null 
     "Noklateo Entrance": 210,
     "Southeast Rotted Woods": 213,
     "Northwest Rotted Woods": 214,
-    "South Lake Night Circle": 215,
-    "South of Castle Night Circle": 216,
+    "South Lake Night Circle": 179,
+    "South of Castle Night Circle": 187,
   };
   
   return nightCircleMapping[location] || null;
