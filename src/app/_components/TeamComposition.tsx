@@ -25,6 +25,12 @@ const NIGHTFARER_OPTIONS: { value: NightfarerClassType; label: string }[] = [
   { value: NightfarerClassType.Revenant, label: "Revenant" },
 ];
 
+// Function to get a random nightfarer
+const getRandomNightfarer = (): NightfarerClassType => {
+  const randomIndex = Math.floor(Math.random() * NIGHTFARER_OPTIONS.length);
+  return NIGHTFARER_OPTIONS[randomIndex].value;
+};
+
 export function TeamComposition({ teamMembers, onTeamChange, onCalculateRoute }: TeamCompositionProps) {
   const handleNightfarerChange = (playerId: number, nightfarer: NightfarerClassType | null) => {
     const updatedTeam = teamMembers.map(member =>
@@ -44,7 +50,7 @@ export function TeamComposition({ teamMembers, onTeamChange, onCalculateRoute }:
     const nextPlayerId = teamMembers.length + 1;
     const newMember: TeamMember = { 
       id: nextPlayerId, 
-      nightfarer: null, 
+      nightfarer: getRandomNightfarer(), 
       startsWithStoneswordKey: false 
     };
     const updatedTeam = [...teamMembers, newMember];
@@ -70,84 +76,104 @@ export function TeamComposition({ teamMembers, onTeamChange, onCalculateRoute }:
           Team Composition: {teamMembers.length} Player{teamMembers.length !== 1 ? 's' : ''}
         </div>
         
-                {/* Player 1 - Always present */}
-        <div className="mb-3 p-3 border border-gray-600 rounded bg-black bg-opacity-50">
-          <div className="mb-2 flex items-center gap-2">
-            <label className="text-sm opacity-80 min-w-[80px]">Player 1:</label>
-            <select
-              value={teamMembers.find(m => m.id === 1)?.nightfarer || ""}
-              onChange={(e) => handleNightfarerChange(1, e.target.value as NightfarerClassType || null)}
-              className="flex-1 px-2 py-1 text-sm bg-gray-700 text-white border border-gray-600 rounded"
-            >
-              <option value="">Choose Nightfarer</option>
-              {NIGHTFARER_OPTIONS.map(option => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className="flex items-center gap-2">
-            {teamMembers.find(m => m.id === 1)?.nightfarer && (
-                              <img
+                        {/* Player 1 - Always present */}
+        <div className="mb-3 p-3 border border-gray-600 rounded bg-black bg-opacity-50 min-w-0">
+          <div className="flex items-center gap-3 h-16">
+            {/* Icon or placeholder */}
+            <div className="w-16 h-16 flex-shrink-0 flex items-center justify-center">
+              {teamMembers.find(m => m.id === 1)?.nightfarer ? (
+                <img
                   src={`/nightfarer_icons/${teamMembers.find(m => m.id === 1)?.nightfarer}_S.png`}
                   alt={`${teamMembers.find(m => m.id === 1)?.nightfarer} icon`}
                   className="w-16 h-16 object-contain"
                 />
-            )}
-            <div className="flex items-center gap-2 ml-auto">
-              <label className="text-xs opacity-80">Starts with Stonesword Key:</label>
-              <input
-                type="checkbox"
-                checked={teamMembers.find(m => m.id === 1)?.startsWithStoneswordKey || false}
-                onChange={(e) => handleStoneswordKeyToggle(1, e.target.checked)}
-                className="w-4 h-4"
-              />
+              ) : (
+                <div className="w-16 h-16 bg-gray-700 border border-gray-600 rounded flex items-center justify-center">
+                  <span className="text-gray-400 text-xs text-center">?</span>
+                </div>
+              )}
+            </div>
+            
+            {/* Dropdown and toggle in same height as icon */}
+            <div className="flex-1 h-full flex flex-col justify-between min-w-0">
+                              <select
+                  value={teamMembers.find(m => m.id === 1)?.nightfarer || ""}
+                  onChange={(e) => handleNightfarerChange(1, e.target.value as NightfarerClassType || null)}
+                  className="w-full px-2 py-1 text-sm bg-gray-700 text-white border border-gray-600 rounded"
+                >
+                  {NIGHTFARER_OPTIONS.map(option => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+              
+                             <div className="flex items-center justify-end gap-2">
+                 <label className="text-xs opacity-80">Starts with Stonesword Key:</label>
+                 <input
+                   type="checkbox"
+                   checked={teamMembers.find(m => m.id === 1)?.startsWithStoneswordKey || false}
+                   onChange={(e) => handleStoneswordKeyToggle(1, e.target.checked)}
+                   className="w-4 h-4"
+                 />
+               </div>
             </div>
           </div>
         </div>
 
         {/* Player 2 - Can be added/removed */}
         {teamMembers.find(m => m.id === 2) ? (
-          <div className="mb-3 p-3 border border-gray-600 rounded bg-black bg-opacity-50">
-            <div className="mb-2 flex items-center gap-2">
-              <label className="text-sm opacity-80 min-w-[80px]">Player 2:</label>
-              <select
-                value={teamMembers.find(m => m.id === 2)?.nightfarer || ""}
-                onChange={(e) => handleNightfarerChange(2, e.target.value as NightfarerClassType || null)}
-                className="flex-1 px-2 py-1 text-sm bg-gray-700 text-white border border-gray-600 rounded"
-              >
-                <option value="">Choose Nightfarer</option>
-                {NIGHTFARER_OPTIONS.map(option => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-              <button
-                onClick={() => removePlayer(2)}
-                className="px-2 py-1 text-xs bg-red-800 text-white border border-red-600 rounded hover:bg-red-700"
-                title="Remove Player 2"
-              >
-                ✕
-              </button>
-            </div>
-            <div className="flex items-center gap-2">
-              {teamMembers.find(m => m.id === 2)?.nightfarer && (
-                <img
-                  src={`/nightfarer_icons/${teamMembers.find(m => m.id === 2)?.nightfarer}_S.png`}
-                  alt={`${teamMembers.find(m => m.id === 2)?.nightfarer} icon`}
-                  className="w-16 h-16 object-contain"
-                />
-              )}
-              <div className="flex items-center gap-2 ml-auto">
-                <label className="text-xs opacity-80">Starts with Stonesword Key:</label>
-                <input
-                  type="checkbox"
-                  checked={teamMembers.find(m => m.id === 2)?.startsWithStoneswordKey || false}
-                  onChange={(e) => handleStoneswordKeyToggle(2, e.target.checked)}
-                  className="w-4 h-4"
-                />
+          <div className="mb-3 p-3 border border-gray-600 rounded bg-black bg-opacity-50 min-w-0">
+            <div className="flex items-center gap-3 h-16">
+              {/* Icon or placeholder */}
+              <div className="w-16 h-16 flex-shrink-0 flex items-center justify-center">
+                {teamMembers.find(m => m.id === 2)?.nightfarer ? (
+                  <img
+                    src={`/nightfarer_icons/${teamMembers.find(m => m.id === 2)?.nightfarer}_S.png`}
+                    alt={`${teamMembers.find(m => m.id === 2)?.nightfarer} icon`}
+                    className="w-16 h-16 object-contain"
+                  />
+                ) : (
+                  <div className="w-16 h-16 bg-gray-700 border border-gray-600 rounded flex items-center justify-center">
+                    <span className="text-gray-400 text-xs text-center">?</span>
+                  </div>
+                )}
+              </div>
+              
+              {/* Dropdown and toggle in same height as icon */}
+              <div className="flex-1 h-full flex flex-col justify-between min-w-0">
+                <div className="flex items-center gap-3">
+                  <select
+                    value={teamMembers.find(m => m.id === 2)?.nightfarer || ""}
+                    onChange={(e) => handleNightfarerChange(2, e.target.value as NightfarerClassType || null)}
+                    className="flex-1 px-2 py-1 text-sm bg-gray-700 text-white border border-gray-600 rounded"
+                  >
+                    {NIGHTFARER_OPTIONS.map(option => (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
+                    ))}
+                  </select>
+                  
+                  {/* Remove button aligned with dropdown */}
+                  <button
+                    onClick={() => removePlayer(2)}
+                    className="px-2 py-1 text-xs bg-red-800 text-white border border-red-600 rounded hover:bg-red-700 flex-shrink-0"
+                    title="Remove Player 2"
+                  >
+                    ✕
+                  </button>
+                </div>
+                
+                <div className="flex items-center justify-end gap-2">
+                  <label className="text-xs opacity-80">Starts with Stonesword Key:</label>
+                  <input
+                    type="checkbox"
+                    checked={teamMembers.find(m => m.id === 2)?.startsWithStoneswordKey || false}
+                    onChange={(e) => handleStoneswordKeyToggle(2, e.target.checked)}
+                    className="w-4 h-4"
+                  />
+                </div>
               </div>
             </div>
           </div>
@@ -155,45 +181,57 @@ export function TeamComposition({ teamMembers, onTeamChange, onCalculateRoute }:
 
         {/* Player 3 - Can be added/removed */}
         {teamMembers.find(m => m.id === 3) ? (
-          <div className="mb-3 p-3 border border-gray-600 rounded bg-black bg-opacity-50">
-            <div className="mb-2 flex items-center gap-2">
-              <label className="text-sm opacity-80 min-w-[80px]">Player 3:</label>
-              <select
-                value={teamMembers.find(m => m.id === 3)?.nightfarer || ""}
-                onChange={(e) => handleNightfarerChange(3, e.target.value as NightfarerClassType || null)}
-                className="flex-1 px-2 py-1 text-sm bg-gray-700 text-white border border-gray-600 rounded"
-              >
-                <option value="">Choose Nightfarer</option>
-                {NIGHTFARER_OPTIONS.map(option => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-              <button
-                onClick={() => removePlayer(3)}
-                className="px-2 py-1 text-xs bg-red-800 text-white border border-red-600 rounded hover:bg-red-700"
-                title="Remove Player 3"
-              >
-                ✕
-              </button>
-            </div>
-            <div className="flex items-center gap-2">
-              {teamMembers.find(m => m.id === 3)?.nightfarer && (
-                <img
-                  src={`/nightfarer_icons/${teamMembers.find(m => m.id === 3)?.nightfarer}_S.png`}
-                  alt={`${teamMembers.find(m => m.id === 3)?.nightfarer} icon`}
-                  className="w-16 h-16 object-contain"
-                />
-              )}
-              <div className="flex items-center gap-2 ml-auto">
-                <label className="text-xs opacity-80">Starts with Stonesword Key:</label>
-                <input
-                  type="checkbox"
-                  checked={teamMembers.find(m => m.id === 3)?.startsWithStoneswordKey || false}
-                  onChange={(e) => handleStoneswordKeyToggle(3, e.target.checked)}
-                  className="w-4 h-4"
-                />
+          <div className="mb-3 p-3 border border-gray-600 rounded bg-black bg-opacity-50 min-w-0">
+            <div className="flex items-center gap-3 h-16">
+              {/* Icon or placeholder */}
+              <div className="w-16 h-16 flex-shrink-0 flex items-center justify-center">
+                {teamMembers.find(m => m.id === 3)?.nightfarer ? (
+                  <img
+                    src={`/nightfarer_icons/${teamMembers.find(m => m.id === 3)?.nightfarer}_S.png`}
+                    alt={`${teamMembers.find(m => m.id === 3)?.nightfarer} icon`}
+                    className="w-16 h-16 object-contain"
+                  />
+                ) : (
+                  <div className="w-16 h-16 bg-gray-700 border border-gray-600 rounded flex items-center justify-center">
+                    <span className="text-gray-400 text-xs text-center">?</span>
+                  </div>
+                )}
+              </div>
+              
+              {/* Dropdown and toggle in same height as icon */}
+              <div className="flex-1 h-full flex flex-col justify-between min-w-0">
+                <div className="flex items-center gap-3">
+                  <select
+                    value={teamMembers.find(m => m.id === 3)?.nightfarer || ""}
+                    onChange={(e) => handleNightfarerChange(3, e.target.value as NightfarerClassType || null)}
+                    className="flex-1 px-2 py-1 text-sm bg-gray-700 text-white border border-gray-600 rounded"
+                  >
+                    {NIGHTFARER_OPTIONS.map(option => (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
+                    ))}
+                  </select>
+                  
+                  {/* Remove button aligned with dropdown */}
+                  <button
+                    onClick={() => removePlayer(3)}
+                    className="px-2 py-1 text-xs bg-red-800 text-white border border-red-600 rounded hover:bg-red-700 flex-shrink-0"
+                    title="Remove Player 3"
+                  >
+                    ✕
+                  </button>
+                </div>
+                
+                <div className="flex items-center justify-end gap-2">
+                  <label className="text-xs opacity-80">Starts with Stonesword Key:</label>
+                  <input
+                    type="checkbox"
+                    checked={teamMembers.find(m => m.id === 3)?.startsWithStoneswordKey || false}
+                    onChange={(e) => handleStoneswordKeyToggle(3, e.target.checked)}
+                    className="w-4 h-4"
+                  />
+                </div>
               </div>
             </div>
           </div>

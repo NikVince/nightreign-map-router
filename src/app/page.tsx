@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { Header } from "./_components/Header";
 import { Sidebar } from "./_components/Sidebar";
 import { type TeamMember } from "./_components/TeamComposition";
+import { NightfarerClassType } from "~/types/core";
 import dynamic from "next/dynamic";
 
 const MainPanel = dynamic(() => import("./_components/MainPanel").then(mod => mod.MainPanel), { ssr: false });
@@ -14,7 +15,7 @@ export default function Home() {
 
   // Team composition state
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([
-    { id: 1, nightfarer: null, startsWithStoneswordKey: false }
+    { id: 1, nightfarer: NightfarerClassType.Wylder, startsWithStoneswordKey: false }
   ]);
 
   // Icon category toggles

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { api } from "~/trpc/react";
 import { TeamComposition, type TeamMember } from "./TeamComposition";
+import { NightfarerClassType } from "~/types/core";
 
 export type SidebarProps = {
   isOpen: boolean;
@@ -14,7 +15,7 @@ export function Sidebar({ isOpen, onClose, layoutNumber, onTeamChange }: Sidebar
 
   // State for team composition
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([
-    { id: 1, nightfarer: null, startsWithStoneswordKey: false }
+    { id: 1, nightfarer: NightfarerClassType.Wylder, startsWithStoneswordKey: false }
   ]);
 
   // Fetch layout data if layoutNumber is provided
