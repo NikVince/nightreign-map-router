@@ -39,7 +39,7 @@ export const MapOptionsDropdown: React.FC<MapOptionsDropdownProps> = ({
           onClick={() => setIsOpen(!isOpen)}
           className="px-4 py-2 bg-gray-800 text-white border border-gray-600 rounded hover:bg-gray-700 flex items-center gap-2"
         >
-          <span>Map Options</span>
+          <span>Map</span>
           <span className={`transform transition-transform ${isOpen ? 'rotate-180' : ''}`}>▼</span>
         </button>
         
