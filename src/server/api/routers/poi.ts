@@ -144,7 +144,7 @@ export const poiRouter = createTRPCRouter({
                 evergaolBosses.push({ id: masterPOI.id, boss: poiValue });
               }
               // If this is a Field Boss, add to fieldBosses
-              if (icon === "Field_Boss.png") {
+              if (icon === "Field_Boss.png" || icon === "Field_Boss_Red.png") {
                 fieldBosses.push({ id: masterPOI.id, boss: poiValue });
               }
               // If this is a Major Base, add to majorLocations

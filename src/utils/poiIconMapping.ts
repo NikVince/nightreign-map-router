@@ -78,29 +78,35 @@ export const POI_VALUE_TO_ICON_MAP: POIIconMapping[] = [
   { value: "Stoneskin Lords", icon: "Evergaol.png", category: "Evergaol" },
   { value: "Dragonkin Soldier", icon: "Evergaol.png", category: "Evergaol" },
 
-  // Field Bosses
-  { value: "Ancient Dragon", icon: "Field_Boss.png", category: "Field Boss" },
-  { value: "Ancient Hero of Zamor", icon: "Field_Boss.png", category: "Field Boss" },
-  { value: "Ancestor Spirit", icon: "Field_Boss.png", category: "Field Boss" },
-  { value: "Bell Bearing Hunter", icon: "Field_Boss.png", category: "Field Boss" },
-  { value: "Black Blade Kindred", icon: "Field_Boss.png", category: "Field Boss" },
-  { value: "Black Knife Assassin", icon: "Field_Boss.png", category: "Field Boss" },
-  { value: "Death Rite Bird", icon: "Field_Boss.png", category: "Field Boss" },
-  { value: "Demi-Human Queen", icon: "Field_Boss.png", category: "Field Boss" },
-  { value: "Draconic Tree Sentinel", icon: "Field_Boss.png", category: "Field Boss" },
-  { value: "Elder Lion", icon: "Field_Boss.png", category: "Field Boss" },
-  { value: "Erdtree Avatar", icon: "Field_Boss.png", category: "Field Boss" },
-  { value: "Flying Dragon", icon: "Field_Boss.png", category: "Field Boss" },
-  { value: "Golden Hippopotamus", icon: "Field_Boss.png", category: "Field Boss" },
+  // Field Bosses - Strong (Score: 80-90) - Use Field_Boss_Red.png
+  { value: "Flying Dragon", icon: "Field_Boss_Red.png", category: "Field Boss" },
+  { value: "Ulcerated Tree Spirit", icon: "Field_Boss_Red.png", category: "Field Boss" },
+  { value: "Bell Bearing Hunter", icon: "Field_Boss_Red.png", category: "Field Boss" },
+  { value: "Erdtree Avatar", icon: "Field_Boss_Red.png", category: "Field Boss" },
+  { value: "Ancestor Spirit", icon: "Field_Boss_Red.png", category: "Field Boss" },
+  { value: "Tree Sentinel", icon: "Field_Boss_Red.png", category: "Field Boss" },
+  { value: "Magma Wyrm", icon: "Field_Boss_Red.png", category: "Field Boss" },
+  { value: "Royal Carian Knight", icon: "Field_Boss_Red.png", category: "Field Boss" },
+  { value: "Death Rite Bird", icon: "Field_Boss_Red.png", category: "Field Boss" },
+  { value: "Black Blade Kindred", icon: "Field_Boss_Red.png", category: "Field Boss" },
+  { value: "Draconic Tree Sentinel", icon: "Field_Boss_Red.png", category: "Field Boss" },
+
+  // Field Bosses - Weak (Score: 60-70) - Keep Field_Boss.png
   { value: "Grafted Scion", icon: "Field_Boss.png", category: "Field Boss" },
+  { value: "Black Knife Assassin", icon: "Field_Boss.png", category: "Field Boss" },
+  { value: "Red Wolf", icon: "Field_Boss.png", category: "Field Boss" },
+  { value: "Ancient Hero of Zamor", icon: "Field_Boss.png", category: "Field Boss" },
   { value: "Leonine Misbegotten", icon: "Field_Boss.png", category: "Field Boss" },
-  { value: "Magma Wyrm", icon: "Field_Boss.png", category: "Field Boss" },
+  { value: "Elder Lion", icon: "Field_Boss.png", category: "Field Boss" },
+  { value: "Golden Hippopotamus", icon: "Field_Boss.png", category: "Field Boss" },
+  { value: "Demi-Human Queen", icon: "Field_Boss.png", category: "Field Boss" },
   { value: "Miranda Blossom", icon: "Field_Boss.png", category: "Field Boss" },
-  { value: "Night's Cavalry", icon: "Field_Boss.png", category: "Field Boss" },
-  { value: "Putrid Ancestral Followers", icon: "Field_Boss.png", category: "Field Boss" },
-  { value: "Royal Carian Knight", icon: "Field_Boss.png", category: "Field Boss" },
   { value: "Royal Revenant", icon: "Field_Boss.png", category: "Field Boss" },
-  { value: "Ulcerated Tree Spirit", icon: "Field_Boss.png", category: "Field Boss" },
+  { value: "Night's Cavalry", icon: "Field_Boss.png", category: "Field Boss" },
+
+  // Other Field Bosses (keeping original Field_Boss.png for any not explicitly classified)
+  { value: "Ancient Dragon", icon: "Field_Boss.png", category: "Field Boss" },
+  { value: "Putrid Ancestral Followers", icon: "Field_Boss.png", category: "Field Boss" },
 
   // Arena Bosses
   { value: "Grafted Scion", icon: "Arena_Boss.png", category: "Arena Boss" },
@@ -109,11 +115,7 @@ export const POI_VALUE_TO_ICON_MAP: POIIconMapping[] = [
   { value: "Spawn Point", icon: "Spawn_Location.png", category: "Spawn Point" },
   { value: "Scale-Bearing Merchant", icon: "Scale_Bearing_Merchant.png", category: "Merchant" },
   { value: "Night Boss", icon: "Event.png", category: "Night Circle" },
-  { value: "Red Wolf", icon: "Field_Boss.png", category: "Field Boss" },
-  { value: "Royal Revenant", icon: "Field_Boss.png", category: "Field Boss" },
-  { value: "Tree Sentinel", icon: "Field_Boss.png", category: "Field Boss" },
   { value: "Trolls", icon: "Castle.png", category: "Castle" },
-  { value: "Ulcerated Tree Spirit", icon: "Field_Boss.png", category: "Field Boss" },
 
   // Castle
   { value: "Crucible Knights", icon: "Castle.png", category: "Castle" },

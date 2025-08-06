@@ -95,6 +95,7 @@ const POI_ICONS = [
   "Great_Church.png",
   "Fort.png",
   "Field_Boss.png",
+  "Field_Boss_Red.png",
   "Evergaol.png",
   "Church.png",
   "Castle.png",
@@ -124,6 +125,7 @@ export const POI_ICON_SIZES: Record<string, { width?: number; height?: number }>
   "Great_Church.png": { width: 128 },
   "Fort.png": { width: 128 },
   "Field_Boss.png": { width: 64 },
+  "Field_Boss_Red.png": { width: 64 },
   "Evergaol.png": { width: 64 },
   "Church.png": { width: 64 },
   "Castle.png": { width: 128 },
@@ -433,6 +435,7 @@ const MapCanvas: React.FC<{ iconToggles: IconToggles, layoutNumber?: number }> =
       "/POI_icons/Great_Church.png",
       "/POI_icons/Fort.png",
       "/POI_icons/Field_Boss.png",
+      "/POI_icons/Field_Boss_Red.png",
       "/POI_icons/Evergaol.png",
       "/POI_icons/Church.png",
       "/POI_icons/Castle.png",
@@ -794,7 +797,7 @@ const MapCanvas: React.FC<{ iconToggles: IconToggles, layoutNumber?: number }> =
     if (effectiveMapLayout === "the_rotten_woods_shifted" && dynamicPOIData?.fieldBosses) {
       finalPOIs = finalPOIs.filter(poi => {
         // Check if this POI is a field boss
-        if (poi.poiType === "Field_Bosses" || poi.icon === "Field_Boss.png") {
+        if (poi.poiType === "Field_Bosses" || poi.icon === "Field_Boss.png" || poi.icon === "Field_Boss_Red.png") {
           // Look up the field boss data for this POI
           const fieldBossData = dynamicPOIData.fieldBosses.find((b: { id: number; boss: string }) => b.id === poi.id);
           // If the boss is "Putrid Ancestral Followers", filter it out
@@ -988,7 +991,7 @@ const MapCanvas: React.FC<{ iconToggles: IconToggles, layoutNumber?: number }> =
         if (found) allTitles.push({ id, x: scaledX, y: scaledY, text: formatBossName(found.boss), priority: 1 });
       }
       // Field Boss
-      if ((icon === "Field_Boss.png" || poiType === "Field_Bosses") && dynamicPOIData?.fieldBosses) {
+      if ((icon === "Field_Boss.png" || icon === "Field_Boss_Red.png" || poiType === "Field_Bosses") && dynamicPOIData?.fieldBosses) {
         const found = dynamicPOIData.fieldBosses.find((b: { id: number; boss: string }) => b.id === id);
         if (found) allTitles.push({ id, x: scaledX, y: scaledY, text: formatBossName(found.boss), priority: 2 });
       }
@@ -1181,7 +1184,7 @@ const MapCanvas: React.FC<{ iconToggles: IconToggles, layoutNumber?: number }> =
       
       // Special case for POI 91 (Flying Dragon only in crater layouts)
       if (id === 91 && effectiveMapLayout === "the_crater_shifted") {
-        iconFile = "Field_Boss.png";
+        iconFile = "Field_Boss_Red.png";
       }
       
       // Special case for POI 23 (Golden Hippopotamus only in noklateo layouts)
