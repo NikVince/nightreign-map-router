@@ -114,6 +114,7 @@ const POI_ICONS = [
   "Scale_Bearing_Merchant.png",
   "Spawn_Location.png",
   "Arena_Boss.png",
+  "Map_Event.png",
 ];
 
 // --- MANUAL ICON SIZE CONTROL ---
@@ -144,6 +145,7 @@ export const POI_ICON_SIZES: Record<string, { width?: number; height?: number }>
   "Scale_Bearing_Merchant.png": { width: 48 },
   // --- Add spawn location icon size ---
   "Spawn_Location.png": { width: 128 },
+  "Map_Event.png": { width: 96 },
 };
 // ---------------------------------
 
@@ -845,6 +847,17 @@ const MapCanvas: React.FC<{
           return true; // Keep all other POIs
         });
       }
+    }
+
+    // 6. Filter Map Event POIs when Special Event is "empty"
+    if (dynamicPOIData?.layoutData?.["Special Event"] === "empty") {
+      finalPOIs = finalPOIs.filter(poi => {
+        // Filter out POIs with Map Event values when there's no special event
+        if (poi.value && poi.value.startsWith("Map Event -")) {
+          return false;
+        }
+        return true;
+      });
     }
 
     return finalPOIs;
