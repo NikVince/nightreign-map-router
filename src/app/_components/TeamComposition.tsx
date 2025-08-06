@@ -87,14 +87,23 @@ export function TeamComposition({ teamMembers, onTeamChange, onCalculateRoute }:
               ))}
             </select>
           </div>
-          <div className="flex items-center justify-end gap-2">
-            <label className="text-xs opacity-80">Starts with Stonesword Key:</label>
-            <input
-              type="checkbox"
-              checked={teamMembers.find(m => m.id === 1)?.startsWithStoneswordKey || false}
-              onChange={(e) => handleStoneswordKeyToggle(1, e.target.checked)}
-              className="w-4 h-4"
-            />
+          <div className="flex items-center gap-2">
+            {teamMembers.find(m => m.id === 1)?.nightfarer && (
+                              <img
+                  src={`/nightfarer_icons/${teamMembers.find(m => m.id === 1)?.nightfarer}_S.png`}
+                  alt={`${teamMembers.find(m => m.id === 1)?.nightfarer} icon`}
+                  className="w-16 h-16 object-contain"
+                />
+            )}
+            <div className="flex items-center gap-2 ml-auto">
+              <label className="text-xs opacity-80">Starts with Stonesword Key:</label>
+              <input
+                type="checkbox"
+                checked={teamMembers.find(m => m.id === 1)?.startsWithStoneswordKey || false}
+                onChange={(e) => handleStoneswordKeyToggle(1, e.target.checked)}
+                className="w-4 h-4"
+              />
+            </div>
           </div>
         </div>
 
@@ -123,14 +132,23 @@ export function TeamComposition({ teamMembers, onTeamChange, onCalculateRoute }:
                 ✕
               </button>
             </div>
-            <div className="flex items-center justify-end gap-2">
-              <label className="text-xs opacity-80">Starts with Stonesword Key:</label>
-              <input
-                type="checkbox"
-                checked={teamMembers.find(m => m.id === 2)?.startsWithStoneswordKey || false}
-                onChange={(e) => handleStoneswordKeyToggle(2, e.target.checked)}
-                className="w-4 h-4"
-              />
+            <div className="flex items-center gap-2">
+              {teamMembers.find(m => m.id === 2)?.nightfarer && (
+                <img
+                  src={`/nightfarer_icons/${teamMembers.find(m => m.id === 2)?.nightfarer}_S.png`}
+                  alt={`${teamMembers.find(m => m.id === 2)?.nightfarer} icon`}
+                  className="w-16 h-16 object-contain"
+                />
+              )}
+              <div className="flex items-center gap-2 ml-auto">
+                <label className="text-xs opacity-80">Starts with Stonesword Key:</label>
+                <input
+                  type="checkbox"
+                  checked={teamMembers.find(m => m.id === 2)?.startsWithStoneswordKey || false}
+                  onChange={(e) => handleStoneswordKeyToggle(2, e.target.checked)}
+                  className="w-4 h-4"
+                />
+              </div>
             </div>
           </div>
         ) : null}
@@ -160,14 +178,23 @@ export function TeamComposition({ teamMembers, onTeamChange, onCalculateRoute }:
                 ✕
               </button>
             </div>
-            <div className="flex items-center justify-end gap-2">
-              <label className="text-xs opacity-80">Starts with Stonesword Key:</label>
-              <input
-                type="checkbox"
-                checked={teamMembers.find(m => m.id === 3)?.startsWithStoneswordKey || false}
-                onChange={(e) => handleStoneswordKeyToggle(3, e.target.checked)}
-                className="w-4 h-4"
-              />
+            <div className="flex items-center gap-2">
+              {teamMembers.find(m => m.id === 3)?.nightfarer && (
+                <img
+                  src={`/nightfarer_icons/${teamMembers.find(m => m.id === 3)?.nightfarer}_S.png`}
+                  alt={`${teamMembers.find(m => m.id === 3)?.nightfarer} icon`}
+                  className="w-16 h-16 object-contain"
+                />
+              )}
+              <div className="flex items-center gap-2 ml-auto">
+                <label className="text-xs opacity-80">Starts with Stonesword Key:</label>
+                <input
+                  type="checkbox"
+                  checked={teamMembers.find(m => m.id === 3)?.startsWithStoneswordKey || false}
+                  onChange={(e) => handleStoneswordKeyToggle(3, e.target.checked)}
+                  className="w-4 h-4"
+                />
+              </div>
             </div>
           </div>
         ) : null}
@@ -177,7 +204,7 @@ export function TeamComposition({ teamMembers, onTeamChange, onCalculateRoute }:
           <div className="mb-2">
             <button
               onClick={addPlayer}
-              className="px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700"
+              className="px-3 py-1 text-sm bg-green-700 text-white border border-green-600 rounded hover:bg-green-600"
             >
               + Add Player
             </button>
