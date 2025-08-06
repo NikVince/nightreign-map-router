@@ -28,7 +28,12 @@ const NIGHTFARER_OPTIONS: { value: NightfarerClassType; label: string }[] = [
 // Function to get a random nightfarer
 const getRandomNightfarer = (): NightfarerClassType => {
   const randomIndex = Math.floor(Math.random() * NIGHTFARER_OPTIONS.length);
-  return NIGHTFARER_OPTIONS[randomIndex].value;
+  const selectedOption = NIGHTFARER_OPTIONS[randomIndex];
+  if (!selectedOption) {
+    // Fallback to first option if somehow undefined
+    return NIGHTFARER_OPTIONS[0]!.value;
+  }
+  return selectedOption.value;
 };
 
 export function TeamComposition({ teamMembers, onTeamChange, onCalculateRoute }: TeamCompositionProps) {
