@@ -39,11 +39,11 @@ export function Sidebar({ isOpen, onClose, layoutNumber, onLayoutChange, onTeamC
   return (
     <aside className="elden-panel flex flex-col h-full flex-1 p-6 bg-[var(--elden-background)]" style={{ fontFamily: "var(--elden-ui-font)" }}>
       {/* Layout Selection */}
-      <div className="mb-4 p-3 bg-black bg-opacity-75 rounded">
-        <h3 className="text-sm font-semibold mb-2" style={{ color: "var(--elden-accent)" }}>
-          Layout
-        </h3>
+      <div className="mb-4">
         <form onSubmit={handleLayoutSubmit} className="flex items-center gap-2">
+          <span className="text-lg font-semibold" style={{ color: "var(--elden-accent)" }}>
+            Map Layout (Seed)
+          </span>
           <input
             type="number"
             min="1"
@@ -62,16 +62,13 @@ export function Sidebar({ isOpen, onClose, layoutNumber, onLayoutChange, onTeamC
         </form>
       </div>
 
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xl" style={{ color: "var(--elden-accent)" }}>
-          {layoutData?.Nightlord ? `Target: ${layoutData.Nightlord}` : "Objectives"}
-        </h2>
-        {onClose && (
+      {onClose && (
+        <div className="flex justify-end mb-4">
           <button className="elden-button px-2 py-1 text-sm sm:hidden" onClick={onClose} aria-label="Close objectives">
             ✕
           </button>
-        )}
-      </div>
+        </div>
+      )}
 
       {/* Team Composition */}
       <TeamComposition 
@@ -90,7 +87,11 @@ export function Sidebar({ isOpen, onClose, layoutNumber, onLayoutChange, onTeamC
       {layoutData && (
         <div className="mb-4 p-3 bg-black bg-opacity-75 rounded">
           <div className="text-sm">
-            <div className="font-bold mb-2">Layout {layoutNumber}</div>
+            {layoutData.Nightlord && (
+              <div className="font-bold mb-2 text-base" style={{ color: "var(--elden-accent)" }}>
+                Target: {layoutData.Nightlord}
+              </div>
+            )}
             {layoutData["Special Event"] && layoutData["Special Event"] !== "empty" && (
               <div className="mb-1">
                 <span className="text-yellow-400">Event:</span> {
