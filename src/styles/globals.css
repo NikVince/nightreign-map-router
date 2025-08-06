@@ -95,3 +95,31 @@ select {
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
 }
+
+/* Smooth scrolling for sidebar */
+.elden-panel.overflow-y-auto {
+  scrollbar-width: thin;
+  scrollbar-color: var(--elden-border) transparent;
+}
+
+.elden-panel.overflow-y-auto::-webkit-scrollbar {
+  width: 8px;
+}
+
+.elden-panel.overflow-y-auto::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.elden-panel.overflow-y-auto::-webkit-scrollbar-thumb {
+  background-color: var(--elden-border);
+  border-radius: 3px;
+}
+
+.elden-panel.overflow-y-auto::-webkit-scrollbar-thumb:hover {
+  background-color: var(--elden-accent);
+}
+
+/* Only show scrollbar when content overflows */
+.elden-panel.overflow-y-auto {
+  overflow-y: auto;
+}

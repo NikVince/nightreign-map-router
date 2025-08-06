@@ -37,7 +37,7 @@ export function Sidebar({ isOpen, onClose, layoutNumber, onLayoutChange, onTeamC
   );
 
   return (
-    <aside className="elden-panel flex flex-col h-full flex-1 p-6 bg-[var(--elden-background)]" style={{ fontFamily: "var(--elden-ui-font)" }}>
+    <aside className="elden-panel flex flex-col h-full flex-1 p-6 bg-[var(--elden-background)] overflow-y-auto" style={{ fontFamily: "var(--elden-ui-font)" }}>
       {/* Layout Selection */}
       <div className="mb-4">
         <form onSubmit={handleLayoutSubmit} className="flex items-center gap-2">
