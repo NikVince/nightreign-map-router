@@ -22,7 +22,7 @@ export function Sidebar({ isOpen, onClose, iconToggles, onToggleChange, layoutNu
 
   // State for team composition
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([
-    { id: 1, nightfarer: null }
+    { id: 1, nightfarer: null, startsWithStoneswordKey: false }
   ]);
 
   // Fetch layout data if layoutNumber is provided
@@ -50,6 +50,10 @@ export function Sidebar({ isOpen, onClose, iconToggles, onToggleChange, layoutNu
         onTeamChange={(updatedTeam) => {
           setTeamMembers(updatedTeam);
           onTeamChange?.(updatedTeam);
+        }}
+        onCalculateRoute={() => {
+          // TODO: Implement route calculation logic
+          console.log("Calculate Route clicked - placeholder for now");
         }}
       />
 

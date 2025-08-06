@@ -14,7 +14,7 @@ export default function Home() {
 
   // Team composition state
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([
-    { id: 1, nightfarer: null }
+    { id: 1, nightfarer: null, startsWithStoneswordKey: false }
   ]);
 
   // Icon category toggles
