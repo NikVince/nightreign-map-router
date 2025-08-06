@@ -42,7 +42,7 @@ export function Sidebar({ isOpen, onClose, layoutNumber, onLayoutChange, onTeamC
       <div className="mb-4">
         <form onSubmit={handleLayoutSubmit} className="flex items-center gap-2">
           <span className="text-lg font-semibold" style={{ color: "var(--elden-accent)" }}>
-            Map Layout (Seed)
+            Seed
           </span>
           <input
             type="number"
@@ -60,16 +60,13 @@ export function Sidebar({ isOpen, onClose, layoutNumber, onLayoutChange, onTeamC
           >
             Load
           </button>
+          {onClose && (
+            <button className="elden-button px-2 py-1 text-sm sm:hidden" onClick={onClose} aria-label="Close objectives">
+              ✕
+            </button>
+          )}
         </form>
       </div>
-
-      {onClose && (
-        <div className="flex justify-end mb-4">
-          <button className="elden-button px-2 py-1 text-sm sm:hidden" onClick={onClose} aria-label="Close objectives">
-            ✕
-          </button>
-        </div>
-      )}
 
       {/* Team Composition */}
       <TeamComposition 
