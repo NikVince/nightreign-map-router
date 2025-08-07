@@ -4,6 +4,7 @@ import dynamic from "next/dynamic";
 import { MapOptionsDropdown } from "./MapOptionsDropdown";
 import { RouteDebugPanel } from "./RouteDebugPanel";
 import type { RouteState, POIPriority } from "~/types/route";
+import { api } from "~/trpc/react";
 
 const MapCanvas = dynamic(() => import("./MapCanvas"), { ssr: false });
 
@@ -36,6 +37,12 @@ export function MainPanel({
   
   // Route debug state
   const [debugPanelVisible, setDebugPanelVisible] = useState(false);
+
+  // Fetch layout data if layoutNumber is provided
+  const { data: layoutData } = api.poi.getLayout.useQuery(
+    { layoutNumber: layoutNumber || 1 },
+    { enabled: !!layoutNumber }
+  );
 
   return (
     <main className="elden-panel flex-1 flex flex-col h-full w-full" style={{ fontFamily: "var(--elden-ui-font)" }}>
@@ -76,6 +83,7 @@ export function MainPanel({
                     nightlord: "Gladius" as any,
                   }}
                   priorityCalculations={priorityCalculations || []}
+                  layoutData={layoutData}
                   isVisible={true}
                   onClose={() => setDebugPanelVisible(false)}
                 />

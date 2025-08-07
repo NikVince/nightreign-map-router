@@ -5,13 +5,163 @@ import type { RouteState, POIPriority } from "~/types/route";
 interface RouteDebugPanelProps {
   state: RouteState;
   priorityCalculations?: POIPriority[];
+  layoutData?: any;
   isVisible: boolean;
   onClose: () => void;
 }
 
+// Function to get POI type name based on ID and layout data
+const getPOITypeName = (poiId: number, layoutData?: any): string => {
+  if (!layoutData) {
+    return `POI ${poiId}`;
+  }
+
+  // Check for hardcoded titles based on map layout (from MapCanvas.tsx)
+  const effectiveMapLayout = layoutData["Shifting Earth"] || "default";
+  
+  // Hardcoded titles for mountaintops field bosses and major locations
+  const mountaintopsHardcodedTitles: Record<number, string> = {
+    140: "Flying Dragon",
+    141: "Mountaintop Ice Dragon",
+    142: "Mountaintop Ice Dragon", 
+    143: "Demi-Human Swordmaster",
+    144: "Giant Crows",
+    145: "Mountaintop Ice Dragon",
+    146: "Demi-Human Swordmaster",
+    147: "Mountaintop Ice Dragon",
+    148: "Snowfield Trolls",
+    149: "Albinauric Archers"
+  };
+  
+  // Hardcoded titles for crater field bosses and special cases
+  const craterHardcodedTitles: Record<number, string> = {
+    132: "Red Wolf",
+    133: "Demi-Human Queen",
+    134: "Fire Prelates",
+    135: "Demi-Human Queen",
+    136: "Magma Wyrm",
+    137: "Fallingstar Beast",
+    138: "Valiant Gargoyle",
+    91: "Flying Dragon"
+  };
+  
+  // Hardcoded titles for noklateo field bosses and special cases
+  const noklateoHardcodedTitles: Record<number, string> = {
+    123: "Royal Carian Knight",
+    124: "Flying Dragon",
+    125: "Black Knife Assassin",
+    126: "Headless Troll",
+    127: "Dragonkin Soldier",
+    128: "Royal Revenant",
+    129: "Black Knife Assassin",
+    130: "Astel",
+    23: "Golden Hippopotamus"
+  };
+  
+  // Hardcoded titles for rotten woods special cases
+  const rottenWoodsHardcodedTitles: Record<number, string> = {
+    156: "Lordsworn Captain"
+  };
+
+  // Check for hardcoded titles based on map layout
+  let hardcodedTitle: string | undefined;
+  
+  if (effectiveMapLayout === "Mountaintop" && mountaintopsHardcodedTitles[poiId]) {
+    hardcodedTitle = mountaintopsHardcodedTitles[poiId];
+  } else if (effectiveMapLayout === "Crater" && craterHardcodedTitles[poiId]) {
+    hardcodedTitle = craterHardcodedTitles[poiId];
+  } else if (effectiveMapLayout === "Noklateo" && noklateoHardcodedTitles[poiId]) {
+    hardcodedTitle = noklateoHardcodedTitles[poiId];
+  } else if (effectiveMapLayout === "Rotted Woods" && rottenWoodsHardcodedTitles[poiId]) {
+    hardcodedTitle = rottenWoodsHardcodedTitles[poiId];
+  }
+
+  if (hardcodedTitle) {
+    return hardcodedTitle;
+  }
+
+  // Check for dynamic POI data from layout
+  if (layoutData) {
+    // Look for POI data in layout entries
+    for (const [key, value] of Object.entries(layoutData)) {
+      if (typeof value === 'object' && value !== null && 'location' in value && 'value' in value) {
+        const poiValue = (value as any).value;
+        const location = (value as any).location;
+        
+        if (typeof poiValue === 'string' && poiValue !== 'empty' && typeof location === 'string') {
+          // Try to find if this location corresponds to our POI ID
+          // This is a simplified approach - we'll check if the location name contains any clues
+          // In a full implementation, you'd use the POI location mapping system
+          
+          // Check for common patterns
+          if (poiId === 159 && key.includes("Castle")) {
+            return `Castle - ${poiValue}`;
+          }
+          
+          // Check for major bases
+          if (key.startsWith("Major Base -") && poiValue.includes("Ruins -")) {
+            return poiValue;
+          }
+          
+          // Check for evergaols
+          if (key.startsWith("Evergaol -") || poiValue.includes("Evergaol")) {
+            return `Evergaol - ${poiValue}`;
+          }
+          
+          // Check for field bosses
+          if (key.startsWith("Field Boss -") || poiValue.includes("Field Boss")) {
+            return `Field Boss - ${poiValue}`;
+          }
+          
+          // Check for churches
+          if (poiValue.includes("Church")) {
+            return poiValue;
+          }
+          
+          // Check for forts
+          if (poiValue.includes("Fort")) {
+            return poiValue;
+          }
+          
+          // Check for great churches
+          if (poiValue.includes("Great Church")) {
+            return poiValue;
+          }
+          
+          // Check for ruins
+          if (poiValue.includes("Ruins")) {
+            return poiValue;
+          }
+          
+          // Check for camps
+          if (poiValue.includes("Camp")) {
+            return poiValue;
+          }
+        }
+      }
+    }
+  }
+
+  // Fallback based on POI ID ranges (from poi_coordinates_with_ids.json analysis)
+  if (poiId === 159) {
+    return "Castle - Main Castle";
+  } else if (poiId >= 1 && poiId <= 50) {
+    return "Church/Fort/Great Church";
+  } else if (poiId >= 51 && poiId <= 100) {
+    return "Ruins/Main Encampment";
+  } else if (poiId >= 101 && poiId <= 150) {
+    return "Field Boss/Evergaol";
+  } else if (poiId >= 151 && poiId <= 200) {
+    return "Special Location";
+  } else {
+    return `POI ${poiId}`;
+  }
+};
+
 export function RouteDebugPanel({ 
   state, 
   priorityCalculations = [], 
+  layoutData,
   isVisible, 
   onClose 
 }: RouteDebugPanelProps) {
@@ -113,7 +263,7 @@ export function RouteDebugPanel({
             {priorityCalculations.slice(0, 5).map((priority) => (
               <div key={priority.poiId} className="bg-gray-800 p-2 rounded">
                 <div className="flex justify-between">
-                  <span>POI {priority.poiId}:</span>
+                  <span>POI {priority.poiId}: {getPOITypeName(priority.poiId, layoutData)}</span>
                   <span className="text-green-400">{priority.adjustedPriority}</span>
                 </div>
                 <div className="text-gray-400">
