@@ -18,6 +18,7 @@ export interface RouteState {
   currentDay: 1 | 2;
   teamComposition: TeamMember[];
   nightlord: Nightlord;
+  calculatedRoute?: number[]; // Ordered list of POI IDs from route calculation
 }
 
 export interface POIPriority {

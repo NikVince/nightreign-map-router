@@ -101,6 +101,8 @@ export function MainPanel({
           setShowTitles={setShowTitles}
           showNumbers={showNumbers}
           setShowNumbers={setShowNumbers}
+          route={routeState?.calculatedRoute || []}
+          currentDay={routeState?.currentDay || 1}
         />
       </div>
     </main>

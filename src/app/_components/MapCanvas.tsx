@@ -180,24 +180,28 @@ const POI_TYPE_ICON_MAP: Record<string, string> = {
   "Spawn_Locations": "Spawn_Location.png",
 };
 
-const MapCanvas: React.FC<{ 
-  iconToggles: IconToggles, 
+const MapCanvas: React.FC<{
+  iconToggles: IconToggles,
   layoutNumber?: number,
   showIcons?: boolean,
   setShowIcons?: (show: boolean) => void,
   showTitles?: boolean,
   setShowTitles?: (show: boolean) => void,
   showNumbers?: boolean,
-  setShowNumbers?: (show: boolean) => void
-}> = ({ 
-  iconToggles, 
+  setShowNumbers?: (show: boolean) => void,
+  route?: number[],
+  currentDay?: 1 | 2,
+}> = ({
+  iconToggles,
   layoutNumber,
   showIcons = true,
   setShowIcons = () => {},
   showTitles = true,
   setShowTitles = () => {},
   showNumbers = false,
-  setShowNumbers = () => {}
+  setShowNumbers = () => {},
+  route = [],
+  currentDay = 1,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<KonvaStageType>(null);
@@ -301,55 +305,55 @@ const MapCanvas: React.FC<{
   // OPTIMIZED: Simplified touch handling for better mobile performance
   const handleTouchMove = (e: KonvaEventObject<TouchEvent>) => {
     const touches = e.evt.touches;
-    
+
     // Single finger pan (optimized)
     if (touches.length === 1 && isDragging && lastPointerPos) {
       const t0 = touches[0];
       if (!t0) return;
-      
+
       const dx = t0.clientX - lastPointerPos.x;
       const dy = t0.clientY - lastPointerPos.y;
-      
+
       setStagePos(pos => {
         const newPos = { x: pos.x + dx, y: pos.y + dy };
         return clampStagePos(newPos, stageScaleRef.current, mapWidth, mapHeight, dimensions.width, dimensions.height);
       });
       setLastPointerPos({ x: t0.clientX, y: t0.clientY });
-    } 
+    }
     // Two finger pinch (optimized)
     else if (touches.length === 2 && lastDistRef.current && lastMidRef.current) {
       const t0 = touches[0], t1 = touches[1];
       if (!t0 || !t1) return;
-      
+
       // Simplified distance calculation
       const dx = t0.clientX - t1.clientX;
       const dy = t0.clientY - t1.clientY;
       const dist = Math.sqrt(dx * dx + dy * dy);
-      
+
       // Simplified scale calculation
       const scaleBy = dist / lastDistRef.current;
       let newScale = stageScaleRef.current * scaleBy;
       newScale = clamp(newScale, minScale, 4);
-      
+
       // Simplified position calculation
       const mid = {
         x: (t0.clientX + t1.clientX) / 2,
         y: (t0.clientY + t1.clientY) / 2,
       };
-      
+
       const pointTo = {
         x: (lastMidRef.current.x - stagePosRef.current.x) / stageScaleRef.current,
         y: (lastMidRef.current.y - stagePosRef.current.y) / stageScaleRef.current,
       };
-      
+
       const newPos = {
         x: mid.x - pointTo.x * newScale,
         y: mid.y - pointTo.y * newScale,
       };
-      
+
       setStageScale(newScale);
       setStagePos(clampStagePos(newPos, newScale, mapWidth, mapHeight, dimensions.width, dimensions.height));
-      
+
       lastDistRef.current = dist;
       lastMidRef.current = mid;
     }
@@ -518,11 +522,11 @@ const MapCanvas: React.FC<{
 
   // Dynamic POI data from layout
   const { data: dynamicPOIData } = api.poi.getDynamicPOIs.useQuery(
-    { 
-      layoutNumber: layoutNumber || 1, 
+    {
+      layoutNumber: layoutNumber || 1,
       mapLayout: "default" // This will be overridden by the returned mapLayout
     },
-    { 
+    {
       enabled: !!layoutNumber,
       staleTime: 5 * 60 * 1000, // 5 minutes
     }
@@ -542,7 +546,7 @@ const MapCanvas: React.FC<{
   const formatBossName = (bossName: string): string => {
     const words = bossName.split(' ');
     if (words.length <= 1) return bossName;
-    
+
     // Find the middle point to split
     const midPoint = Math.ceil(words.length / 2);
     return words.slice(0, midPoint).join(' ') + '\n' + words.slice(midPoint).join(' ');
@@ -690,7 +694,7 @@ const MapCanvas: React.FC<{
   // Heavy processing: coordinate matching, deduplication, layout-specific filtering
   const allPOIs = useMemo((): RenderedPOI[] => {
     const allPOIs: RenderedPOI[] = [];
-    
+
     // 1. Add dynamic POIs from layout files (if available)
     if (dynamicPOIData && dynamicPOIData.dynamicPOIs.length > 0) {
       const dynamicPOIs = dynamicPOIData.dynamicPOIs.map(poi => ({
@@ -716,7 +720,7 @@ const MapCanvas: React.FC<{
           if (poiType === "Spawn_Locations" || poiType === "Event_Locations" || poiType === "Scale_Bearing_Merchant_Locations" || poiType === "Circle_Locations" || poiType === "Merchants" || poiType === "Smithing_Tables") {
             return;
           }
-          
+
           // Special handling for Minor_Locations - only render POI 131 (Church) in crater layouts
           if (poiType === "Minor_Locations") {
             if (effectiveMapLayout === "the_crater_shifted") {
@@ -765,17 +769,17 @@ const MapCanvas: React.FC<{
       // Filter out POIs with id 24, 25, and 26 so they do not appear on the map.
       // IMPORTANT: These should also be ignored by the route algorithm when implemented.
       let filtered = Array.from(uniquePois.values()).filter(poi => ![24, 25, 26].includes(poi.id));
-      
+
       // Filter out POI 88 from crater layouts (it should not appear in crater)
       if (effectiveMapLayout === "the_crater_shifted") {
         filtered = filtered.filter(poi => poi.id !== 88);
       }
-      
+
       // Filter out POI 92 from rotten woods layouts (it should not appear in rotten woods)
       if (effectiveMapLayout === "the_rotten_woods_shifted") {
         filtered = filtered.filter(poi => poi.id !== 92);
       }
-      
+
       // Special handling for POI 23 in noklateo layouts - add it if not present
       if (effectiveMapLayout === "noklateo_shifted") {
         const poi23Exists = filtered.some(poi => poi.id === 23);
@@ -792,7 +796,7 @@ const MapCanvas: React.FC<{
           }
         }
       }
-      
+
       // Add fixed POIs to the combined list
       allPOIs.push(...filtered);
     }
@@ -808,7 +812,7 @@ const MapCanvas: React.FC<{
     });
 
     let finalPOIs = Array.from(uniquePOIs.values());
-    
+
     // 4. Filter out "Putrid Ancestral Followers" from field bosses in rotten woods layout
     if (effectiveMapLayout === "the_rotten_woods_shifted" && dynamicPOIData?.fieldBosses) {
       finalPOIs = finalPOIs.filter(poi => {
@@ -824,20 +828,20 @@ const MapCanvas: React.FC<{
         return true;
       });
     }
-    
+
     // 5. Filter Rot Blessing POIs (164, 165, 166) - only render the one specified in layout data
     if (effectiveMapLayout === "the_rotten_woods_shifted" && dynamicPOIData?.layoutData?.["Rot Blessing"]) {
       const rotBlessingLocation = dynamicPOIData.layoutData["Rot Blessing"];
-      
+
       // Map location names to POI IDs
       const rotBlessingPOIMap: Record<string, number> = {
         "Southwest": 164,
-        "Northeast": 165, 
+        "Northeast": 165,
         "West": 166
       };
-      
+
       const targetPOIId = rotBlessingPOIMap[rotBlessingLocation];
-      
+
       if (targetPOIId) {
         // Only keep the POI that matches the Rot Blessing location
         finalPOIs = finalPOIs.filter(poi => {
@@ -873,7 +877,7 @@ const MapCanvas: React.FC<{
       scarabs: "Scarabs",
       buriedTreasures: "Buried_Treasures",
     };
-    
+
     return allPOIs.filter(poi => {
       if (poi.poiType === categoryMap.sitesOfGrace && !iconToggles.sitesOfGrace) return false;
       if (poi.poiType === categoryMap.spiritStreams && !iconToggles.spiritStreams) return false;
@@ -919,22 +923,22 @@ const MapCanvas: React.FC<{
     if (!showTitles) return [];
     const placed: { id: number, x: number, y: number, text: string, priority: number }[] = [];
     const allTitles: { id: number, x: number, y: number, text: string, priority: number }[] = [];
-    
+
     // OPTIMIZATION: Use actual map dimensions but cache the results
     // This ensures titles align with POI icons but prevents recalculation during pan/zoom
     const leftBound = 507;
     const activeWidth = 1690;
     const maxMovementDistance = 48; // Increased back to 48px to ensure no overlapping
-    
+
     // Use actual map dimensions for coordinate transformation to match POI icons
     const currentMapWidth = mapWidth || 1000; // Fallback to prevent errors
     const currentMapHeight = mapHeight || 1000; // Fallback to prevent errors
-    
+
     // Hardcoded titles for mountaintops field bosses and major locations
     const mountaintopsHardcodedTitles: Record<number, string> = {
       140: "Flying Dragon",
       141: "Mountaintop Ice Dragon",
-      142: "Mountaintop Ice Dragon", 
+      142: "Mountaintop Ice Dragon",
       143: "Demi-Human Swordmaster",
       144: "Giant Crows",
       145: "Mountaintop Ice Dragon",
@@ -943,7 +947,7 @@ const MapCanvas: React.FC<{
       148: "Snowfield Trolls",
       149: "Albinauric Archers"
     };
-    
+
     // Hardcoded titles for crater field bosses and special cases
     const craterHardcodedTitles: Record<number, string> = {
       132: "Red Wolf",
@@ -955,7 +959,7 @@ const MapCanvas: React.FC<{
       138: "Valiant Gargoyle",
       91: "Flying Dragon" // Special case: POI 91 is Flying Dragon only in crater layouts
     };
-    
+
     // Hardcoded titles for noklateo field bosses and special cases
     const noklateoHardcodedTitles: Record<number, string> = {
       123: "Royal Carian Knight",
@@ -968,35 +972,35 @@ const MapCanvas: React.FC<{
       130: "Astel",
       23: "Golden Hippopotamus" // Only in noklateo_shifted
     };
-    
+
     // Hardcoded titles for rotten woods special cases
     const rottenWoodsHardcodedTitles: Record<number, string> = {
       156: "Lordsworn Captain" // Fixed title in rotten woods layouts
     };
-    
+
     // Gather all titles (Evergaols, Field Bosses, etc.)
     // Use allPOIs instead of poisToRender to avoid icon toggle dependencies
     allPOIs.forEach((poi) => {
       const { id, x, y, poiType, icon } = poi;
       if (id === 159) return; // skip castle
-      
+
       // Use the same coordinate transformation as POI icons to ensure alignment
       let scaledX = ((x - leftBound) / activeWidth) * currentMapWidth;
       let scaledY = (y / 1690) * currentMapHeight;
-      
+
       // Special offset for POI 23 in noklateo layout (40px to the right)
       if (id === 23 && effectiveMapLayout === "noklateo_shifted") {
         scaledX += 40;
       }
-      
+
       // Special offset for POI 84 (Lake Field Boss) - 20px to the left to avoid overlap
       if (id === 84) {
         scaledX -= 20;
       }
-      
+
       // Check for hardcoded titles based on map layout
       let hardcodedTitle: string | undefined;
-      
+
       if (effectiveMapLayout === "the_mountaintop_shifted" && mountaintopsHardcodedTitles[id]) {
         hardcodedTitle = mountaintopsHardcodedTitles[id];
       } else if (effectiveMapLayout === "the_crater_shifted" && craterHardcodedTitles[id]) {
@@ -1006,12 +1010,12 @@ const MapCanvas: React.FC<{
       } else if (effectiveMapLayout === "the_rotten_woods_shifted" && rottenWoodsHardcodedTitles[id]) {
         hardcodedTitle = rottenWoodsHardcodedTitles[id];
       }
-      
+
       if (hardcodedTitle) {
         allTitles.push({ id, x: scaledX, y: scaledY, text: formatBossName(hardcodedTitle), priority: 2 });
         return; // Skip dynamic title assignment for hardcoded POIs
       }
-      
+
       // Evergaol
       if ((icon === "Evergaol.png" || poiType === "Evergaols") && dynamicPOIData?.evergaolBosses) {
         const found = dynamicPOIData.evergaolBosses.find((b: { id: number; boss: string }) => b.id === id);
@@ -1057,7 +1061,7 @@ const MapCanvas: React.FC<{
           if (eventMatch) {
             const day = eventMatch[1];
             const eventType = eventMatch[2];
-            
+
             // For frenzy towers, they are present from the start, so don't specify day
             if (eventType === "Frenzy Tower") {
               const eventText = `Frenzy Tower`;
@@ -1077,27 +1081,27 @@ const MapCanvas: React.FC<{
         }
       }
     });
-    
+
     // Sort by priority (lower = higher priority)
     allTitles.sort((a, b) => a.priority - b.priority);
-    
+
     // Bidirectional collision resolution with movement limits
     for (const title of allTitles) {
       let currentPos = { x: title.x, y: title.y };
       let needsRepositioning = true;
       let iterations = 0;
       const maxIterations = 10; // Prevent infinite loops
-      
+
       while (needsRepositioning && iterations < maxIterations) {
         needsRepositioning = false;
         iterations++;
-        
+
         const currentBounds = getTextBounds(currentPos.x, currentPos.y, title.text);
-        
+
         // Check for collisions with already placed titles
         for (const placedTitle of placed) {
           const placedBounds = getTextBounds(placedTitle.x, placedTitle.y, placedTitle.text);
-          
+
           // Check if there's a collision
           const collision = !(
             currentBounds.right < placedBounds.left ||
@@ -1105,20 +1109,20 @@ const MapCanvas: React.FC<{
             currentBounds.bottom < placedBounds.top ||
             currentBounds.top > placedBounds.bottom
           );
-          
+
           if (collision) {
             // Calculate the minimum movement needed to resolve collision
             const dx = Math.max(0, placedBounds.right - currentBounds.left + 5, currentBounds.right - placedBounds.left + 5);
             const dy = Math.max(0, placedBounds.bottom - currentBounds.top + 5, currentBounds.bottom - placedBounds.top + 5);
-            
+
             // Determine the best direction to move both texts
             const centerX = (currentPos.x + placedTitle.x) / 2;
             const centerY = (currentPos.y + placedTitle.y) / 2;
-            
+
             // Calculate movement for current title
             let moveX = currentPos.x < centerX ? -dx/2 : dx/2;
             let moveY = currentPos.y < centerY ? -dy/2 : dy/2;
-            
+
             // Limit movement to maxMovementDistance from original position
             const distanceFromOriginal = Math.sqrt(moveX * moveX + moveY * moveY);
             if (distanceFromOriginal > maxMovementDistance) {
@@ -1126,14 +1130,14 @@ const MapCanvas: React.FC<{
               moveX *= scale;
               moveY *= scale;
             }
-            
+
             // Calculate movement for placed title (opposite direction)
             let placedMoveX = -moveX;
             let placedMoveY = -moveY;
-            
+
             // Limit placed title movement to maxMovementDistance from its original position
             const placedDistanceFromOriginal = Math.sqrt(
-              Math.pow(placedTitle.x - title.x + placedMoveX, 2) + 
+              Math.pow(placedTitle.x - title.x + placedMoveX, 2) +
               Math.pow(placedTitle.y - title.y + placedMoveY, 2)
             );
             if (placedDistanceFromOriginal > maxMovementDistance) {
@@ -1141,25 +1145,25 @@ const MapCanvas: React.FC<{
               placedMoveX *= scale;
               placedMoveY *= scale;
             }
-            
+
             currentPos = {
               x: currentPos.x + moveX,
               y: currentPos.y + moveY
             };
-            
+
             // Also move the placed title in the opposite direction
             placedTitle.x += placedMoveX;
             placedTitle.y += placedMoveY;
-            
+
             needsRepositioning = true;
             break;
           }
         }
       }
-      
+
       placed.push({ ...title, x: currentPos.x, y: currentPos.y });
     }
-    
+
     return placed;
   }, [allPOIs, dynamicPOIData, showTitles, effectiveMapLayout, mapWidth, mapHeight]);
 
@@ -1174,7 +1178,7 @@ const MapCanvas: React.FC<{
   const poiRenderData = useMemo(() => {
     return poisToRender.map((poi) => {
       const { id, x, y, poiType, icon, value } = poi;
-      
+
       // Special handling for POI 159 (central castle) - show text instead of icon
       if (id === 159) {
         const castleEnemyType = dynamicPOIData?.castleEnemyType;
@@ -1195,35 +1199,35 @@ const MapCanvas: React.FC<{
           value
         };
       }
-      
+
       // Determine icon based on dynamic data or fallback to poiType
       let iconFile = icon || POI_TYPE_ICON_MAP[poiType] || POI_TYPE_ICON_MAP.Default;
-      
+
       // Special case for POI 149 (Major Location with Ruins)
       if (id === 149 && poiType === "Major_Locations") {
         iconFile = "Ruins.png";
       }
-      
+
       // Special case for POI 131 (Minor Location that should be Church in crater)
       if (id === 131 && poiType === "Minor_Locations" && effectiveMapLayout === "the_crater_shifted") {
         iconFile = "Church.png";
       }
-      
+
       // Special case for POI 91 (Flying Dragon only in crater layouts)
       if (id === 91 && effectiveMapLayout === "the_crater_shifted") {
         iconFile = "Field_Boss_Red.png";
       }
-      
+
       // Special case for POI 23 (Golden Hippopotamus only in noklateo layouts)
       if (id === 23 && effectiveMapLayout === "noklateo_shifted") {
         iconFile = "Field_Boss.png";
       }
-      
+
       // Special case for POI 156 (Lordsworn Captain - Fort icon in rotten woods layouts)
       if (id === 156 && effectiveMapLayout === "the_rotten_woods_shifted") {
         iconFile = "Fort.png";
       }
-      
+
       if (!iconFile) return null;
 
       const iconIndex = POI_ICONS.indexOf(iconFile);
@@ -1231,7 +1235,7 @@ const MapCanvas: React.FC<{
       if (!img) return null;
 
       const size = POI_ICON_SIZES[iconFile] ?? {};
-      
+
       let displayWidth = img.width || 32;
       let displayHeight = img.height || 32;
       if (size.width && !size.height) {
@@ -1250,12 +1254,12 @@ const MapCanvas: React.FC<{
 
       let scaledX = ((x - leftBound) / activeWidth) * mapWidth;
       let scaledY = (y / 1690) * mapHeight;
-      
+
       // Special offset for POI 23 in noklateo layout (40px to the right)
       if (id === 23 && effectiveMapLayout === "noklateo_shifted") {
         scaledX += 40;
       }
-      
+
       // Special offset for POI 84 (Lake Field Boss) - 20px to the left to avoid overlap
       if (id === 84) {
         scaledX -= 20;
@@ -1337,6 +1341,41 @@ const MapCanvas: React.FC<{
               })
             )}
         </Layer>
+        {/* Route Visualization Layer: Draw a line connecting the POIs in the current route */}
+        {route && route.length > 1 && (
+          <Layer listening={false}>
+            {(() => {
+              // Get coordinates for each POI in the route
+              const leftBound = 507;
+              const activeWidth = 1690;
+              const points: number[] = [];
+              
+              for (const poiId of route) {
+                const poi = poiMasterList.find(p => p.id === poiId);
+                if (!poi) continue;
+                const scaledX = ((poi.coordinates[0] - leftBound) / activeWidth) * mapWidth;
+                const scaledY = (poi.coordinates[1] / 1690) * mapHeight;
+                points.push(scaledX, scaledY);
+              }
+              
+              if (points.length < 4) return null;
+              
+              const strokeColor = currentDay === 2 ? 'orange' : 'red';
+              
+              return (
+                <KonvaLine
+                  points={points}
+                  stroke={strokeColor}
+                  strokeWidth={4}
+                  lineCap="round"
+                  lineJoin="round"
+                  dashEnabled={false}
+                  opacity={0.9}
+                />
+              );
+            })()}
+          </Layer>
+        )}
         {/* Debug/Test Path Layer: Draw a red line between POI 183 and 103 */}
         {/*
         <Layer listening={false}>
@@ -1372,9 +1411,9 @@ const MapCanvas: React.FC<{
             {/* OPTIMIZED: Use pre-calculated POI rendering data */}
             {poiRenderData.map((poiData) => {
               if (!poiData) return null;
-              
+
               const { id, scaledX, scaledY } = poiData;
-              
+
               // Special handling for POI 159 (central castle) - show text instead of icon
               if ('isCastle' in poiData && poiData.isCastle) {
                 const { castleEnemyType } = poiData;
