@@ -62,15 +62,16 @@ export function getPOIStats(type: string, value: string): { estimatedTime: numbe
 
 /**
  * Extracts Shifting Earth event POIs based on the current Shifting Earth event
+ * This function includes ONLY the actual POIs that exist in the source files
  */
 export function extractShiftingEarthPOIs(shiftingEarth: string, poiMasterList: POIData[]): POITypeInfo[] {
   const pois: POITypeInfo[] = [];
   
   if (!shiftingEarth || shiftingEarth === "Default") return pois;
   
-  // Crater-specific POIs
+  // Crater-specific POIs (Volcanic environment)
   if (shiftingEarth === "Crater") {
-    // POI 131 is the Church in the Crater
+    // Crater Church (POI 131) - highest priority
     const churchPOI = poiMasterList.find(p => p.id === 131);
     if (churchPOI) {
       pois.push({
@@ -83,35 +84,100 @@ export function extractShiftingEarthPOIs(shiftingEarth: string, poiMasterList: P
         estimatedRunes: 2000
       });
     }
-  }
-  
-  // Mountaintop-specific POIs
-  if (shiftingEarth === "Mountaintop") {
-    // POI 23 is a Field Boss in Mountaintop
-    const fieldBossPOI = poiMasterList.find(p => p.id === 23);
-    if (fieldBossPOI) {
-      pois.push({
-        id: 23,
-        type: "FieldBoss",
-        name: "Mountaintop Field Boss",
-        location: "Mountaintop Field Boss",
-        value: "Field Boss - Ice Dragon",
-        estimatedTime: 180,
-        estimatedRunes: 6000
-      });
+    
+    // Crater Field Bosses (POIs 132-138)
+    const craterBossPOIs = [132, 133, 134, 135, 136, 137, 138];
+    for (const poiId of craterBossPOIs) {
+      const poi = poiMasterList.find(p => p.id === poiId);
+      if (poi) {
+        pois.push({
+          id: poiId,
+          type: "FieldBoss",
+          name: `Crater Field Boss ${poiId}`,
+          location: `Crater Area`,
+          value: `Field Boss - Crater`,
+          estimatedTime: 180,
+          estimatedRunes: 1500
+        });
+      }
     }
   }
   
-  // Rotted Woods-specific POIs
+  // Mountaintop-specific POIs (Frozen mountain environment)
+  if (shiftingEarth === "Mountaintop") {
+    // Mountaintop Major Base (POI 149)
+    const majorBasePOI = poiMasterList.find(p => p.id === 149);
+    if (majorBasePOI) {
+      pois.push({
+        id: 149,
+        type: "MainEncampment",
+        name: "Mountaintop Major Base",
+        location: "Mountaintop Major Base",
+        value: "Major Base - Mountaintop",
+        estimatedTime: 90,
+        estimatedRunes: 800
+      });
+    }
+    
+    // Mountaintop Field Bosses (POIs 140-147)
+    const mountaintopBossPOIs = [140, 141, 142, 143, 144, 145, 146, 147];
+    for (const poiId of mountaintopBossPOIs) {
+      const poi = poiMasterList.find(p => p.id === poiId);
+      if (poi) {
+        pois.push({
+          id: poiId,
+          type: "FieldBoss",
+          name: `Mountaintop Field Boss ${poiId}`,
+          location: `Mountaintop Area`,
+          value: `Field Boss - Mountaintop`,
+          estimatedTime: 180,
+          estimatedRunes: 1500
+        });
+      }
+    }
+  }
+  
+  // Rotted Woods-specific POIs (Scarlet Rot forest environment)
   if (shiftingEarth === "Rotted Woods") {
-    // Add Rotted Woods-specific POIs here when known
+    // Rotted Woods POIs (POIs 150-168)
+    const rottedWoodsPOIs = [150, 151, 152, 153, 154, 155, 167, 168];
+    for (const poiId of rottedWoodsPOIs) {
+      const poi = poiMasterList.find(p => p.id === poiId);
+      if (poi) {
+        pois.push({
+          id: poiId,
+          type: getPOITypeFromValue(`POI ${poiId}`),
+          name: `Rotted Woods POI ${poiId}`,
+          location: `Rotted Woods Area`,
+          value: `POI ${poiId} - Rotted Woods`,
+          estimatedTime: 75,
+          estimatedRunes: 600
+        });
+      }
+    }
   }
   
-  // Noklateo-specific POIs
+  // Noklateo-specific POIs (Eternal City environment)
   if (shiftingEarth === "Noklateo") {
-    // Add Noklateo-specific POIs here when known
+    // Noklateo Bosses (POIs 123-130)
+    const noklateoBossPOIs = [123, 124, 125, 126, 127, 128, 129, 130];
+    for (const poiId of noklateoBossPOIs) {
+      const poi = poiMasterList.find(p => p.id === poiId);
+      if (poi) {
+        pois.push({
+          id: poiId,
+          type: "FieldBoss",
+          name: `Noklateo Boss ${poiId}`,
+          location: `Noklateo Area`,
+          value: `Field Boss - Noklateo`,
+          estimatedTime: 200,
+          estimatedRunes: 2000
+        });
+      }
+    }
   }
   
+  console.log(`Extracted ${pois.length} Shifting Earth POIs for event: ${shiftingEarth}`);
   return pois;
 }
 
