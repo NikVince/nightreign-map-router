@@ -3,7 +3,7 @@ import { api } from "~/trpc/react";
 import { TeamComposition, type TeamMember } from "./TeamComposition";
 import { RouteCalculator } from "~/utils/routeCalculator";
 import type { RouteState, POIPriority } from "~/types/route";
-import { NightfarerClassType, Nightlord } from "~/types/core";
+import { NightfarerClassType, Nightlord, LandmarkType } from "~/types/core";
 import { getPOIIdForLocationWithContext } from "~/utils/poiLocationMapping";
 import { getPOIData } from "~/utils/poiDataLoader";
 import { extractPOIsFromLayout } from "~/utils/poiUtils";
@@ -128,7 +128,7 @@ export function Sidebar({
           // Extract POI data from the current layout using centralized utility
           const layoutPOIs = extractPOIsFromLayout(layoutData, poiMasterList).map(poi => ({
             id: poi.id,
-            type: poi.type,
+            type: poi.type as LandmarkType,
             x: poiMasterList.find(p => p.id === poi.id)?.coordinates[0] || 0,
             y: poiMasterList.find(p => p.id === poi.id)?.coordinates[1] || 0,
             estimatedTime: poi.estimatedTime,
