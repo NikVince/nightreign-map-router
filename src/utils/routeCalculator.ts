@@ -242,6 +242,7 @@ export class RouteCalculator {
 
   /**
    * Main route calculation method
+   * CRITICAL: Filter out POIs with "empty" values to ensure data synchronization
    */
   public calculateRoute(availablePOIs: Array<{
     id: number;
@@ -250,12 +251,37 @@ export class RouteCalculator {
     y: number;
     estimatedTime: number;
     estimatedRunes: number;
+    location?: string;
+    value?: string;
   }>): RouteResult {
     const startTime = performance.now();
     
     try {
-      // Calculate priorities for all available POIs
-      const priorities = availablePOIs.map(poi => 
+      // CRITICAL: Filter out POIs with "empty" values
+      // This ensures we only consider POIs that actually exist in the current layout
+      const validPOIs = availablePOIs.filter(poi => {
+        // Skip POIs with "empty" values
+        if (poi.value === "empty" || poi.value === "POI X: empty") {
+          return false;
+        }
+        
+        // Skip POIs with empty location names
+        if (poi.location === "empty" || poi.location === "") {
+          return false;
+        }
+        
+        // Skip POIs with invalid coordinates
+        if (poi.x === 0 && poi.y === 0) {
+          return false;
+        }
+        
+        return true;
+      });
+
+      console.log(`Filtered ${availablePOIs.length} POIs down to ${validPOIs.length} valid POIs`);
+
+      // Calculate priorities for all valid POIs
+      const priorities = validPOIs.map(poi => 
         this.calculatePOIPriority(
           poi.id,
           poi.type,
@@ -274,19 +300,29 @@ export class RouteCalculator {
       // Sort by adjusted priority (highest first)
       accessiblePOIs.sort((a, b) => b.adjustedPriority - a.adjustedPriority);
 
-      // Simple route generation (to be replaced with A* algorithm)
+      console.log(`Found ${accessiblePOIs.length} accessible POIs with priorities:`, 
+        accessiblePOIs.map(p => `${p.poiId}:${p.adjustedPriority}`).join(', '));
+
+      // CRITICAL: Generate route that matches priority order exactly
+      // The route should follow the priority calculations precisely
       const route: number[] = [];
       let totalTime = 0;
       let totalDistance = 0;
 
+      // Use the exact order from priority calculations
       for (const poi of accessiblePOIs) {
         if (totalTime + poi.estimatedTime <= this.state.remainingTime) {
           route.push(poi.poiId);
           totalTime += poi.estimatedTime;
           // TODO: Calculate actual distance between POIs
           totalDistance += 100; // Placeholder distance
+        } else {
+          console.log(`Skipping POI ${poi.poiId} due to time constraint (${totalTime + poi.estimatedTime}s > ${this.state.remainingTime}s)`);
         }
       }
+
+      console.log(`Generated route with ${route.length} POIs:`, route);
+      console.log(`Total route time: ${totalTime}s, remaining time: ${this.state.remainingTime}s`);
 
       const executionTime = performance.now() - startTime;
 
@@ -308,7 +344,7 @@ export class RouteCalculator {
         route: routeCalculation,
         debugInfo: {
           stateSnapshot: this.getCurrentState(),
-          priorityCalculations: accessiblePOIs,
+          priorityCalculations: accessiblePOIs, // Return ALL accessible POIs, not limited
           executionTime,
         },
       };
