@@ -3,6 +3,67 @@
 ## Overview
 This document outlines the step-by-step implementation of the route optimization algorithm for Elden Ring: Nightreign. The algorithm will calculate optimal paths between POIs based on priority scores, team composition, and various game state counters.
 
+## CRITICAL: Single Source of Truth for POI Data
+
+### Authoritative Data Sources
+**NEVER create mock data or placeholder values. Use ONLY these sources:**
+
+1. **`public/assets/maps/poi_coordinates_with_ids.json`**
+   - Contains all 213 POIs with exact coordinates (IDs 1-213)
+   - **ONLY** authoritative source for POI coordinates
+   - Used by: All route calculation and visualization components
+
+2. **`public/assets/maps/coordinates_backup/poi_name_coordinate_map.js`**
+   - Contains POI names mapped to coordinates
+   - **ONLY** authoritative source for POI naming
+   - Used by: POI identification and display components
+
+3. **`reference_material/pattern_layouts/layout_XXX.json`**
+   - Contains POIs present in each specific seed (1-320)
+   - **ONLY** authoritative source for which POIs are available in current layout
+   - Used by: Route calculation to determine available POIs
+
+### Static (Fixed) vs Dynamic (Layout-Based) POIs
+
+#### Static/Fixed POIs
+- **Definition:** POIs that are always present for a given map tile layout, regardless of the current pattern/layout_XXX.json (e.g., Sites of Grace, Spirit Streams, Spectral Hawk Trees, Scarabs, Buried Treasures, etc.).
+- **Source:** Defined in the master coordinate files (e.g., `poi_coordinates_with_ids.json` and map-specific coordinate files in `/public/assets/maps/coordinates/`).
+- **Shifting Earth Events:** The set of static POIs can change depending on the active Shifting Earth event, as each event can have its own map tile layout and thus its own set of fixed POIs. The correct coordinate file is loaded based on the event (e.g., `the_crater_map_layout.json` for Crater event).
+- **Rendering:** Always rendered if their category is enabled, regardless of the current dynamic layout.
+
+#### Dynamic POIs
+- **Definition:** POIs determined by the currently loaded `layout_XXX.json` file (i.e., the current seed/pattern). Represent variable content for each run.
+- **Source:** Extracted from the current layout file, then mapped to coordinates and IDs using the master coordinate list.
+- **Rendering:** Only POIs present in the current layout are rendered as dynamic POIs.
+
+#### Combination and Filtering
+- The system **combines** dynamic POIs (from the current layout) with static POIs (from the coordinate files) to produce the full set of visible icons.
+- **Duplicates** are removed based on coordinate proximity.
+- **Category filtering** allows users to toggle which types of POIs are visible.
+
+#### Shifting Earth Event Handling
+- The active Shifting Earth event determines which map tile layout and static POI set is used.
+- Both static and dynamic POIs must be mapped to the correct layout.
+
+#### Implementation Principle: Avoid Code Duplication
+- **Do not duplicate code unless there is a clear, documented benefit.**
+- If duplication is necessary for performance or maintainability, document the reason and the benefit in this file.
+
+### Layout-Based Route Calculation
+**Routes must be calculated SOLELY from POIs present in the currently loaded layout and the static POIs for the current map tile layout:**
+
+- **Input**: Current `layout_XXX.json` file based on selected seed, plus static POIs for the current map tile layout (including Shifting Earth event if active)
+- **Process**: Extract POIs from layout → Combine with static POIs → Map to coordinates from `poi_coordinates_with_ids.json`
+- **Output**: Route only through POIs that appear in the layout and have visible icons
+- **Constraint**: Never consider POIs not present in the current layout or static set for the current map tile layout
+
+### Data Flow Architecture
+```
+Layout Selection & Shifting Earth → Extract Dynamic POIs & Load Static POIs → Combine & Map to Coordinates → Calculate Route → Visualize
+     ↓                                 ↓                        ↓                    ↓              ↓
+layout_XXX.json & map_layout.json → POI List (dynamic + static) → poi_coordinates_with_ids.json → Route Algorithm → Map Display
+```
+
 ## Core Algorithm Architecture
 
 ### State Management Counters
@@ -17,7 +78,7 @@ The algorithm maintains several critical counters that influence route decisions
 #### 2. **Player Level**
 - **Purpose**: Tracks current player level for difficulty calculations
 - **Increment**: Automatic based on runes gained counter
-- **Thresholds**: [PLACEHOLDER - Add precise level thresholds based on rune requirements]
+- **Thresholds**: Based on actual Elden Ring level requirements
 - **Usage**: Determines which POIs are viable targets
 
 #### 3. **Stonesword Keys Counter**
@@ -45,7 +106,7 @@ The algorithm maintains several critical counters that influence route decisions
 
 #### 1.2 Implement Counter Logic
 - [ ] **Runes Counter**: Add POI rune rewards to total
-- [ ] **Level Counter**: Auto-calculate level from runes (placeholder thresholds)
+- [ ] **Level Counter**: Auto-calculate level from runes (use actual Elden Ring thresholds)
 - [ ] **Keys Counter**: Track Stonesword Key acquisition/usage
 - [ ] **Timer Counter**: Subtract POI completion times
 
@@ -65,7 +126,7 @@ The algorithm maintains several critical counters that influence route decisions
 
 #### 2.2 Pathfinding Algorithm
 - [ ] Implement A* pathfinding between POIs
-- [ ] Add distance calculation functions
+- [ ] Add distance calculation functions using coordinates from `poi_coordinates_with_ids.json`
 - [ ] Create route optimization logic
 - [ ] Implement alternative route generation
 
@@ -79,14 +140,14 @@ The algorithm maintains several critical counters that influence route decisions
 **Goal**: Implement day 1 and day 2 specific routing
 
 #### 3.1 Day 1 Route Implementation
-- [ ] **Start Point**: Always begin at Spawn location
-- [ ] **End Point**: Always end at Night 1 circle location
+- [ ] **Start Point**: Always begin at Spawn location (from layout)
+- [ ] **End Point**: Always end at Night 1 circle location (from layout)
 - [ ] **Priority Focus**: Churches, Forts, early-game POIs
 - [ ] **Time Management**: Optimize for 15-minute cycle
 
 #### 3.2 Day 2 Route Implementation
-- [ ] **Start Point**: Begin at Night 1 circle location
-- [ ] **End Point**: End at Night 2 circle location
+- [ ] **Start Point**: Begin at Night 1 circle location (from layout)
+- [ ] **End Point**: End at Night 2 circle location (from layout)
 - [ ] **Priority Focus**: High-value POIs, Shifting Earth events
 - [ ] **Advanced Targeting**: Nightlord weakness POIs
 
@@ -153,6 +214,8 @@ interface RouteState {
   currentDay: 1 | 2;
   teamComposition: TeamMember[];
   nightlord: Nightlord;
+  currentLayout: number; // 1-320
+  availablePOIs: POI[]; // Only POIs present in current layout
 }
 ```
 
@@ -173,6 +236,7 @@ interface POIPriority {
     requiresLevel: number;
     requiresTime: number;
   };
+  coordinates: [number, number]; // From poi_coordinates_with_ids.json
 }
 ```
 
@@ -180,20 +244,23 @@ interface POIPriority {
 
 #### 1. State Initialization
 - Initialize counters based on current game state
-- Set start/end points based on current day
+- Set start/end points based on current day and layout
 - Load team composition and Nightlord data
+- Extract available POIs from current layout
 
 #### 2. POI Priority Calculation
 - Calculate base priority from POI_INFO_FOR_ALGORITHM.md
 - Apply time-based adjustments
 - Add class-specific modifiers
 - Apply Nightlord weakness bonuses
+- **CRITICAL**: Only consider POIs present in current layout
 
 #### 3. Route Generation
-- Use A* algorithm to find optimal path
+- Use A* algorithm to find optimal path between available POIs
 - Consider distance, time, and priority
 - Generate alternative routes
 - Validate route against constraints
+- **CRITICAL**: Use coordinates from `poi_coordinates_with_ids.json`
 
 #### 4. State Updates
 - Update counters based on selected route
@@ -202,7 +269,7 @@ interface POIPriority {
 - Track visited POIs
 
 #### 5. Route Visualization
-- Draw route line on map
+- Draw route line on map using actual coordinates
 - Highlight selected POIs
 - Display route information
 - Show counter updates
@@ -211,7 +278,7 @@ interface POIPriority {
 
 ### Testing Strategy
 1. **Unit Tests**: Test individual counter logic
-2. **Integration Tests**: Test route calculation with mock data
+2. **Integration Tests**: Test route calculation with actual layout data
 3. **UI Tests**: Test button functionality and route display
 4. **Performance Tests**: Ensure algorithm runs efficiently
 
@@ -220,6 +287,7 @@ interface POIPriority {
 - **Route Log**: Log all route decisions and calculations
 - **Priority Debug**: Show priority calculations for each POI
 - **Performance Monitor**: Track algorithm execution time
+- **Layout Debug**: Show current layout and available POIs
 
 ### Development Phases
 1. **Phase 1**: Basic state management (1-2 days)
@@ -271,5 +339,45 @@ interface POIPriority {
 - **Caching**: Cache route calculations for similar states
 - **Parallel Processing**: Calculate multiple route options simultaneously
 - **Predictive Routing**: Anticipate optimal routes based on patterns
+
+## CRITICAL REMINDERS
+
+### Data Source Compliance
+- **NEVER** create mock data or placeholder values
+- **ALWAYS** use `poi_coordinates_with_ids.json` for coordinates
+- **ALWAYS** use `poi_name_coordinate_map.js` for POI names
+- **ALWAYS** extract POIs from current layout file
+
+### Layout-Based Calculation
+- **ONLY** calculate routes from POIs present in current layout
+- **NEVER** consider POIs not visible on the current map
+- **ALWAYS** validate POI availability before route calculation
+
+### Data Synchronization
+- **ALWAYS** filter out POIs with "empty" values in route calculations
+- **NEVER** include POIs with `value: "empty"` or `value: "POI X: empty"` in route logic
+- **ALWAYS** ensure priority calculations and route visualization use the same filtered data
+- **ALWAYS** validate that POI coordinates exist before including in calculations
+
+### Code Quality
+- **ALWAYS** reference this document before making routing changes
+- **NEVER** duplicate POI data in code
+- **ALWAYS** use centralized POI utilities
+- **NEVER** hardcode POI coordinates or names
+- **ALWAYS** show all priority calculations in debug panels (no artificial limits)
+
+### Debug and Validation
+- **ALWAYS** log the number of POIs filtered vs valid POIs for debugging
+- **ALWAYS** ensure route line connections match priority calculation entries
+- **ALWAYS** validate that both static and dynamic POIs are properly synchronized
+- **ALWAYS** test with different layouts to ensure filtering works correctly
+
+### Route and Priority Calculation Synchronization
+- **CRITICAL**: The red debug line MUST follow the priority calculations exactly
+- **ALWAYS** ensure route POIs are in the same order as priority calculations
+- **NEVER** allow discrepancies between priority calculations and route visualization
+- **ALWAYS** validate that route generation uses the exact priority order
+- **ALWAYS** log route synchronization validation for debugging
+- **ALWAYS** ensure POI 104 (Redmane Knights) appears in both priority calculations and route if available in layout
 
 This implementation guide will be updated as development progresses, serving as a living document for the route optimization algorithm development process. 
