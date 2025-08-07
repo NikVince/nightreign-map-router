@@ -22,26 +22,26 @@ const LEVEL_THRESHOLDS = [
 
 // Base priority scores from POI_INFO_FOR_ALGORITHM.md
 const POI_BASE_PRIORITIES: Record<LandmarkType, number> = {
-  [LandmarkType.Church]: 95,
-  [LandmarkType.GreatChurch]: 80,
-  [LandmarkType.Fort]: 80,
-  [LandmarkType.MainEncampment]: 65,
-  [LandmarkType.Ruins]: 60,
-  [LandmarkType.SorcerersRise]: 40,
-  [LandmarkType.Evergaol]: 80,
-  [LandmarkType.Castle]: 85,
-  [LandmarkType.Tunnel]: 40,
+  [LandmarkType.Church]: 50,
+  [LandmarkType.GreatChurch]: 25,
+  [LandmarkType.Fort]: 25,
+  [LandmarkType.MainEncampment]: 20,
+  [LandmarkType.Ruins]: 20,
+  [LandmarkType.SorcerersRise]: 15,
+  [LandmarkType.Evergaol]: 40,
+  [LandmarkType.Castle]: 45,
+  [LandmarkType.Tunnel]: 15,
   [LandmarkType.OldSorcerersRise]: 40,
-  [LandmarkType.Township]: 0, // Small encampment equivalent
-  [LandmarkType.ArenaBoss]: 70,
-  [LandmarkType.FieldBoss]: 60,
+  [LandmarkType.Township]: 45, 
+  [LandmarkType.ArenaBoss]: 30,
+  [LandmarkType.FieldBoss]: 20,
   [LandmarkType.RottedWoods]: 50,
-  [LandmarkType.RotBlessing]: 75,
+  [LandmarkType.RotBlessing]: 50,
   [LandmarkType.SiteOfGrace]: 0,
   [LandmarkType.SpectralHawkTree]: 0,
   [LandmarkType.Spiritstream]: 0,
-  [LandmarkType.Scarab]: 0,
-  [LandmarkType.TunnelEntrance]: 0,
+  [LandmarkType.Scarab]: 25,
+  [LandmarkType.TunnelEntrance]: 15,
 };
 
 export class RouteCalculator {

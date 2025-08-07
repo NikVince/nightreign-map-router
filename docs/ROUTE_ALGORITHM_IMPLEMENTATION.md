@@ -20,6 +20,77 @@ This document outlines the step-by-step implementation of the route optimization
 4. **Track Visited POIs**: Prevent duplicates between days
 5. **Visualize Routes**: Red line for Day 1, bright blue line for Day 2
 
+## 🔄 REVISED: POI Scoring System (Implementation Pending)
+
+### New Scoring Architecture
+**Total Score = Base Score (0-50) + Bonus Score (0-50) - Distance Penalty (0-∞)**
+
+#### Base Score System (0-50 points)
+Each POI type gets a base score from 0-50 based on fundamental value:
+
+```typescript
+const POI_BASE_SCORES: Record<LandmarkType, number> = {
+  [LandmarkType.Church]: 25,           // Sacred Flask charge
+  [LandmarkType.GreatChurch]: 20,      // Flask + Stonesword Key + Boss
+  [LandmarkType.Fort]: 20,             // Stonesword Key + Treasure Maps
+  [LandmarkType.MainEncampment]: 15,   // Merchant + Smithing + Boss
+  [LandmarkType.Ruins]: 15,            // Underground boss + Guaranteed loot
+  [LandmarkType.SorcerersRise]: 10,    // Risk-free rewards + Staves/Seals
+  [LandmarkType.Evergaol]: 20,         // Boss encounter + High runes
+  [LandmarkType.Castle]: 25,           // Guaranteed talisman + Massive runes
+  [LandmarkType.Tunnel]: 10,           // Smithing Stone + Map traversal
+  [LandmarkType.Township]: 0,          // Safe merchant + Enhanced inventory
+  [LandmarkType.ArenaBoss]: 15,        // Moderate rune rewards
+  [LandmarkType.FieldBoss]: 15,        // Variable based on boss strength
+  [LandmarkType.RottedWoods]: 25,      // Favor of the Forest + Rally mechanic
+  [LandmarkType.RotBlessing]: 20,      // Special event bonus
+  // Secondary elements (0 points - no base value)
+  [LandmarkType.SiteOfGrace]: 0,
+  [LandmarkType.SpectralHawkTree]: 0,
+  [LandmarkType.Spiritstream]: 0,
+  [LandmarkType.Scarab]: 0,
+  [LandmarkType.TunnelEntrance]: 0,
+};
+```
+
+#### Bonus Score System (0-50 points)
+Additional points based on contextual factors:
+
+1. **Elemental Affinity Bonus** (+20 points):
+   - Camps with elemental damage matching Nightlord weakness: +20
+   - Example: Fire camp vs Gnoster (Fire weakness) = +20
+
+2. **Team Composition Bonus** (0-40 points):
+   - Sorcerer's Rise: +40 if team is 100% magic users (Recluse, Revenant, Duchess)
+   - Scales percentage-wise: 1/1 = 40, 1/2 = 20, 2/3 = 27, etc.
+   - Other class-specific bonuses to be defined
+
+3. **Strategic Bonus** (0-20 points):
+   - Circle proximity bonus: +10 if near current circle
+   - Resource scarcity bonus: +10 if few alternatives available
+   - Level accessibility bonus: +10 if matches current player level
+
+#### Distance Penalty System
+**Distance Penalty = (Distance to last visited POI / Maximum map distance) × 50**
+
+- **Purpose**: Prevent teleporting across the map
+- **Calculation**: Based on actual coordinates from `poi_coordinates_with_ids.json`
+- **Maximum Penalty**: 50 points (reduces score to minimum)
+- **Implementation**: Use Euclidean distance or Manhattan distance
+
+### Implementation Priority
+1. **Phase 1**: Implement base score system (0-50)
+2. **Phase 2**: Implement bonus score system (0-50)
+3. **Phase 3**: Implement distance penalty system
+4. **Phase 4**: Integrate with existing route calculation
+
+### Benefits of New System
+- **More Balanced**: Base scores reflect fundamental value
+- **Contextual**: Bonus scores adapt to current game state
+- **Realistic**: Distance penalties prevent unrealistic routing
+- **Scalable**: Easy to add new bonus rules
+- **Transparent**: Clear separation of scoring factors
+
 ## CRITICAL: Single Source of Truth for POI Data
 
 ### Authoritative Data Sources
