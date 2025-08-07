@@ -2,6 +2,8 @@
 import React, { useState } from "react";
 import dynamic from "next/dynamic";
 import { MapOptionsDropdown } from "./MapOptionsDropdown";
+import { RouteDebugPanel } from "./RouteDebugPanel";
+import type { RouteState, POIPriority } from "~/types/route";
 
 const MapCanvas = dynamic(() => import("./MapCanvas"), { ssr: false });
 
@@ -17,16 +19,23 @@ export function MainPanel({
   iconToggles, 
   onLayoutChange, 
   onIconToggleChange,
-  layoutNumber = 1
+  layoutNumber = 1,
+  routeState,
+  priorityCalculations
 }: { 
   iconToggles: IconToggles; 
   onLayoutChange?: (layoutNumber: number) => void;
   onIconToggleChange?: (key: string, value: boolean) => void;
   layoutNumber?: number;
+  routeState?: RouteState | null;
+  priorityCalculations?: POIPriority[];
 }) {
   const [showIcons, setShowIcons] = useState(true);
   const [showTitles, setShowTitles] = useState(true);
   const [showNumbers, setShowNumbers] = useState(false);
+  
+  // Route debug state
+  const [debugPanelVisible, setDebugPanelVisible] = useState(false);
 
   return (
     <main className="elden-panel flex-1 flex flex-col h-full w-full" style={{ fontFamily: "var(--elden-ui-font)" }}>
@@ -41,6 +50,40 @@ export function MainPanel({
           iconToggles={iconToggles}
           onIconToggleChange={onIconToggleChange || (() => {})}
         />
+        
+        {/* Route Debug Dropdown */}
+        <div className="absolute top-4 right-4 z-20">
+          <div className="relative">
+            <button
+              onClick={() => setDebugPanelVisible(!debugPanelVisible)}
+              className="px-4 py-2 bg-gray-800 text-white border border-gray-600 rounded hover:bg-gray-700 flex items-center gap-2"
+            >
+              <span>Route Debug</span>
+              <span className={`transform transition-transform ${debugPanelVisible ? 'rotate-180' : ''}`}>▼</span>
+            </button>
+            
+            {debugPanelVisible && (
+              <div className="absolute top-full right-0 mt-2 p-4 bg-black bg-opacity-90 border border-gray-600 rounded min-w-[320px] backdrop-blur-sm max-h-[80vh] overflow-y-auto">
+                <RouteDebugPanel
+                  state={routeState || {
+                    runesGained: 0,
+                    playerLevel: 1,
+                    stoneswordKeys: 0,
+                    remainingTime: 15 * 60,
+                    visitedPOIs: [],
+                    currentDay: 1,
+                    teamComposition: [],
+                    nightlord: "Gladius" as any,
+                  }}
+                  priorityCalculations={priorityCalculations || []}
+                  isVisible={true}
+                  onClose={() => setDebugPanelVisible(false)}
+                />
+              </div>
+            )}
+          </div>
+        </div>
+        
         <MapCanvas 
           iconToggles={iconToggles} 
           layoutNumber={layoutNumber}

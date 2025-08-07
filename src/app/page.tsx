@@ -4,6 +4,7 @@ import { Header } from "./_components/Header";
 import { Sidebar } from "./_components/Sidebar";
 import { type TeamMember } from "./_components/TeamComposition";
 import { NightfarerClassType } from "~/types/core";
+import type { RouteState, POIPriority } from "~/types/route";
 import dynamic from "next/dynamic";
 
 const MainPanel = dynamic(() => import("./_components/MainPanel").then(mod => mod.MainPanel), { ssr: false });
@@ -26,6 +27,10 @@ export default function Home() {
     scarabs: false,
     buriedTreasures: false,
   });
+
+  // Route state
+  const [routeState, setRouteState] = useState<RouteState | null>(null);
+  const [priorityCalculations, setPriorityCalculations] = useState<POIPriority[]>([]);
 
   const handleToggleChange = (key: string, value: boolean) => {
     setIconToggles(toggles => ({ ...toggles, [key]: value }));
@@ -71,6 +76,10 @@ export default function Home() {
                 layoutNumber={layoutNumber}
                 onLayoutChange={setLayoutNumber}
                 onTeamChange={setTeamMembers}
+                routeState={routeState}
+                setRouteState={setRouteState}
+                priorityCalculations={priorityCalculations}
+                setPriorityCalculations={setPriorityCalculations}
               />
             </div>
             {/* 8px gap between objectives and map */}
@@ -82,6 +91,8 @@ export default function Home() {
                 onLayoutChange={setLayoutNumber}
                 onIconToggleChange={handleToggleChange}
                 layoutNumber={layoutNumber}
+                routeState={routeState}
+                priorityCalculations={priorityCalculations}
               />
             </div>
           </>
@@ -93,6 +104,8 @@ export default function Home() {
               onLayoutChange={setLayoutNumber}
               onIconToggleChange={handleToggleChange}
               layoutNumber={layoutNumber}
+              routeState={routeState}
+              priorityCalculations={priorityCalculations}
             />
             {sidebarOpen && (
               <>

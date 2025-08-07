@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import { api } from "~/trpc/react";
 import { TeamComposition, type TeamMember } from "./TeamComposition";
-import { NightfarerClassType } from "~/types/core";
+import { RouteCalculator } from "~/utils/routeCalculator";
+import type { RouteState, POIPriority } from "~/types/route";
+import { NightfarerClassType, Nightlord } from "~/types/core";
 
 export type SidebarProps = {
   isOpen: boolean;
@@ -9,9 +11,23 @@ export type SidebarProps = {
   layoutNumber?: number;
   onLayoutChange?: (layoutNumber: number) => void;
   onTeamChange?: (teamMembers: TeamMember[]) => void;
+  routeState?: RouteState | null;
+  setRouteState?: (state: RouteState | null) => void;
+  priorityCalculations?: POIPriority[];
+  setPriorityCalculations?: (calculations: POIPriority[]) => void;
 };
 
-export function Sidebar({ isOpen, onClose, layoutNumber, onLayoutChange, onTeamChange }: SidebarProps) {
+export function Sidebar({ 
+  isOpen, 
+  onClose, 
+  layoutNumber, 
+  onLayoutChange, 
+  onTeamChange,
+  routeState,
+  setRouteState,
+  priorityCalculations,
+  setPriorityCalculations
+}: SidebarProps) {
   if (!isOpen) return null;
 
   // State for team composition
@@ -21,6 +37,25 @@ export function Sidebar({ isOpen, onClose, layoutNumber, onLayoutChange, onTeamC
 
   // State for layout selection
   const [inputValue, setInputValue] = useState((layoutNumber || 1).toString());
+
+  // Route calculation state
+  const [routeCalculator] = useState(() => new RouteCalculator({
+    runesGained: 0,
+    playerLevel: 1,
+    stoneswordKeys: 0,
+    remainingTime: 15 * 60, // 15 minutes
+    visitedPOIs: [],
+    currentDay: 1,
+    teamComposition: [],
+    nightlord: Nightlord.Gladius,
+  }));
+
+  // Route calculation state - use props if available, otherwise local state
+  const [localCurrentState, setLocalCurrentState] = useState<RouteState>(routeCalculator.getCurrentState());
+  const [localPriorityCalculations, setLocalPriorityCalculations] = useState<POIPriority[]>([]);
+  
+  const currentState = routeState || localCurrentState;
+  const currentPriorityCalculations = priorityCalculations || localPriorityCalculations;
 
   const handleLayoutSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -76,8 +111,38 @@ export function Sidebar({ isOpen, onClose, layoutNumber, onLayoutChange, onTeamC
           onTeamChange?.(updatedTeam);
         }}
         onCalculateRoute={() => {
-          // TODO: Implement route calculation logic
-          console.log("Calculate Route clicked - placeholder for now");
+          // Initialize route calculator with current state
+          const nightlord = layoutData?.Nightlord as Nightlord || Nightlord.Gladius;
+          routeCalculator.initializeState(teamMembers, nightlord, 1);
+          
+          // Mock POI data for testing (replace with actual data later)
+          const mockPOIs = [
+            { id: 1, type: "Church" as any, x: 100, y: 100, estimatedTime: 120, estimatedRunes: 0 },
+            { id: 2, type: "Fort" as any, x: 200, y: 150, estimatedTime: 300, estimatedRunes: 4000 },
+            { id: 3, type: "GreatChurch" as any, x: 150, y: 200, estimatedTime: 240, estimatedRunes: 6000 },
+            { id: 4, type: "Evergaol" as any, x: 300, y: 250, estimatedTime: 180, estimatedRunes: 12000 },
+          ];
+          
+          // Calculate route
+          const result = routeCalculator.calculateRoute(mockPOIs);
+          
+          // Update route state
+          const newState = routeCalculator.getCurrentState();
+          const newPriorityCalculations = result.debugInfo?.priorityCalculations || [];
+          
+          if (setRouteState) {
+            setRouteState(newState);
+          } else {
+            setLocalCurrentState(newState);
+          }
+          
+          if (setPriorityCalculations) {
+            setPriorityCalculations(newPriorityCalculations);
+          } else {
+            setLocalPriorityCalculations(newPriorityCalculations);
+          }
+          
+          console.log("Route calculation result:", result);
         }}
       />
 
