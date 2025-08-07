@@ -2,6 +2,7 @@
 // This file ensures consistent POI ID and type mapping across the entire codebase
 
 import type { POIData } from './poiDataLoader';
+import { getPOIIdForLocationWithContext } from './poiLocationMapping';
 
 export interface POITypeInfo {
   id: number;
@@ -57,6 +58,61 @@ export function getPOIStats(type: string, value: string): { estimatedTime: numbe
     default:
       return { estimatedTime: 240, estimatedRunes: 4000 };
   }
+}
+
+/**
+ * Extracts Shifting Earth event POIs based on the current Shifting Earth event
+ */
+export function extractShiftingEarthPOIs(shiftingEarth: string, poiMasterList: POIData[]): POITypeInfo[] {
+  const pois: POITypeInfo[] = [];
+  
+  if (!shiftingEarth || shiftingEarth === "Default") return pois;
+  
+  // Crater-specific POIs
+  if (shiftingEarth === "Crater") {
+    // POI 131 is the Church in the Crater
+    const churchPOI = poiMasterList.find(p => p.id === 131);
+    if (churchPOI) {
+      pois.push({
+        id: 131,
+        type: "Church",
+        name: "Crater Church",
+        location: "Crater Church",
+        value: "Church - Normal",
+        estimatedTime: 120,
+        estimatedRunes: 2000
+      });
+    }
+  }
+  
+  // Mountaintop-specific POIs
+  if (shiftingEarth === "Mountaintop") {
+    // POI 23 is a Field Boss in Mountaintop
+    const fieldBossPOI = poiMasterList.find(p => p.id === 23);
+    if (fieldBossPOI) {
+      pois.push({
+        id: 23,
+        type: "FieldBoss",
+        name: "Mountaintop Field Boss",
+        location: "Mountaintop Field Boss",
+        value: "Field Boss - Ice Dragon",
+        estimatedTime: 180,
+        estimatedRunes: 6000
+      });
+    }
+  }
+  
+  // Rotted Woods-specific POIs
+  if (shiftingEarth === "Rotted Woods") {
+    // Add Rotted Woods-specific POIs here when known
+  }
+  
+  // Noklateo-specific POIs
+  if (shiftingEarth === "Noklateo") {
+    // Add Noklateo-specific POIs here when known
+  }
+  
+  return pois;
 }
 
 /**
@@ -176,6 +232,13 @@ export function extractPOIsFromLayout(layoutData: any, poiMasterList: POIData[])
     }
   });
   
+  // Add Shifting Earth event POIs
+  const shiftingEarth = layoutData["Shifting Earth"] || "Default";
+  if (shiftingEarth !== "Default") {
+    const shiftingEarthPOIs = extractShiftingEarthPOIs(shiftingEarth, poiMasterList);
+    pois.push(...shiftingEarthPOIs);
+  }
+  
   return pois;
 }
 
@@ -201,9 +264,17 @@ export function getPOIDisplayName(poiId: number, layoutData?: any): string {
     }
   }
   
-  // Fallback if not found in layout
+  // If not found in layout, check if it's a Shifting Earth POI
+  const shiftingEarth = layoutData["Shifting Earth"] || "Default";
+  if (shiftingEarth !== "Default") {
+    // Check for known Shifting Earth POIs
+    if (shiftingEarth === "Crater" && poiId === 131) {
+      return "Church - Normal";
+    }
+    if (shiftingEarth === "Mountaintop" && poiId === 23) {
+      return "Field Boss - Ice Dragon";
+    }
+  }
+  
   return `POI ${poiId}`;
-}
-
-// Import the location mapping function
-import { getPOIIdForLocationWithContext } from './poiLocationMapping'; 
+} 

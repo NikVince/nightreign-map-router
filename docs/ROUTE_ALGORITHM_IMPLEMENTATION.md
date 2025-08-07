@@ -12,6 +12,7 @@ This document outlines the step-by-step implementation of the route optimization
 - ✅ **No Duplicate POI Visits**: POIs visited on Day 1 are excluded from Day 2
 - ✅ **Visual Distinction**: Red line for Day 1, bright blue line for Day 2
 - ✅ **Debug Panel**: Separate sections for each day's route with improved readability
+- ✅ **Shifting Earth POI Integration**: Shifting Earth event POIs are now included in route calculations
 
 ### Route Calculation Flow
 1. **Extract Start/End Points**: From layout data (Spawn Point, Night 1 Circle, Night 2 Circle)
@@ -19,6 +20,78 @@ This document outlines the step-by-step implementation of the route optimization
 3. **Calculate Day 2 Route**: Night 1 Circle → Intermediate POIs → Night 2 Circle
 4. **Track Visited POIs**: Prevent duplicates between days
 5. **Visualize Routes**: Red line for Day 1, bright blue line for Day 2
+6. **Include Shifting Earth POIs**: Add event-specific POIs to route calculations
+
+## 🔄 REVISED: POI Scoring System (Implementation Pending)
+
+### New Scoring Architecture
+**Total Score = Base Score (0-50) + Bonus Score (0-50) - Distance Penalty (0-∞)**
+
+#### Base Score System (0-50 points)
+Each POI type gets a base score from 0-50 based on fundamental value:
+
+```typescript
+const POI_BASE_SCORES: Record<LandmarkType, number> = {
+  [LandmarkType.Church]: 25,           // Sacred Flask charge
+  [LandmarkType.GreatChurch]: 20,      // Flask + Stonesword Key + Boss
+  [LandmarkType.Fort]: 20,             // Stonesword Key + Treasure Maps
+  [LandmarkType.MainEncampment]: 15,   // Merchant + Smithing + Boss
+  [LandmarkType.Ruins]: 15,            // Underground boss + Guaranteed loot
+  [LandmarkType.SorcerersRise]: 10,    // Risk-free rewards + Staves/Seals
+  [LandmarkType.Evergaol]: 20,         // Boss encounter + High runes
+  [LandmarkType.Castle]: 25,           // Guaranteed talisman + Massive runes
+  [LandmarkType.Tunnel]: 10,           // Smithing Stone + Map traversal
+  [LandmarkType.Township]: 0,          // Safe merchant + Enhanced inventory
+  [LandmarkType.ArenaBoss]: 15,        // Moderate rune rewards
+  [LandmarkType.FieldBoss]: 15,        // Variable based on boss strength
+  [LandmarkType.RottedWoods]: 25,      // Favor of the Forest + Rally mechanic
+  [LandmarkType.RotBlessing]: 20,      // Special event bonus
+  // Secondary elements (0 points - no base value)
+  [LandmarkType.SiteOfGrace]: 0,
+  [LandmarkType.SpectralHawkTree]: 0,
+  [LandmarkType.Spiritstream]: 0,
+  [LandmarkType.Scarab]: 0,
+  [LandmarkType.TunnelEntrance]: 0,
+};
+```
+
+#### Bonus Score System (0-50 points)
+Additional points based on contextual factors:
+
+1. **Elemental Affinity Bonus** (+20 points):
+   - Camps with elemental damage matching Nightlord weakness: +20
+   - Example: Fire camp vs Gnoster (Fire weakness) = +20
+
+2. **Team Composition Bonus** (0-40 points):
+   - Sorcerer's Rise: +40 if team is 100% magic users (Recluse, Revenant, Duchess)
+   - Scales percentage-wise: 1/1 = 40, 1/2 = 20, 2/3 = 27, etc.
+   - Other class-specific bonuses to be defined
+
+3. **Strategic Bonus** (0-20 points):
+   - Circle proximity bonus: +10 if near current circle
+   - Resource scarcity bonus: +10 if few alternatives available
+   - Level accessibility bonus: +10 if matches current player level
+
+#### Distance Penalty System
+**Distance Penalty = (Distance to last visited POI / Maximum map distance) × 50**
+
+- **Purpose**: Prevent teleporting across the map
+- **Calculation**: Based on actual coordinates from `poi_coordinates_with_ids.json`
+- **Maximum Penalty**: 50 points (reduces score to minimum)
+- **Implementation**: Use Euclidean distance or Manhattan distance
+
+### Implementation Priority
+1. **Phase 1**: Implement base score system (0-50)
+2. **Phase 2**: Implement bonus score system (0-50)
+3. **Phase 3**: Implement distance penalty system
+4. **Phase 4**: Integrate with existing route calculation
+
+### Benefits of New System
+- **More Balanced**: Base scores reflect fundamental value
+- **Contextual**: Bonus scores adapt to current game state
+- **Realistic**: Distance penalties prevent unrealistic routing
+- **Scalable**: Easy to add new bonus rules
+- **Transparent**: Clear separation of scoring factors
 
 ## 🔄 REVISED: POI Scoring System (Implementation Pending)
 
@@ -505,5 +578,81 @@ interface POIPriority {
 - **NEVER** allow POIs visited on Day 1 to be visited again on Day 2 ✅
 - **ALWAYS** display Day 1 route as red line and Day 2 route as bright blue line ✅
 - **ALWAYS** maintain 15-minute time constraint per day ✅
+- **ALWAYS** include Shifting Earth event POIs in route calculations ✅
+
+## ✅ IMPLEMENTED: Shifting Earth POI Integration
+
+### Shifting Earth POI Integration Status
+- ✅ **Crater Event**: POI 131 (Church) included in route calculations
+- ✅ **Mountaintop Event**: POI 23 (Field Boss) included in route calculations
+- ✅ **Dynamic POI Loading**: Shifting Earth POIs loaded via `getDynamicPOIs` API
+- ✅ **Route Calculation Integration**: Shifting Earth POIs included in priority calculations
+- ✅ **POI Extraction**: `extractShiftingEarthPOIs` function implemented
+- ✅ **Layout Integration**: Shifting Earth POIs added to `extractPOIsFromLayout`
+
+### Shifting Earth POI Implementation Details
+
+#### Supported Shifting Earth Events
+1. **The Crater (Volcanic)**
+   - **POI 131**: Church with high priority (50 points)
+   - **Location**: Northern section of map
+   - **Rewards**: Sacred Flask charge, quick completion
+   - **Route Priority**: High (Church has highest base priority)
+
+2. **Mountaintop**
+   - **POI 23**: Field Boss (Ice Dragon)
+   - **Location**: Northwestern side of map
+   - **Rewards**: High rune rewards, dragon damage bonus
+   - **Route Priority**: High (Field Boss with good rewards)
+
+3. **Rotted Woods** (Placeholder)
+   - **Status**: Ready for implementation
+   - **Future POIs**: To be added when specific POIs are identified
+
+4. **Noklateo** (Placeholder)
+   - **Status**: Ready for implementation
+   - **Future POIs**: To be added when specific POIs are identified
+
+#### Implementation Architecture
+```typescript
+// Shifting Earth POI extraction
+export function extractShiftingEarthPOIs(shiftingEarth: string, poiMasterList: POIData[]): POITypeInfo[] {
+  // Returns hardcoded POIs for each Shifting Earth event
+  // POI 131 for Crater, POI 23 for Mountaintop
+}
+
+// Integration with route calculation
+export function extractPOIsFromLayout(layoutData: any, poiMasterList: POIData[]): POITypeInfo[] {
+  // ... existing POI extraction ...
+  
+  // Add Shifting Earth event POIs
+  const shiftingEarth = layoutData["Shifting Earth"] || "Default";
+  if (shiftingEarth !== "Default") {
+    const shiftingEarthPOIs = extractShiftingEarthPOIs(shiftingEarth, poiMasterList);
+    pois.push(...shiftingEarthPOIs);
+  }
+  
+  return pois;
+}
+```
+
+#### Route Calculation Integration
+- **Sidebar Component**: Fetches dynamic POI data via `getDynamicPOIs` API
+- **POI Combination**: Merges layout POIs with Shifting Earth POIs
+- **Priority Calculation**: Shifting Earth POIs included in route priority calculations
+- **Debug Logging**: Console logs show Shifting Earth POI inclusion
+
+#### Data Flow
+```
+Layout Selection → Extract Layout POIs → Add Shifting Earth POIs → Route Calculation → Visualization
+     ↓                    ↓                        ↓                    ↓                ↓
+layout_XXX.json → extractPOIsFromLayout → extractShiftingEarthPOIs → RouteCalculator → Map Display
+```
+
+### Future Enhancements
+- **Additional POIs**: Add more Shifting Earth POIs as they are identified
+- **Dynamic Loading**: Implement asynchronous loading of Shifting Earth coordinate data
+- **Event-Specific Scoring**: Add Shifting Earth event-specific priority bonuses
+- **Visual Indicators**: Add special icons or highlighting for Shifting Earth POIs
 
 This implementation guide will be updated as development progresses, serving as a living document for the route optimization algorithm development process. 

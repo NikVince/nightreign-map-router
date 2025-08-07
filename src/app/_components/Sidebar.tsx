@@ -6,7 +6,7 @@ import type { RouteState, POIPriority, CompleteRoute } from "~/types/route";
 import { NightfarerClassType, Nightlord, LandmarkType } from "~/types/core";
 import { getPOIIdForLocationWithContext } from "~/utils/poiLocationMapping";
 import { getPOIData } from "~/utils/poiDataLoader";
-import { extractPOIsFromLayout } from "~/utils/poiUtils";
+import { extractPOIsFromLayout, getPOITypeFromValue, getPOIStats } from "~/utils/poiUtils";
 
 // TODO: Add state reset when seed changes (clear route, remove line, reset calculations)
 // TODO: Fix stonesword keys counter to update only on team member toggle changes
@@ -85,6 +85,18 @@ export function Sidebar({
     { enabled: !!layoutNumber }
   );
 
+  // Fetch dynamic POI data including Shifting Earth POIs
+  const { data: dynamicPOIData } = api.poi.getDynamicPOIs.useQuery(
+    {
+      layoutNumber: layoutNumber || 1,
+      mapLayout: "default" // This will be overridden by the returned mapLayout
+    },
+    {
+      enabled: !!layoutNumber,
+      staleTime: 5 * 60 * 1000, // 5 minutes
+    }
+  );
+
   return (
     <aside className="elden-panel flex flex-col h-full flex-1 p-6 bg-[var(--elden-background)] overflow-y-auto" style={{ fontFamily: "var(--elden-ui-font)" }}>
       {/* Layout Selection */}
@@ -141,10 +153,33 @@ export function Sidebar({
             value: poi.value
           }));
           
-          console.log("Layout POIs extracted:", layoutPOIs);
+          // Add Shifting Earth POIs from dynamic POI data
+          let allPOIs = [...layoutPOIs];
+          if (dynamicPOIData && dynamicPOIData.dynamicPOIs.length > 0) {
+            const shiftingEarthPOIs = dynamicPOIData.dynamicPOIs.map(poi => ({
+              id: poi.id,
+              type: getPOITypeFromValue(poi.value) as LandmarkType,
+              x: poi.coordinates[0],
+              y: poi.coordinates[1],
+              estimatedTime: getPOIStats(getPOITypeFromValue(poi.value), poi.value).estimatedTime,
+              estimatedRunes: getPOIStats(getPOITypeFromValue(poi.value), poi.value).estimatedRunes,
+              location: poi.location,
+              value: poi.value
+            }));
+            
+            // Only add POIs that aren't already in the layout POIs
+            const existingPOIIds = new Set(layoutPOIs.map(p => p.id));
+            const newShiftingEarthPOIs = shiftingEarthPOIs.filter(poi => !existingPOIIds.has(poi.id));
+            allPOIs.push(...newShiftingEarthPOIs);
+          }
           
-          // Calculate complete route (both day 1 and day 2) using layout POIs
-          const result = routeCalculator.calculateCompleteRoute(layoutPOIs, layoutData);
+          console.log("Layout POIs extracted:", layoutPOIs);
+          console.log("Shifting Earth POIs added:", dynamicPOIData?.dynamicPOIs || []);
+          console.log("Total POIs for route calculation:", allPOIs);
+          console.log("Shifting Earth event:", layoutData?.["Shifting Earth"] || "Default");
+          
+          // Calculate complete route (both day 1 and day 2) using all POIs
+          const result = routeCalculator.calculateCompleteRoute(allPOIs, layoutData);
           
           // Update route state
           const newState = routeCalculator.getCurrentState();
