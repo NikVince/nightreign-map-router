@@ -54,7 +54,6 @@ export function Sidebar({
     playerLevel: 1,
     stoneswordKeys: 0,
     remainingTime: 15 * 60, // 15 minutes
-    visitedPOIs: [],
     currentDay: 1,
     teamComposition: [],
     nightlord: Nightlord.Gladius,

@@ -14,7 +14,6 @@ export interface RouteState {
   playerLevel: number;
   stoneswordKeys: number;
   remainingTime: number; // in seconds
-  visitedPOIs: number[];
   currentDay: 1 | 2;
   teamComposition: TeamMember[];
   nightlord: Nightlord;

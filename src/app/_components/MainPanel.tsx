@@ -77,7 +77,6 @@ export function MainPanel({
                     playerLevel: 1,
                     stoneswordKeys: 0,
                     remainingTime: 15 * 60,
-                    visitedPOIs: [],
                     currentDay: 1,
                     teamComposition: [],
                     nightlord: "Gladius" as any,

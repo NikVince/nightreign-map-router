@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import type { RouteState, POIPriority } from "~/types/route";
 import { getPOIDisplayName } from "~/utils/poiUtils";
 
@@ -27,6 +27,10 @@ export function RouteDebugPanel({
 }: RouteDebugPanelProps) {
   if (!isVisible) return null;
 
+  // State for collapsible sections
+  const [stateCountersExpanded, setStateCountersExpanded] = useState(true);
+  const [teamCompositionExpanded, setTeamCompositionExpanded] = useState(true);
+
   const formatTime = (seconds: number): string => {
     const minutes = Math.floor(seconds / 60);
     const remainingSeconds = seconds % 60;
@@ -41,76 +45,75 @@ export function RouteDebugPanel({
         </h3>
       </div>
 
-      {/* State Counters */}
+      {/* State Counters - Collapsible */}
       <div className="mb-4">
-        <h4 className="font-semibold mb-2 text-yellow-400">State Counters</h4>
-        <div className="space-y-1 text-sm">
-          <div className="flex justify-between">
-            <span>Runes Gained:</span>
-            <span className="text-green-400">{state.runesGained.toLocaleString()}</span>
+        <button
+          onClick={() => setStateCountersExpanded(!stateCountersExpanded)}
+          className="flex items-center justify-between w-full font-semibold mb-2 text-yellow-400 hover:text-yellow-300 transition-colors"
+        >
+          <span>State Counters</span>
+          <span className={`transform transition-transform ${stateCountersExpanded ? 'rotate-180' : ''}`}>
+            ▼
+          </span>
+        </button>
+        {stateCountersExpanded && (
+          <div className="space-y-1 text-sm">
+            <div className="flex justify-between">
+              <span>Runes Gained:</span>
+              <span className="text-green-400">{state.runesGained.toLocaleString()}</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Player Level:</span>
+              <span className="text-blue-400">{state.playerLevel}</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Stonesword Keys:</span>
+              <span className="text-purple-400">{state.stoneswordKeys}</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Remaining Time:</span>
+              <span className="text-red-400">{formatTime(state.remainingTime)}</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Current Day:</span>
+              <span className="text-orange-400">{state.currentDay}</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Team Size:</span>
+              <span className="text-cyan-400">{state.teamComposition.length}</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Nightlord:</span>
+              <span className="text-pink-400">{state.nightlord}</span>
+            </div>
           </div>
-          <div className="flex justify-between">
-            <span>Player Level:</span>
-            <span className="text-blue-400">{state.playerLevel}</span>
-          </div>
-          <div className="flex justify-between">
-            <span>Stonesword Keys:</span>
-            <span className="text-purple-400">{state.stoneswordKeys}</span>
-          </div>
-          <div className="flex justify-between">
-            <span>Remaining Time:</span>
-            <span className="text-red-400">{formatTime(state.remainingTime)}</span>
-          </div>
-          <div className="flex justify-between">
-            <span>Current Day:</span>
-            <span className="text-orange-400">{state.currentDay}</span>
-          </div>
-          <div className="flex justify-between">
-            <span>Team Size:</span>
-            <span className="text-cyan-400">{state.teamComposition.length}</span>
-          </div>
-          <div className="flex justify-between">
-            <span>Nightlord:</span>
-            <span className="text-pink-400">{state.nightlord}</span>
-          </div>
-        </div>
+        )}
       </div>
 
-      {/* Visited POIs */}
+      {/* Team Composition - Collapsible */}
       <div className="mb-4">
-        <h4 className="font-semibold mb-2 text-yellow-400">Visited POIs</h4>
-        <div className="text-sm">
-          {state.visitedPOIs.length > 0 ? (
-            <div className="flex flex-wrap gap-1">
-              {state.visitedPOIs.map((poiId, index) => (
-                <span
-                  key={poiId}
-                  className="px-2 py-1 bg-gray-700 rounded text-xs"
-                >
-                  {poiId}
+        <button
+          onClick={() => setTeamCompositionExpanded(!teamCompositionExpanded)}
+          className="flex items-center justify-between w-full font-semibold mb-2 text-yellow-400 hover:text-yellow-300 transition-colors"
+        >
+          <span>Team Composition</span>
+          <span className={`transform transition-transform ${teamCompositionExpanded ? 'rotate-180' : ''}`}>
+            ▼
+          </span>
+        </button>
+        {teamCompositionExpanded && (
+          <div className="space-y-1 text-sm">
+            {state.teamComposition.map((member, index) => (
+              <div key={member.id} className="flex justify-between">
+                <span>Player {member.id}:</span>
+                <span className="text-cyan-400">
+                  {member.nightfarer || "None"}
+                  {member.startsWithStoneswordKey && " 🔑"}
                 </span>
-              ))}
-            </div>
-          ) : (
-            <span className="text-gray-400">None</span>
-          )}
-        </div>
-      </div>
-
-      {/* Team Composition */}
-      <div className="mb-4">
-        <h4 className="font-semibold mb-2 text-yellow-400">Team Composition</h4>
-        <div className="space-y-1 text-sm">
-          {state.teamComposition.map((member, index) => (
-            <div key={member.id} className="flex justify-between">
-              <span>Player {member.id}:</span>
-              <span className="text-cyan-400">
-                {member.nightfarer || "None"}
-                {member.startsWithStoneswordKey && " 🔑"}
-              </span>
-            </div>
-          ))}
-        </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Priority Calculations */}
@@ -119,7 +122,7 @@ export function RouteDebugPanel({
           <h4 className="font-semibold mb-2 text-yellow-400">
             Priority Calculations ({priorityCalculations.length})
           </h4>
-          <div className="space-y-2 text-xs max-h-32 overflow-y-auto">
+          <div className="space-y-2 text-xs max-h-96 overflow-y-auto">
             {priorityCalculations.map((priority) => (
               <div key={priority.poiId} className="bg-gray-800 p-2 rounded">
                 <div className="flex justify-between">

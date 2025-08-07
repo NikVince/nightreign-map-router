@@ -65,7 +65,6 @@ export class RouteCalculator {
       playerLevel: 1,
       stoneswordKeys: this.calculateStartingKeys(teamMembers),
       remainingTime: startTime,
-      visitedPOIs: [],
       currentDay,
       teamComposition: teamMembers,
       nightlord,
@@ -119,15 +118,6 @@ export class RouteCalculator {
    */
   public subtractTime(seconds: number): void {
     this.state.remainingTime = Math.max(0, this.state.remainingTime - seconds);
-  }
-
-  /**
-   * Mark a POI as visited
-   */
-  public markPOIVisited(poiId: number): void {
-    if (!this.state.visitedPOIs.includes(poiId)) {
-      this.state.visitedPOIs.push(poiId);
-    }
   }
 
   /**
