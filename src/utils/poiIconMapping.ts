@@ -90,6 +90,11 @@ export const POI_VALUE_TO_ICON_MAP: POIIconMapping[] = [
   { value: "Death Rite Bird", icon: "Field_Boss_Red.png", category: "Field Boss" },
   { value: "Black Blade Kindred", icon: "Field_Boss_Red.png", category: "Field Boss" },
   { value: "Draconic Tree Sentinel", icon: "Field_Boss_Red.png", category: "Field Boss" },
+  { value: "Mountaintop Ice Dragon", icon: "Field_Boss_Red.png", category: "Field Boss" },
+  { value: "Valiant Gargoyle", icon: "Field_Boss_Red.png", category: "Field Boss" },
+  { value: "Fallingstar Beast", icon: "Field_Boss_Red.png", category: "Field Boss" },
+  { value: "Astel", icon: "Field_Boss_Red.png", category: "Field Boss" },
+  { value: "Dragonking Soldier", icon: "Field_Boss_Red.png", category: "Field Boss" },
 
   // Field Bosses - Weak (Score: 60-70) - Keep Field_Boss.png
   { value: "Grafted Scion", icon: "Field_Boss.png", category: "Field Boss" },

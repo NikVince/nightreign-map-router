@@ -1228,6 +1228,27 @@ const MapCanvas: React.FC<{
         iconFile = "Fort.png";
       }
 
+      // Special cases for field bosses that should get red icons in shifting earth events
+      // Mountaintop Ice Dragons (POIs 141, 142, 145, 147) in mountaintop layouts
+      if ((id === 141 || id === 142 || id === 145 || id === 147) && effectiveMapLayout === "the_mountaintop_shifted") {
+        iconFile = "Field_Boss_Red.png";
+      }
+      
+      // Valiant Gargoyle (POI 138), Fallingstar Beast (POI 137), and Magma Wyrm (POI 136) in crater layouts
+      if ((id === 136 || id === 137 || id === 138) && effectiveMapLayout === "the_crater_shifted") {
+        iconFile = "Field_Boss_Red.png";
+      }
+      
+      // Astel (POI 130) in noklateo layouts
+      if (id === 130 && effectiveMapLayout === "noklateo_shifted") {
+        iconFile = "Field_Boss_Red.png";
+      }
+      
+      // Royal Carian Knight (POI 123) and Dragonkin Soldier (POI 127) in noklateo layouts
+      if ((id === 123 || id === 127) && effectiveMapLayout === "noklateo_shifted") {
+        iconFile = "Field_Boss_Red.png";
+      }
+
       if (!iconFile) return null;
 
       const iconIndex = POI_ICONS.indexOf(iconFile);
