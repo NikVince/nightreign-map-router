@@ -4,6 +4,16 @@ import { TeamComposition, type TeamMember } from "./TeamComposition";
 import { RouteCalculator } from "~/utils/routeCalculator";
 import type { RouteState, POIPriority } from "~/types/route";
 import { NightfarerClassType, Nightlord } from "~/types/core";
+import { getPOIIdForLocationWithContext } from "~/utils/poiLocationMapping";
+import { getPOIData } from "~/utils/poiDataLoader";
+import { extractPOIsFromLayout } from "~/utils/poiUtils";
+
+// TODO: Add state reset when seed changes (clear route, remove line, reset calculations)
+// TODO: Fix stonesword keys counter to update only on team member toggle changes
+// TODO: Ensure route calculation uses only POIs present in current layout
+
+// Master POI list from coordinate file - now using all 213 POIs
+const poiMasterList = getPOIData();
 
 export type SidebarProps = {
   isOpen: boolean;
@@ -115,25 +125,54 @@ export function Sidebar({
           const nightlord = layoutData?.Nightlord as Nightlord || Nightlord.Gladius;
           routeCalculator.initializeState(teamMembers, nightlord, 1);
           
-          // Mock POI data for testing (replace with actual data later)
-          const mockPOIs = [
-            { id: 1, type: "Church" as any, x: 100, y: 100, estimatedTime: 120, estimatedRunes: 0 },
-            { id: 2, type: "Fort" as any, x: 200, y: 150, estimatedTime: 300, estimatedRunes: 4000 },
-            { id: 3, type: "GreatChurch" as any, x: 150, y: 200, estimatedTime: 240, estimatedRunes: 6000 },
-            { id: 4, type: "Evergaol" as any, x: 300, y: 250, estimatedTime: 180, estimatedRunes: 12000 },
-          ];
+          // Extract POI data from the current layout using centralized utility
+          const layoutPOIs = extractPOIsFromLayout(layoutData, poiMasterList).map(poi => ({
+            id: poi.id,
+            type: poi.type,
+            x: poiMasterList.find(p => p.id === poi.id)?.coordinates[0] || 0,
+            y: poiMasterList.find(p => p.id === poi.id)?.coordinates[1] || 0,
+            estimatedTime: poi.estimatedTime,
+            estimatedRunes: poi.estimatedRunes,
+            location: poi.location,
+            value: poi.value
+          }));
           
-          // Calculate route
-          const result = routeCalculator.calculateRoute(mockPOIs);
+          console.log("Layout POIs extracted:", layoutPOIs);
+          
+          // Calculate route using layout POIs
+          const result = routeCalculator.calculateRoute(layoutPOIs);
           
           // Update route state
           const newState = routeCalculator.getCurrentState();
           const newPriorityCalculations = result.debugInfo?.priorityCalculations || [];
+          const calculatedRoute = result.route?.route || [];
+          
+          // CRITICAL: Validate synchronization between route and priority calculations
+          console.log("=== ROUTE SYNCHRONIZATION VALIDATION ===");
+          console.log("Priority calculations count:", newPriorityCalculations.length);
+          console.log("Calculated route count:", calculatedRoute.length);
+          console.log("Priority calculations POIs:", newPriorityCalculations.map(p => p.poiId));
+          console.log("Calculated route POIs:", calculatedRoute);
+          
+          // Validate that route POIs are in the same order as priority calculations
+          const routeFromPriorities = newPriorityCalculations
+            .filter(p => calculatedRoute.includes(p.poiId))
+            .map(p => p.poiId);
+          
+          console.log("Route POIs from priority order:", routeFromPriorities);
+          console.log("Route matches priority order:", JSON.stringify(calculatedRoute) === JSON.stringify(routeFromPriorities));
+          console.log("=== END VALIDATION ===");
+          
+          // Add the calculated route to the state
+          const stateWithRoute = {
+            ...newState,
+            calculatedRoute: calculatedRoute
+          };
           
           if (setRouteState) {
-            setRouteState(newState);
+            setRouteState(stateWithRoute);
           } else {
-            setLocalCurrentState(newState);
+            setLocalCurrentState(stateWithRoute);
           }
           
           if (setPriorityCalculations) {
@@ -143,6 +182,8 @@ export function Sidebar({
           }
           
           console.log("Route calculation result:", result);
+          console.log("Calculated route:", result.route?.route);
+          console.log("State with route:", stateWithRoute);
         }}
       />
 
