@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import dynamic from "next/dynamic";
 import { MapOptionsDropdown } from "./MapOptionsDropdown";
 import { RouteDebugPanel } from "./RouteDebugPanel";
-import type { RouteState, POIPriority } from "~/types/route";
+import type { RouteState, POIPriority, CompleteRoute } from "~/types/route";
 import { api } from "~/trpc/react";
 
 const MapCanvas = dynamic(() => import("./MapCanvas"), { ssr: false });
@@ -22,7 +22,8 @@ export function MainPanel({
   onIconToggleChange,
   layoutNumber = 1,
   routeState,
-  priorityCalculations
+  priorityCalculations,
+  completeRoute
 }: { 
   iconToggles: IconToggles; 
   onLayoutChange?: (layoutNumber: number) => void;
@@ -30,6 +31,7 @@ export function MainPanel({
   layoutNumber?: number;
   routeState?: RouteState | null;
   priorityCalculations?: POIPriority[];
+  completeRoute?: CompleteRoute | null;
 }) {
   const [showIcons, setShowIcons] = useState(true);
   const [showTitles, setShowTitles] = useState(true);
@@ -80,9 +82,11 @@ export function MainPanel({
                     currentDay: 1,
                     teamComposition: [],
                     nightlord: "Gladius" as any,
+                    visitedPOIs: [],
                   }}
                   priorityCalculations={priorityCalculations || []}
                   layoutData={layoutData}
+                  completeRoute={completeRoute}
                   isVisible={true}
                   onClose={() => setDebugPanelVisible(false)}
                 />
@@ -100,8 +104,8 @@ export function MainPanel({
           setShowTitles={setShowTitles}
           showNumbers={showNumbers}
           setShowNumbers={setShowNumbers}
-          route={routeState?.calculatedRoute || []}
-          currentDay={routeState?.currentDay || 1}
+          day1Route={completeRoute?.day1Route?.route || []}
+          day2Route={completeRoute?.day2Route?.route || []}
         />
       </div>
     </main>

@@ -1,7 +1,7 @@
 // Route calculation algorithm for Nightreign map router
 // Reference: /docs/ROUTE_ALGORITHM_IMPLEMENTATION.md
 
-import type { RouteState, POIPriority, RouteCalculation, RouteResult, TeamMember } from "../types/route";
+import type { RouteState, POIPriority, CompleteRoute, DayRoute, RouteResult, TeamMember } from "../types/route";
 import { Nightlord, LandmarkType } from "../types/core";
 
 // Constants for route calculation
@@ -68,6 +68,7 @@ export class RouteCalculator {
       currentDay,
       teamComposition: teamMembers,
       nightlord,
+      visitedPOIs: [],
     };
   }
 
@@ -121,6 +122,15 @@ export class RouteCalculator {
   }
 
   /**
+   * Mark POI as visited
+   */
+  public markPOIVisited(poiId: number): void {
+    if (!this.state.visitedPOIs.includes(poiId)) {
+      this.state.visitedPOIs.push(poiId);
+    }
+  }
+
+  /**
    * Get current state for debugging
    */
   public getCurrentState(): RouteState {
@@ -156,7 +166,10 @@ export class RouteCalculator {
     // Nightlord weakness targeting
     const nightlordBonus = this.calculateNightlordBonus(poiType);
     
-    const adjustedPriority = basePriority + timeAdjustment + levelAccessibility + keyAccessibility + teamBonus + nightlordBonus;
+    // Penalty for already visited POIs
+    const visitedPenalty = this.state.visitedPOIs.includes(poiId) ? -1000 : 0;
+    
+    const adjustedPriority = basePriority + timeAdjustment + levelAccessibility + keyAccessibility + teamBonus + nightlordBonus + visitedPenalty;
 
     return {
       poiId,
@@ -231,110 +244,170 @@ export class RouteCalculator {
   }
 
   /**
-   * Main route calculation method
+   * Calculate route for a specific day
+   */
+  private calculateDayRoute(
+    day: 1 | 2,
+    availablePOIs: Array<{
+      id: number;
+      type: LandmarkType;
+      x: number;
+      y: number;
+      estimatedTime: number;
+      estimatedRunes: number;
+      location?: string;
+      value?: string;
+    }>,
+    startPOI: number,
+    endPOI: number,
+    layoutData: any
+  ): DayRoute {
+    // Set up state for this day
+    this.state.currentDay = day;
+    this.state.remainingTime = DAY_CYCLE_TIME;
+    
+    // For day 2, carry over state from day 1
+    if (day === 2) {
+      // Keep runes, level, and visited POIs from day 1
+      // Reset time for day 2
+      this.state.remainingTime = DAY_CYCLE_TIME;
+    }
+
+    // CRITICAL: Filter out POIs with "empty" values
+    const validPOIs = availablePOIs.filter(poi => {
+      if (poi.value === "empty" || poi.value === "POI X: empty") {
+        return false;
+      }
+      if (poi.location === "empty" || poi.location === "") {
+        return false;
+      }
+      if (poi.x === 0 && poi.y === 0) {
+        return false;
+      }
+      return true;
+    });
+
+    console.log(`Day ${day}: Filtered ${availablePOIs.length} POIs down to ${validPOIs.length} valid POIs`);
+
+    // Calculate priorities for all valid POIs
+    const priorities = validPOIs.map(poi => 
+      this.calculatePOIPriority(
+        poi.id,
+        poi.type,
+        poi.estimatedTime,
+        poi.estimatedRunes
+      )
+    );
+
+    // Filter accessible POIs (exclude start and end POIs from route calculation)
+    const accessiblePOIs = priorities.filter(priority => 
+      priority.adjustedPriority > 0 &&
+      priority.estimatedTime <= this.state.remainingTime &&
+      (!priority.accessibility.requiresKeys || this.state.stoneswordKeys > 0) &&
+      priority.poiId !== startPOI &&
+      priority.poiId !== endPOI
+    );
+
+    // Sort by adjusted priority (highest first)
+    accessiblePOIs.sort((a, b) => b.adjustedPriority - a.adjustedPriority);
+
+    console.log(`Day ${day}: Found ${accessiblePOIs.length} accessible POIs with priorities:`, 
+      accessiblePOIs.map(p => `${p.poiId}:${p.adjustedPriority}`).join(', '));
+
+    // Generate route that starts at startPOI, visits intermediate POIs, and ends at endPOI
+    const route: number[] = [startPOI];
+    let totalTime = 0;
+    let totalDistance = 0;
+
+    // Add intermediate POIs based on priority
+    for (const poi of accessiblePOIs) {
+      if (totalTime + poi.estimatedTime <= this.state.remainingTime) {
+        route.push(poi.poiId);
+        totalTime += poi.estimatedTime;
+        this.markPOIVisited(poi.poiId);
+        // TODO: Calculate actual distance between POIs
+        totalDistance += 100; // Placeholder distance
+      } else {
+        console.log(`Day ${day}: Skipping POI ${poi.poiId} due to time constraint`);
+      }
+    }
+
+    // Add end POI
+    route.push(endPOI);
+
+    console.log(`Day ${day}: Generated route with ${route.length} POIs:`, route);
+    console.log(`Day ${day}: Total route time: ${totalTime}s, remaining time: ${this.state.remainingTime}s`);
+
+    return {
+      day,
+      startPOI,
+      endPOI,
+      route,
+      totalTime,
+      totalDistance,
+      priorities: accessiblePOIs.reduce((acc, poi) => {
+        acc[poi.poiId] = poi.adjustedPriority;
+        return acc;
+      }, {} as Record<number, number>),
+    };
+  }
+
+  /**
+   * Main route calculation method for both days
    * CRITICAL: Filter out POIs with "empty" values to ensure data synchronization
    */
-  public calculateRoute(availablePOIs: Array<{
-    id: number;
-    type: LandmarkType;
-    x: number;
-    y: number;
-    estimatedTime: number;
-    estimatedRunes: number;
-    location?: string;
-    value?: string;
-  }>): RouteResult {
+  public calculateCompleteRoute(
+    availablePOIs: Array<{
+      id: number;
+      type: LandmarkType;
+      x: number;
+      y: number;
+      estimatedTime: number;
+      estimatedRunes: number;
+      location?: string;
+      value?: string;
+    }>,
+    layoutData: any
+  ): RouteResult {
     const startTime = performance.now();
     
     try {
-      // CRITICAL: Filter out POIs with "empty" values
-      // This ensures we only consider POIs that actually exist in the current layout
-      const validPOIs = availablePOIs.filter(poi => {
-        // Skip POIs with "empty" values
-        if (poi.value === "empty" || poi.value === "POI X: empty") {
-          return false;
-        }
-        
-        // Skip POIs with empty location names
-        if (poi.location === "empty" || poi.location === "") {
-          return false;
-        }
-        
-        // Skip POIs with invalid coordinates
-        if (poi.x === 0 && poi.y === 0) {
-          return false;
-        }
-        
-        return true;
-      });
+      // Extract start and end POIs from layout data
+      const spawnPOI = this.extractSpawnPOI(layoutData);
+      const night1CirclePOI = this.extractNightCirclePOI(layoutData, 1);
+      const night2CirclePOI = this.extractNightCirclePOI(layoutData, 2);
 
-      console.log(`Filtered ${availablePOIs.length} POIs down to ${validPOIs.length} valid POIs`);
-
-      // Calculate priorities for all valid POIs
-      const priorities = validPOIs.map(poi => 
-        this.calculatePOIPriority(
-          poi.id,
-          poi.type,
-          poi.estimatedTime,
-          poi.estimatedRunes
-        )
-      );
-
-      // Filter accessible POIs
-      const accessiblePOIs = priorities.filter(priority => 
-        priority.adjustedPriority > 0 &&
-        priority.estimatedTime <= this.state.remainingTime &&
-        (!priority.accessibility.requiresKeys || this.state.stoneswordKeys > 0)
-      );
-
-      // Sort by adjusted priority (highest first)
-      accessiblePOIs.sort((a, b) => b.adjustedPriority - a.adjustedPriority);
-
-      console.log(`Found ${accessiblePOIs.length} accessible POIs with priorities:`, 
-        accessiblePOIs.map(p => `${p.poiId}:${p.adjustedPriority}`).join(', '));
-
-      // CRITICAL: Generate route that matches priority order exactly
-      // The route should follow the priority calculations precisely
-      const route: number[] = [];
-      let totalTime = 0;
-      let totalDistance = 0;
-
-      // Use the exact order from priority calculations
-      for (const poi of accessiblePOIs) {
-        if (totalTime + poi.estimatedTime <= this.state.remainingTime) {
-          route.push(poi.poiId);
-          totalTime += poi.estimatedTime;
-          // TODO: Calculate actual distance between POIs
-          totalDistance += 100; // Placeholder distance
-        } else {
-          console.log(`Skipping POI ${poi.poiId} due to time constraint (${totalTime + poi.estimatedTime}s > ${this.state.remainingTime}s)`);
-        }
+      if (!spawnPOI || !night1CirclePOI || !night2CirclePOI) {
+        throw new Error("Missing required start/end POIs from layout data");
       }
 
-      console.log(`Generated route with ${route.length} POIs:`, route);
-      console.log(`Total route time: ${totalTime}s, remaining time: ${this.state.remainingTime}s`);
+      console.log(`Route calculation: Spawn=${spawnPOI}, Night1=${night1CirclePOI}, Night2=${night2CirclePOI}`);
+
+      // Calculate day 1 route (Spawn → Night 1 Circle)
+      const day1Route = this.calculateDayRoute(1, availablePOIs, spawnPOI, night1CirclePOI, layoutData);
+
+      // Calculate day 2 route (Night 1 Circle → Night 2 Circle)
+      const day2Route = this.calculateDayRoute(2, availablePOIs, night1CirclePOI, night2CirclePOI, layoutData);
+
+      const totalRunes = Object.keys(day1Route.priorities).length + Object.keys(day2Route.priorities).length; // Placeholder
+      const totalTime = day1Route.totalTime + day2Route.totalTime;
+
+      const completeRoute: CompleteRoute = {
+        day1Route,
+        day2Route,
+        totalRunes,
+        totalTime,
+        notes: `Generated complete route: Day 1 (${day1Route.route.length} POIs), Day 2 (${day2Route.route.length} POIs)`,
+      };
 
       const executionTime = performance.now() - startTime;
 
-      const routeCalculation: RouteCalculation = {
-        patternId: `pattern-${this.state.currentDay}`,
-        nightlord: this.state.nightlord,
-        route,
-        totalDistance,
-        estimatedTime: totalTime,
-        priorities: accessiblePOIs.reduce((acc, poi) => {
-          acc[poi.poiId] = poi.adjustedPriority;
-          return acc;
-        }, {} as Record<number, number>),
-        notes: `Generated route for ${route.length} POIs in ${totalTime}s`,
-      };
-
       return {
         success: true,
-        route: routeCalculation,
+        route: completeRoute,
         debugInfo: {
           stateSnapshot: this.getCurrentState(),
-          priorityCalculations: accessiblePOIs, // Return ALL accessible POIs, not limited
+          priorityCalculations: [], // TODO: Return priority calculations for both days
           executionTime,
         },
       };
@@ -350,5 +423,30 @@ export class RouteCalculator {
         },
       };
     }
+  }
+
+  /**
+   * Extract spawn POI ID from layout data
+   */
+  private extractSpawnPOI(layoutData: any): number | null {
+    if (layoutData["Spawn Point"] && layoutData["Spawn Point"] !== "empty") {
+      // Use the centralized POI location mapping utility
+      const { getPOIIdForSpawnLocation } = require("./poiLocationMapping");
+      return getPOIIdForSpawnLocation(layoutData["Spawn Point"]);
+    }
+    return null;
+  }
+
+  /**
+   * Extract night circle POI ID from layout data
+   */
+  private extractNightCirclePOI(layoutData: any, night: number): number | null {
+    const nightKey = `Night ${night} Circle`;
+    if (layoutData[nightKey] && layoutData[nightKey] !== "empty") {
+      // Use the centralized POI location mapping utility
+      const { getPOIIdForNightCircleLocation } = require("./poiLocationMapping");
+      return getPOIIdForNightCircleLocation(layoutData[nightKey]);
+    }
+    return null;
   }
 } 

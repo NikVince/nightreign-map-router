@@ -189,8 +189,8 @@ const MapCanvas: React.FC<{
   setShowTitles?: (show: boolean) => void,
   showNumbers?: boolean,
   setShowNumbers?: (show: boolean) => void,
-  route?: number[],
-  currentDay?: 1 | 2,
+  day1Route?: number[],
+  day2Route?: number[],
 }> = ({
   iconToggles,
   layoutNumber,
@@ -200,8 +200,8 @@ const MapCanvas: React.FC<{
   setShowTitles = () => {},
   showNumbers = false,
   setShowNumbers = () => {},
-  route = [],
-  currentDay = 1,
+  day1Route = [],
+  day2Route = [],
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<KonvaStageType>(null);
@@ -1341,16 +1341,16 @@ const MapCanvas: React.FC<{
               })
             )}
         </Layer>
-        {/* Route Visualization Layer: Draw a line connecting the POIs in the current route */}
-        {route && route.length > 1 && (
+        {/* Day 1 Route Visualization Layer: Draw a red line connecting the POIs in day 1 route */}
+        {day1Route && day1Route.length > 1 && (
           <Layer listening={false}>
             {(() => {
-              // Get coordinates for each POI in the route
+              // Get coordinates for each POI in the day 1 route
               const leftBound = 507;
               const activeWidth = 1690;
               const points: number[] = [];
               
-              for (const poiId of route) {
+              for (const poiId of day1Route) {
                 const poi = poiMasterList.find(p => p.id === poiId);
                 if (!poi) continue;
                 const scaledX = ((poi.coordinates[0] - leftBound) / activeWidth) * mapWidth;
@@ -1360,12 +1360,44 @@ const MapCanvas: React.FC<{
               
               if (points.length < 4) return null;
               
-              const strokeColor = currentDay === 2 ? 'orange' : 'red';
+              return (
+                <KonvaLine
+                  points={points}
+                  stroke="red"
+                  strokeWidth={4}
+                  lineCap="round"
+                  lineJoin="round"
+                  dashEnabled={false}
+                  opacity={0.9}
+                />
+              );
+            })()}
+          </Layer>
+        )}
+
+        {/* Day 2 Route Visualization Layer: Draw a bright blue line connecting the POIs in day 2 route */}
+        {day2Route && day2Route.length > 1 && (
+          <Layer listening={false}>
+            {(() => {
+              // Get coordinates for each POI in the day 2 route
+              const leftBound = 507;
+              const activeWidth = 1690;
+              const points: number[] = [];
+              
+              for (const poiId of day2Route) {
+                const poi = poiMasterList.find(p => p.id === poiId);
+                if (!poi) continue;
+                const scaledX = ((poi.coordinates[0] - leftBound) / activeWidth) * mapWidth;
+                const scaledY = (poi.coordinates[1] / 1690) * mapHeight;
+                points.push(scaledX, scaledY);
+              }
+              
+              if (points.length < 4) return null;
               
               return (
                 <KonvaLine
                   points={points}
-                  stroke={strokeColor}
+                  stroke="#00BFFF"
                   strokeWidth={4}
                   lineCap="round"
                   lineJoin="round"

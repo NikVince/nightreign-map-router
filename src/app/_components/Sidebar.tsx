@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { api } from "~/trpc/react";
 import { TeamComposition, type TeamMember } from "./TeamComposition";
 import { RouteCalculator } from "~/utils/routeCalculator";
-import type { RouteState, POIPriority } from "~/types/route";
+import type { RouteState, POIPriority, CompleteRoute } from "~/types/route";
 import { NightfarerClassType, Nightlord, LandmarkType } from "~/types/core";
 import { getPOIIdForLocationWithContext } from "~/utils/poiLocationMapping";
 import { getPOIData } from "~/utils/poiDataLoader";
@@ -25,6 +25,8 @@ export type SidebarProps = {
   setRouteState?: (state: RouteState | null) => void;
   priorityCalculations?: POIPriority[];
   setPriorityCalculations?: (calculations: POIPriority[]) => void;
+  completeRoute?: CompleteRoute | null;
+  setCompleteRoute?: (route: CompleteRoute | null) => void;
 };
 
 export function Sidebar({ 
@@ -36,7 +38,9 @@ export function Sidebar({
   routeState,
   setRouteState,
   priorityCalculations,
-  setPriorityCalculations
+  setPriorityCalculations,
+  completeRoute,
+  setCompleteRoute
 }: SidebarProps) {
   if (!isOpen) return null;
 
@@ -57,6 +61,7 @@ export function Sidebar({
     currentDay: 1,
     teamComposition: [],
     nightlord: Nightlord.Gladius,
+    visitedPOIs: [],
   }));
 
   // Route calculation state - use props if available, otherwise local state
@@ -138,34 +143,30 @@ export function Sidebar({
           
           console.log("Layout POIs extracted:", layoutPOIs);
           
-          // Calculate route using layout POIs
-          const result = routeCalculator.calculateRoute(layoutPOIs);
+          // Calculate complete route (both day 1 and day 2) using layout POIs
+          const result = routeCalculator.calculateCompleteRoute(layoutPOIs, layoutData);
           
           // Update route state
           const newState = routeCalculator.getCurrentState();
           const newPriorityCalculations = result.debugInfo?.priorityCalculations || [];
-          const calculatedRoute = result.route?.route || [];
+          const calculatedCompleteRoute = result.route;
           
           // CRITICAL: Validate synchronization between route and priority calculations
           console.log("=== ROUTE SYNCHRONIZATION VALIDATION ===");
           console.log("Priority calculations count:", newPriorityCalculations.length);
-          console.log("Calculated route count:", calculatedRoute.length);
-          console.log("Priority calculations POIs:", newPriorityCalculations.map(p => p.poiId));
-          console.log("Calculated route POIs:", calculatedRoute);
+          console.log("Day 1 route count:", calculatedCompleteRoute?.day1Route?.route?.length || 0);
+          console.log("Day 2 route count:", calculatedCompleteRoute?.day2Route?.route?.length || 0);
           
-          // Validate that route POIs are in the same order as priority calculations
-          const routeFromPriorities = newPriorityCalculations
-            .filter(p => calculatedRoute.includes(p.poiId))
-            .map(p => p.poiId);
-          
-          console.log("Route POIs from priority order:", routeFromPriorities);
-          console.log("Route matches priority order:", JSON.stringify(calculatedRoute) === JSON.stringify(routeFromPriorities));
+          if (calculatedCompleteRoute) {
+            console.log("Day 1 route POIs:", calculatedCompleteRoute.day1Route.route);
+            console.log("Day 2 route POIs:", calculatedCompleteRoute.day2Route.route);
+          }
           console.log("=== END VALIDATION ===");
           
           // Add the calculated route to the state
           const stateWithRoute = {
             ...newState,
-            calculatedRoute: calculatedRoute
+            calculatedRoute: calculatedCompleteRoute?.day1Route?.route || []
           };
           
           if (setRouteState) {
@@ -179,9 +180,13 @@ export function Sidebar({
           } else {
             setLocalPriorityCalculations(newPriorityCalculations);
           }
+
+          if (setCompleteRoute) {
+            setCompleteRoute(calculatedCompleteRoute || null);
+          }
           
           console.log("Route calculation result:", result);
-          console.log("Calculated route:", result.route?.route);
+          console.log("Calculated complete route:", calculatedCompleteRoute);
           console.log("State with route:", stateWithRoute);
         }}
       />
@@ -229,6 +234,24 @@ export function Sidebar({
         </div>
       )}
 
+      {/* Route Information */}
+      {completeRoute && (
+        <div className="mb-4 p-3 bg-black bg-opacity-75 rounded">
+          <div className="text-sm">
+            <div className="font-bold mb-2 text-base" style={{ color: "var(--elden-accent)" }}>
+              Calculated Route
+            </div>
+            <div className="mb-2">
+              <span className="text-red-400">Day 1:</span> {completeRoute.day1Route.route.length} POIs
+              <br />
+              <span className="text-blue-400">Day 2:</span> {completeRoute.day2Route.route.length} POIs
+            </div>
+            <div className="text-xs text-gray-400">
+              Total Time: {Math.floor(completeRoute.totalTime / 60)}:{(completeRoute.totalTime % 60).toString().padStart(2, '0')}
+            </div>
+          </div>
+        </div>
+      )}
 
       <ul className="flex flex-col gap-3">
         {/* Checklist items will go here */}

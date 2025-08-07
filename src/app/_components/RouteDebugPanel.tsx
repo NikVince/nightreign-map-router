@@ -1,12 +1,13 @@
 "use client";
 import React, { useState } from "react";
-import type { RouteState, POIPriority } from "~/types/route";
+import type { RouteState, POIPriority, CompleteRoute, DayRoute } from "~/types/route";
 import { getPOIDisplayName } from "~/utils/poiUtils";
 
 interface RouteDebugPanelProps {
   state: RouteState;
   priorityCalculations?: POIPriority[];
   layoutData?: any;
+  completeRoute?: CompleteRoute | null;
   isVisible: boolean;
   onClose: () => void;
 }
@@ -22,14 +23,17 @@ export function RouteDebugPanel({
   state, 
   priorityCalculations = [], 
   layoutData,
+  completeRoute,
   isVisible, 
   onClose 
 }: RouteDebugPanelProps) {
   if (!isVisible) return null;
 
   // State for collapsible sections
-  const [stateCountersExpanded, setStateCountersExpanded] = useState(true);
-  const [teamCompositionExpanded, setTeamCompositionExpanded] = useState(true);
+  const [stateCountersExpanded, setStateCountersExpanded] = useState(false);
+  const [teamCompositionExpanded, setTeamCompositionExpanded] = useState(false);
+  const [day1RouteExpanded, setDay1RouteExpanded] = useState(true);
+  const [day2RouteExpanded, setDay2RouteExpanded] = useState(true);
 
   const formatTime = (seconds: number): string => {
     const minutes = Math.floor(seconds / 60);
@@ -57,7 +61,7 @@ export function RouteDebugPanel({
           </span>
         </button>
         {stateCountersExpanded && (
-          <div className="space-y-1 text-sm">
+          <div className="space-y-1 text-base">
             <div className="flex justify-between">
               <span>Runes Gained:</span>
               <span className="text-green-400">{state.runesGained.toLocaleString()}</span>
@@ -86,6 +90,10 @@ export function RouteDebugPanel({
               <span>Nightlord:</span>
               <span className="text-pink-400">{state.nightlord}</span>
             </div>
+            <div className="flex justify-between">
+              <span>Visited POIs:</span>
+              <span className="text-gray-400">{state.visitedPOIs?.length || 0}</span>
+            </div>
           </div>
         )}
       </div>
@@ -102,7 +110,7 @@ export function RouteDebugPanel({
           </span>
         </button>
         {teamCompositionExpanded && (
-          <div className="space-y-1 text-sm">
+          <div className="space-y-1 text-base">
             {state.teamComposition.map((member, index) => (
               <div key={member.id} className="flex justify-between">
                 <span>Player {member.id}:</span>
@@ -116,13 +124,103 @@ export function RouteDebugPanel({
         )}
       </div>
 
+      {/* Day 1 Route - Collapsible */}
+      {completeRoute?.day1Route && (
+        <div className="mb-4">
+          <button
+            onClick={() => setDay1RouteExpanded(!day1RouteExpanded)}
+            className="flex items-center justify-between w-full font-semibold mb-2 text-red-400 hover:text-red-300 transition-colors"
+          >
+            <span>Day 1 Route (Red Line)</span>
+            <span className={`transform transition-transform ${day1RouteExpanded ? 'rotate-180' : ''}`}>
+              ▼
+            </span>
+          </button>
+                      {day1RouteExpanded && (
+              <div className="space-y-2 text-sm">
+              <div className="bg-gray-800 p-2 rounded">
+                <div className="flex justify-between">
+                  <span>Start POI:</span>
+                  <span className="text-red-400">{completeRoute.day1Route.startPOI}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>End POI:</span>
+                  <span className="text-red-400">{completeRoute.day1Route.endPOI}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Route Length:</span>
+                  <span className="text-red-400">{completeRoute.day1Route.route.length} POIs</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Total Time:</span>
+                  <span className="text-red-400">{formatTime(completeRoute.day1Route.totalTime)}</span>
+                </div>
+              </div>
+              <div className="max-h-32 overflow-y-auto">
+                <div className="text-sm text-gray-400 mb-1">Route POIs:</div>
+                {completeRoute.day1Route.route.map((poiId, index) => (
+                  <div key={poiId} className="text-sm">
+                    {index + 1}. POI {poiId}: {getPOITypeName(poiId, layoutData)}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Day 2 Route - Collapsible */}
+      {completeRoute?.day2Route && (
+        <div className="mb-4">
+          <button
+            onClick={() => setDay2RouteExpanded(!day2RouteExpanded)}
+            className="flex items-center justify-between w-full font-semibold mb-2 text-blue-400 hover:text-blue-300 transition-colors"
+          >
+            <span>Day 2 Route (Blue Line)</span>
+            <span className={`transform transition-transform ${day2RouteExpanded ? 'rotate-180' : ''}`}>
+              ▼
+            </span>
+          </button>
+                      {day2RouteExpanded && (
+              <div className="space-y-2 text-sm">
+              <div className="bg-gray-800 p-2 rounded">
+                <div className="flex justify-between">
+                  <span>Start POI:</span>
+                  <span className="text-blue-400">{completeRoute.day2Route.startPOI}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>End POI:</span>
+                  <span className="text-blue-400">{completeRoute.day2Route.endPOI}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Route Length:</span>
+                  <span className="text-blue-400">{completeRoute.day2Route.route.length} POIs</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Total Time:</span>
+                  <span className="text-blue-400">{formatTime(completeRoute.day2Route.totalTime)}</span>
+                </div>
+              </div>
+              <div className="max-h-32 overflow-y-auto">
+                <div className="text-sm text-gray-400 mb-1">Route POIs:</div>
+                {completeRoute.day2Route.route.map((poiId, index) => (
+                  <div key={poiId} className="text-sm">
+                    {index + 1}. POI {poiId}: {getPOITypeName(poiId, layoutData)}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
       {/* Priority Calculations */}
       {priorityCalculations.length > 0 && (
         <div className="mb-4">
           <h4 className="font-semibold mb-2 text-yellow-400">
             Priority Calculations ({priorityCalculations.length})
           </h4>
-          <div className="space-y-2 text-xs max-h-96 overflow-y-auto">
+          <div className="space-y-2 text-sm max-h-96 overflow-y-auto">
             {priorityCalculations.map((priority) => (
               <div key={priority.poiId} className="bg-gray-800 p-2 rounded">
                 <div className="flex justify-between">

@@ -18,6 +18,7 @@ export interface RouteState {
   teamComposition: TeamMember[];
   nightlord: Nightlord;
   calculatedRoute?: number[]; // Ordered list of POI IDs from route calculation
+  visitedPOIs: number[]; // Track POIs visited to avoid duplicates between days
 }
 
 export interface POIPriority {
@@ -47,9 +48,27 @@ export interface RouteCalculation {
   notes?: string;
 }
 
+export interface DayRoute {
+  day: 1 | 2;
+  startPOI: number; // Spawn location for day 1, Night 1 circle for day 2
+  endPOI: number; // Night 1 circle for day 1, Night 2 circle for day 2
+  route: number[]; // POIs to visit between start and end
+  totalTime: number;
+  totalDistance: number;
+  priorities: Record<number, number>;
+}
+
+export interface CompleteRoute {
+  day1Route: DayRoute;
+  day2Route: DayRoute;
+  totalRunes: number;
+  totalTime: number;
+  notes?: string;
+}
+
 export interface RouteResult {
   success: boolean;
-  route?: RouteCalculation;
+  route?: CompleteRoute;
   error?: string;
   debugInfo?: {
     stateSnapshot: RouteState;
