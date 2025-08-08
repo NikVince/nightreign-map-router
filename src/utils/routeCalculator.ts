@@ -53,6 +53,21 @@ const POI_BASE_PRIORITIES: Record<LandmarkType, number> = {
 export class RouteCalculator {
   private state: RouteState;
   private poiCoordinates: Map<number, [number, number]> = new Map();
+  private debugMode: boolean = false;
+  private debugStep: number = 0;
+  private debugRoute: number[] = [];
+  private debugCurrentPOI: number | null = null;
+  private debugAvailablePOIs: Array<{
+    id: number;
+    type: LandmarkType;
+    x: number;
+    y: number;
+    estimatedTime: number;
+    estimatedRunes: number;
+    location?: string;
+    value?: string;
+  }> = [];
+  private debugLayoutData: any = null;
 
   constructor(initialState: RouteState) {
     this.state = { ...initialState };
@@ -659,5 +674,166 @@ export class RouteCalculator {
       averageDistance: distanceCount > 0 ? totalDistance / distanceCount : 0,
       sampleDistances
     };
+  }
+
+  /**
+   * Enable debug mode for step-by-step route calculation
+   */
+  public enableDebugMode(
+    availablePOIs: Array<{
+      id: number;
+      type: LandmarkType;
+      x: number;
+      y: number;
+      estimatedTime: number;
+      estimatedRunes: number;
+      location?: string;
+      value?: string;
+    }>,
+    layoutData: any
+  ): void {
+    this.debugMode = true;
+    this.debugStep = 0;
+    this.debugRoute = [];
+    this.debugAvailablePOIs = [...availablePOIs];
+    this.debugLayoutData = layoutData;
+    
+    // Extract start POI
+    const spawnPOI = this.extractSpawnPOI(layoutData);
+    if (spawnPOI) {
+      this.debugCurrentPOI = spawnPOI;
+      this.debugRoute = [spawnPOI];
+    }
+    
+    console.log("Debug mode enabled. Starting from POI:", this.debugCurrentPOI);
+  }
+
+  /**
+   * Disable debug mode
+   */
+  public disableDebugMode(): void {
+    this.debugMode = false;
+    this.debugStep = 0;
+    this.debugRoute = [];
+    this.debugCurrentPOI = null;
+    this.debugAvailablePOIs = [];
+    this.debugLayoutData = null;
+  }
+
+  /**
+   * Get current debug state
+   */
+  public getDebugState(): {
+    step: number;
+    currentPOI: number | null;
+    route: number[];
+    availablePOIs: number[];
+    isComplete: boolean;
+  } {
+    return {
+      step: this.debugStep,
+      currentPOI: this.debugCurrentPOI,
+      route: this.debugRoute,
+      availablePOIs: this.debugAvailablePOIs.map(poi => poi.id),
+      isComplete: this.debugStep > 0 && this.debugAvailablePOIs.length === 0
+    };
+  }
+
+  /**
+   * Execute next step in debug mode
+   */
+  public executeNextStep(): {
+    success: boolean;
+    selectedPOI?: number;
+    priorities?: POIPriority[];
+    error?: string;
+  } {
+    if (!this.debugMode) {
+      return { success: false, error: "Debug mode not enabled" };
+    }
+
+    if (!this.debugCurrentPOI) {
+      return { success: false, error: "No current POI" };
+    }
+
+    // Calculate priorities for all available POIs
+    const priorities = this.debugAvailablePOIs.map(poi => 
+      this.calculatePOIPriority(
+        poi.id,
+        poi.type,
+        poi.estimatedTime,
+        poi.estimatedRunes,
+        [],
+        0,
+        this.debugCurrentPOI || undefined
+      )
+    );
+
+    // Filter accessible POIs
+    const accessiblePOIs = priorities.filter(priority => 
+      priority.adjustedPriority > 0 &&
+      priority.estimatedTime <= this.state.remainingTime &&
+      (!priority.accessibility.requiresKeys || this.state.stoneswordKeys > 0) &&
+      priority.poiId !== this.debugCurrentPOI &&
+      !this.debugRoute.includes(priority.poiId)
+    );
+
+    // Sort by adjusted priority (highest first)
+    accessiblePOIs.sort((a, b) => b.adjustedPriority - a.adjustedPriority);
+
+    if (accessiblePOIs.length === 0) {
+      console.log(`Debug Step ${this.debugStep}: No more accessible POIs`);
+      return { 
+        success: true, 
+        priorities: priorities,
+        selectedPOI: undefined 
+      };
+    }
+
+    // Select the highest priority POI
+    const nextPOI = accessiblePOIs[0];
+    if (!nextPOI) {
+      return { success: false, error: "No valid POI found" };
+    }
+
+    this.debugRoute.push(nextPOI.poiId);
+    this.debugCurrentPOI = nextPOI.poiId;
+    this.debugStep++;
+    
+    // Remove selected POI from available POIs
+    this.debugAvailablePOIs = this.debugAvailablePOIs.filter(poi => poi.id !== nextPOI.poiId);
+    
+    // Update state
+    this.markPOIVisited(nextPOI.poiId);
+    this.state.remainingTime -= nextPOI.estimatedTime;
+    
+    console.log(`Debug Step ${this.debugStep}: Selected POI ${nextPOI.poiId} (priority: ${nextPOI.adjustedPriority})`);
+    
+    return {
+      success: true,
+      selectedPOI: nextPOI.poiId,
+      priorities: priorities
+    };
+  }
+
+  /**
+   * Get current step priorities for score overlay
+   */
+  public getCurrentStepPriorities(): POIPriority[] {
+    if (!this.debugMode || !this.debugCurrentPOI) {
+      return [];
+    }
+
+    return this.debugAvailablePOIs.map(poi => 
+      this.calculatePOIPriority(
+        poi.id,
+        poi.type,
+        poi.estimatedTime,
+        poi.estimatedRunes,
+        [],
+        0,
+        this.debugCurrentPOI || undefined
+      )
+    );
   }
 } 

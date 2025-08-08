@@ -7,6 +7,7 @@ import type { KonvaEventObject } from "konva/lib/Node";
 import Konva from "konva";
 import useImage from "use-image";
 import type { IconToggles } from "./MainPanel";
+import type { POIPriority } from "~/types/route";
 import { api } from "~/trpc/react";
 
 // Add this type definition for our new data structure
@@ -191,6 +192,9 @@ const MapCanvas: React.FC<{
   setShowNumbers?: (show: boolean) => void,
   day1Route?: number[],
   day2Route?: number[],
+  debugPriorities?: POIPriority[],
+  showDebugScores?: boolean,
+  setShowDebugScores?: (show: boolean) => void,
 }> = ({
   iconToggles,
   layoutNumber,
@@ -202,6 +206,9 @@ const MapCanvas: React.FC<{
   setShowNumbers = () => {},
   day1Route = [],
   day2Route = [],
+  debugPriorities = [],
+  showDebugScores = false,
+  setShowDebugScores = () => {},
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<KonvaStageType>(null);
@@ -1519,6 +1526,43 @@ const MapCanvas: React.FC<{
                         />
                       </>
                     )}
+                    {showDebugScores && debugPriorities.length > 0 && (
+                      (() => {
+                        const priority = debugPriorities.find(p => p.poiId === id);
+                        if (!priority || priority.adjustedPriority <= 0) return null;
+                        
+                        return (
+                          <>
+                            <KonvaImage
+                              image={undefined}
+                              x={scaledX - 30}
+                              y={scaledY + 20}
+                              width={60}
+                              height={24}
+                              fill={priority.adjustedPriority > 20 ? "rgba(0,255,0,0.8)" : priority.adjustedPriority > 10 ? "rgba(255,255,0,0.8)" : "rgba(255,0,0,0.8)"}
+                              stroke="#000"
+                              strokeWidth={1}
+                              cornerRadius={4}
+                              listening={false}
+                            />
+                            <KonvaText
+                              text={priority.adjustedPriority.toFixed(1)}
+                              x={scaledX - 30}
+                              y={scaledY + 20}
+                              fontSize={14}
+                              fontFamily="Arial"
+                              fill="#000"
+                              align="center"
+                              width={60}
+                              height={24}
+                              listening={false}
+                              verticalAlign="middle"
+                              fontStyle="bold"
+                            />
+                          </>
+                        );
+                      })()
+                    )}
                   </React.Fragment>
                 );
               }
@@ -1588,6 +1632,43 @@ const MapCanvas: React.FC<{
                         verticalAlign="middle"
                       />
                     </>
+                  )}
+                  {showDebugScores && debugPriorities.length > 0 && (
+                    (() => {
+                      const priority = debugPriorities.find(p => p.poiId === id);
+                      if (!priority || priority.adjustedPriority <= 0) return null;
+                      
+                      return (
+                        <>
+                          <KonvaImage
+                            image={undefined}
+                            x={scaledX - 30}
+                            y={scaledY + 20}
+                            width={60}
+                            height={24}
+                            fill={priority.adjustedPriority > 20 ? "rgba(0,255,0,0.8)" : priority.adjustedPriority > 10 ? "rgba(255,255,0,0.8)" : "rgba(255,0,0,0.8)"}
+                            stroke="#000"
+                            strokeWidth={1}
+                            cornerRadius={4}
+                            listening={false}
+                          />
+                          <KonvaText
+                            text={priority.adjustedPriority.toFixed(1)}
+                            x={scaledX - 30}
+                            y={scaledY + 20}
+                            fontSize={14}
+                            fontFamily="Arial"
+                            fill="#000"
+                            align="center"
+                            width={60}
+                            height={24}
+                            listening={false}
+                            verticalAlign="middle"
+                            fontStyle="bold"
+                          />
+                        </>
+                      );
+                    })()
                   )}
                 </React.Fragment>
               );

@@ -23,7 +23,8 @@ export function MainPanel({
   layoutNumber = 1,
   routeState,
   priorityCalculations,
-  completeRoute
+  completeRoute,
+  debugPriorities = [],
 }: { 
   iconToggles: IconToggles; 
   onLayoutChange?: (layoutNumber: number) => void;
@@ -32,10 +33,12 @@ export function MainPanel({
   routeState?: RouteState | null;
   priorityCalculations?: POIPriority[];
   completeRoute?: CompleteRoute | null;
+  debugPriorities?: POIPriority[];
 }) {
   const [showIcons, setShowIcons] = useState(true);
   const [showTitles, setShowTitles] = useState(true);
   const [showNumbers, setShowNumbers] = useState(false);
+  const [showDebugScores, setShowDebugScores] = useState(false);
   
   // Route debug state
   const [debugPanelVisible, setDebugPanelVisible] = useState(false);
@@ -56,6 +59,8 @@ export function MainPanel({
           setShowTitles={setShowTitles}
           showNumbers={showNumbers}
           setShowNumbers={setShowNumbers}
+          showDebugScores={showDebugScores}
+          setShowDebugScores={setShowDebugScores}
           iconToggles={iconToggles}
           onIconToggleChange={onIconToggleChange || (() => {})}
         />
@@ -104,8 +109,11 @@ export function MainPanel({
           setShowTitles={setShowTitles}
           showNumbers={showNumbers}
           setShowNumbers={setShowNumbers}
+          showDebugScores={showDebugScores}
+          setShowDebugScores={setShowDebugScores}
           day1Route={completeRoute?.day1Route?.route || []}
           day2Route={completeRoute?.day2Route?.route || []}
+          debugPriorities={debugPriorities}
         />
       </div>
     </main>

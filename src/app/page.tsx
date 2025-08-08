@@ -32,6 +32,7 @@ export default function Home() {
   const [routeState, setRouteState] = useState<RouteState | null>(null);
   const [priorityCalculations, setPriorityCalculations] = useState<POIPriority[]>([]);
   const [completeRoute, setCompleteRoute] = useState<CompleteRoute | null>(null);
+  const [debugPriorities, setDebugPriorities] = useState<POIPriority[]>([]);
 
   const handleToggleChange = (key: string, value: boolean) => {
     setIconToggles(toggles => ({ ...toggles, [key]: value }));
@@ -83,34 +84,38 @@ export default function Home() {
                 setPriorityCalculations={setPriorityCalculations}
                 completeRoute={completeRoute}
                 setCompleteRoute={setCompleteRoute}
+                debugPriorities={debugPriorities}
+                setDebugPriorities={setDebugPriorities}
               />
             </div>
             {/* 8px gap between objectives and map */}
             <div style={{ width: 8 }} />
             {/* Map panel, no border */}
             <div className="h-full flex-1 flex flex-col w-full sm:w-3/4 min-h-0">
-              <MainPanel 
-                iconToggles={iconToggles} 
+              <MainPanel
+                iconToggles={iconToggles}
                 onLayoutChange={setLayoutNumber}
                 onIconToggleChange={handleToggleChange}
                 layoutNumber={layoutNumber}
                 routeState={routeState}
                 priorityCalculations={priorityCalculations}
                 completeRoute={completeRoute}
+                debugPriorities={debugPriorities}
               />
             </div>
           </>
         ) : (
           // Mobile: map canvas fills width, objectives overlays as before
           <div className="h-full flex-1 flex flex-col w-full min-h-0">
-            <MainPanel 
-              iconToggles={iconToggles} 
+            <MainPanel
+              iconToggles={iconToggles}
               onLayoutChange={setLayoutNumber}
               onIconToggleChange={handleToggleChange}
               layoutNumber={layoutNumber}
               routeState={routeState}
               priorityCalculations={priorityCalculations}
               completeRoute={completeRoute}
+              debugPriorities={debugPriorities}
             />
             {sidebarOpen && (
               <>
@@ -138,6 +143,8 @@ export default function Home() {
                     setPriorityCalculations={setPriorityCalculations}
                     completeRoute={completeRoute}
                     setCompleteRoute={setCompleteRoute}
+                    debugPriorities={debugPriorities}
+                    setDebugPriorities={setDebugPriorities}
                   />
                 </div>
               </>

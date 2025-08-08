@@ -9,6 +9,8 @@ interface MapOptionsDropdownProps {
   setShowTitles: (show: boolean) => void;
   showNumbers: boolean;
   setShowNumbers: (show: boolean) => void;
+  showDebugScores?: boolean;
+  setShowDebugScores?: (show: boolean) => void;
   iconToggles: {
     sitesOfGrace: boolean;
     spiritStreams: boolean;
@@ -26,6 +28,8 @@ export const MapOptionsDropdown: React.FC<MapOptionsDropdownProps> = ({
   setShowTitles,
   showNumbers,
   setShowNumbers,
+  showDebugScores = false,
+  setShowDebugScores = () => {},
   iconToggles,
   onIconToggleChange
 }) => {
@@ -147,6 +151,15 @@ export const MapOptionsDropdown: React.FC<MapOptionsDropdownProps> = ({
                           className="w-4 h-4"
                         />
                         Show Numbers
+                      </label>
+                      <label className="flex items-center gap-2 text-sm text-white">
+                        <input
+                          type="checkbox"
+                          checked={showDebugScores}
+                          onChange={e => setShowDebugScores(e.target.checked)}
+                          className="w-4 h-4"
+                        />
+                        Show Debug Scores
                       </label>
                     </div>
                   </div>
