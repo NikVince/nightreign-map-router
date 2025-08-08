@@ -20,6 +20,10 @@ interface RouteDebugPanelProps {
   teamMembers?: Array<{ id: number; nightfarer: NightfarerClassType; startsWithStoneswordKey: boolean }>;
   debugRoute?: number[];
   setDebugRoute?: (route: number[]) => void;
+  debugDay1Route?: number[];
+  setDebugDay1Route?: (route: number[]) => void;
+  debugDay2Route?: number[];
+  setDebugDay2Route?: (route: number[]) => void;
 }
 
 // Function to get POI type name based on ID and layout data
@@ -40,7 +44,11 @@ export function RouteDebugPanel({
   setDebugPriorities = () => {},
   teamMembers = [],
   debugRoute = [],
-  setDebugRoute = () => {}
+  setDebugRoute = () => {},
+  debugDay1Route = [],
+  setDebugDay1Route = () => {},
+  debugDay2Route = [],
+  setDebugDay2Route = () => {}
 }: RouteDebugPanelProps) {
   if (!isVisible) return null;
 
@@ -363,7 +371,9 @@ export function RouteDebugPanel({
                   // Get the initial debug route from the RouteCalculator
                   const debugState = routeCalculator.getDebugState();
                   setDebugRouteState(debugState.route);
-                  setDebugRoute(debugState.route);
+                  setDebugRoute(debugState.day1Route); // Use Day 1 route for initial display
+                  setDebugDay1Route(debugState.day1Route);
+                  setDebugDay2Route(debugState.day2Route);
                   setDebugPriorities([]);
                 }}
                 className="w-full px-3 py-2 text-sm bg-green-600 text-white border border-green-500 rounded hover:bg-green-700"
@@ -392,7 +402,16 @@ export function RouteDebugPanel({
                         if (result.selectedPOI) {
                           const newRoute = [...debugRouteState, result.selectedPOI];
                           setDebugRouteState(newRoute);
-                          setDebugRoute(newRoute);
+                          
+                          // Get updated debug state to check current day
+                          const debugState = routeCalculator.getDebugState();
+                          if (debugState.currentDay === 1) {
+                            setDebugRoute(debugState.day1Route);
+                            setDebugDay1Route(debugState.day1Route);
+                          } else {
+                            setDebugRoute(debugState.day2Route);
+                            setDebugDay2Route(debugState.day2Route);
+                          }
                         }
                         if (result.priorities) {
                           setDebugPriorities(result.priorities);

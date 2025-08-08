@@ -50,6 +50,8 @@ export function MainPanel({
   
   // Route debug state
   const [debugPanelVisible, setDebugPanelVisible] = useState(false);
+  const [debugDay1Route, setDebugDay1Route] = useState<number[]>([]);
+  const [debugDay2Route, setDebugDay2Route] = useState<number[]>([]);
 
   // Fetch layout data if layoutNumber is provided
   const { data: layoutData } = api.poi.getLayout.useQuery(
@@ -107,6 +109,10 @@ export function MainPanel({
                   teamMembers={teamMembers}
                   debugRoute={debugRoute}
                   setDebugRoute={setDebugRoute}
+                  debugDay1Route={debugDay1Route}
+                  setDebugDay1Route={setDebugDay1Route}
+                  debugDay2Route={debugDay2Route}
+                  setDebugDay2Route={setDebugDay2Route}
                 />
               </div>
             )}
@@ -124,8 +130,8 @@ export function MainPanel({
           setShowNumbers={setShowNumbers}
           showDebugScores={showDebugScores}
           setShowDebugScores={setShowDebugScores}
-          day1Route={debugRoute.length > 0 ? debugRoute : (completeRoute?.day1Route?.route || [])}
-          day2Route={completeRoute?.day2Route?.route || []}
+          day1Route={debugDay1Route.length > 0 ? debugDay1Route : (completeRoute?.day1Route?.route || [])}
+          day2Route={debugDay2Route.length > 0 ? debugDay2Route : (completeRoute?.day2Route?.route || [])}
           debugPriorities={debugPriorities}
         />
       </div>

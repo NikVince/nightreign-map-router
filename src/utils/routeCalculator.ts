@@ -73,6 +73,8 @@ export class RouteCalculator {
   private debugCurrentDay: 1 | 2 = 1;
   private debugDayRoute: number[] = [];
   private debugDayStep: number = 0;
+  private debugDay1Route: number[] = [];
+  private debugDay2Route: number[] = [];
 
   constructor(initialState: RouteState) {
     this.state = { ...initialState };
@@ -707,6 +709,8 @@ export class RouteCalculator {
     this.debugCurrentDay = 1;
     this.debugDayRoute = [];
     this.debugDayStep = 0;
+    this.debugDay1Route = [];
+    this.debugDay2Route = [];
 
     // Use the EXACT SAME logic as main route calculation
     const result = this.calculateCompleteRoute(availablePOIs, layoutData);
@@ -716,8 +720,9 @@ export class RouteCalculator {
     const spawnPOI = this.extractSpawnPOI(layoutData);
     if (spawnPOI) {
       this.debugCurrentPOI = spawnPOI;
-      this.debugRoute = [spawnPOI];
-      this.debugDayRoute = [spawnPOI];
+      // Don't add to route yet - it will be added in the first step
+      this.debugRoute = [];
+      this.debugDayRoute = [];
     }
 
     console.log("Debug mode enabled with complete route:", this.debugCompleteRoute);
@@ -742,6 +747,8 @@ export class RouteCalculator {
     step: number;
     currentPOI: number | null;
     route: number[];
+    day1Route: number[];
+    day2Route: number[];
     availablePOIs: number[];
     isComplete: boolean;
     currentDay: 1 | 2;
@@ -750,6 +757,8 @@ export class RouteCalculator {
       step: this.debugStep,
       currentPOI: this.debugCurrentPOI,
       route: this.debugRoute,
+      day1Route: this.debugDay1Route,
+      day2Route: this.debugDay2Route,
       availablePOIs: this.debugAvailablePOIs.map(poi => poi.id),
       isComplete: this.debugCompleteRoute ? false : true,
       currentDay: this.debugCurrentDay
@@ -809,6 +818,13 @@ export class RouteCalculator {
     this.debugCurrentPOI = nextPOI;
     this.debugStep++;
     this.debugDayStep++;
+
+    // Track Day 1 vs Day 2 routes
+    if (this.debugCurrentDay === 1) {
+      this.debugDay1Route.push(nextPOI);
+    } else {
+      this.debugDay2Route.push(nextPOI);
+    }
 
     // Calculate priorities for the current step (for score overlay)
     const priorities = this.debugAvailablePOIs.map(poi => 
