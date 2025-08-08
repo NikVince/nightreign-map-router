@@ -25,6 +25,8 @@ export function MainPanel({
   priorityCalculations,
   completeRoute,
   debugPriorities = [],
+  setDebugPriorities = () => {},
+  teamMembers = [],
 }: { 
   iconToggles: IconToggles; 
   onLayoutChange?: (layoutNumber: number) => void;
@@ -34,6 +36,8 @@ export function MainPanel({
   priorityCalculations?: POIPriority[];
   completeRoute?: CompleteRoute | null;
   debugPriorities?: POIPriority[];
+  setDebugPriorities?: (priorities: POIPriority[]) => void;
+  teamMembers?: Array<{ id: number; nightfarer: any; startsWithStoneswordKey: boolean }>;
 }) {
   const [showIcons, setShowIcons] = useState(true);
   const [showTitles, setShowTitles] = useState(true);
@@ -94,6 +98,9 @@ export function MainPanel({
                   completeRoute={completeRoute}
                   isVisible={true}
                   onClose={() => setDebugPanelVisible(false)}
+                  debugPriorities={debugPriorities}
+                  setDebugPriorities={setDebugPriorities}
+                  teamMembers={teamMembers}
                 />
               </div>
             )}

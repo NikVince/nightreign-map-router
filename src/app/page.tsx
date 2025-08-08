@@ -84,8 +84,6 @@ export default function Home() {
                 setPriorityCalculations={setPriorityCalculations}
                 completeRoute={completeRoute}
                 setCompleteRoute={setCompleteRoute}
-                debugPriorities={debugPriorities}
-                setDebugPriorities={setDebugPriorities}
               />
             </div>
             {/* 8px gap between objectives and map */}
@@ -101,6 +99,8 @@ export default function Home() {
                 priorityCalculations={priorityCalculations}
                 completeRoute={completeRoute}
                 debugPriorities={debugPriorities}
+                setDebugPriorities={setDebugPriorities}
+                teamMembers={teamMembers}
               />
             </div>
           </>
@@ -116,6 +116,8 @@ export default function Home() {
               priorityCalculations={priorityCalculations}
               completeRoute={completeRoute}
               debugPriorities={debugPriorities}
+              setDebugPriorities={setDebugPriorities}
+              teamMembers={teamMembers}
             />
             {sidebarOpen && (
               <>
@@ -143,8 +145,6 @@ export default function Home() {
                     setPriorityCalculations={setPriorityCalculations}
                     completeRoute={completeRoute}
                     setCompleteRoute={setCompleteRoute}
-                    debugPriorities={debugPriorities}
-                    setDebugPriorities={setDebugPriorities}
                   />
                 </div>
               </>

@@ -2,6 +2,10 @@
 import React, { useState } from "react";
 import type { RouteState, POIPriority, CompleteRoute, DayRoute } from "~/types/route";
 import { getPOIDisplayName } from "~/utils/poiUtils";
+import { RouteCalculator } from "~/utils/routeCalculator";
+import { NightfarerClassType, Nightlord, LandmarkType } from "~/types/core";
+import { extractPOIsFromLayout, getPOITypeFromValue, getPOIStats } from "~/utils/poiUtils";
+import { getPOIData } from "~/utils/poiDataLoader";
 
 interface RouteDebugPanelProps {
   state: RouteState;
@@ -10,6 +14,9 @@ interface RouteDebugPanelProps {
   completeRoute?: CompleteRoute | null;
   isVisible: boolean;
   onClose: () => void;
+  debugPriorities?: POIPriority[];
+  setDebugPriorities?: (priorities: POIPriority[]) => void;
+  teamMembers?: Array<{ id: number; nightfarer: NightfarerClassType; startsWithStoneswordKey: boolean }>;
 }
 
 // Function to get POI type name based on ID and layout data
@@ -25,7 +32,10 @@ export function RouteDebugPanel({
   layoutData,
   completeRoute,
   isVisible, 
-  onClose 
+  onClose,
+  debugPriorities = [],
+  setDebugPriorities = () => {},
+  teamMembers = []
 }: RouteDebugPanelProps) {
   if (!isVisible) return null;
 
@@ -34,6 +44,27 @@ export function RouteDebugPanel({
   const [teamCompositionExpanded, setTeamCompositionExpanded] = useState(false);
   const [day1RouteExpanded, setDay1RouteExpanded] = useState(true);
   const [day2RouteExpanded, setDay2RouteExpanded] = useState(true);
+  const [debugModeExpanded, setDebugModeExpanded] = useState(false);
+
+  // Debug mode state
+  const [debugMode, setDebugMode] = useState(false);
+  const [debugStep, setDebugStep] = useState(0);
+  const [debugRoute, setDebugRoute] = useState<number[]>([]);
+
+  // Route calculator instance
+  const [routeCalculator] = useState(() => new RouteCalculator({
+    runesGained: 0,
+    playerLevel: 1,
+    stoneswordKeys: 0,
+    remainingTime: 15 * 60,
+    currentDay: 1,
+    teamComposition: [],
+    nightlord: Nightlord.Gladius,
+    visitedPOIs: [],
+  }));
+
+  // Master POI list
+  const poiMasterList = getPOIData();
 
   const formatTime = (seconds: number): string => {
     const minutes = Math.floor(seconds / 60);
@@ -235,6 +266,121 @@ export function RouteDebugPanel({
           </div>
         </div>
       )}
+
+      {/* Debug Mode - Collapsible */}
+      <div className="mb-4">
+        <button
+          onClick={() => setDebugModeExpanded(!debugModeExpanded)}
+          className="flex items-center justify-between w-full font-semibold mb-2 text-green-400 hover:text-green-300 transition-colors"
+        >
+          <span>Step-by-Step Debug Mode</span>
+          <span className={`transform transition-transform ${debugModeExpanded ? 'rotate-180' : ''}`}>
+            ▼
+          </span>
+        </button>
+        {debugModeExpanded && (
+          <div className="space-y-3">
+            {!debugMode ? (
+              <button
+                onClick={() => {
+                  // Initialize debug mode
+                  const nightlord = layoutData?.Nightlord as Nightlord || Nightlord.Gladius;
+                  routeCalculator.initializeState(teamMembers, nightlord, 1);
+                  
+                  // Extract POI data from the current layout
+                  const layoutPOIs = extractPOIsFromLayout(layoutData, poiMasterList).map(poi => ({
+                    id: poi.id,
+                    type: poi.type as LandmarkType,
+                    x: poiMasterList.find(p => p.id === poi.id)?.coordinates[0] || 0,
+                    y: poiMasterList.find(p => p.id === poi.id)?.coordinates[1] || 0,
+                    estimatedTime: poi.estimatedTime,
+                    estimatedRunes: poi.estimatedRunes,
+                    location: poi.location,
+                    value: poi.value
+                  }));
+                  
+                  routeCalculator.enableDebugMode(layoutPOIs, layoutData);
+                  setDebugMode(true);
+                  setDebugStep(0);
+                  setDebugRoute([]);
+                  setDebugPriorities([]);
+                }}
+                className="w-full px-3 py-2 text-sm bg-green-600 text-white border border-green-500 rounded hover:bg-green-700"
+              >
+                Enable Debug Mode
+              </button>
+            ) : (
+              <div className="space-y-2">
+                <div className="bg-gray-800 p-2 rounded">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-yellow-400">Step:</span>
+                    <span>{debugStep}</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-blue-400">Route:</span>
+                    <span className="text-xs">{debugRoute.join(' → ')}</span>
+                  </div>
+                </div>
+                
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => {
+                      const result = routeCalculator.executeNextStep();
+                      if (result.success) {
+                        setDebugStep(prev => prev + 1);
+                        if (result.selectedPOI) {
+                          setDebugRoute(prev => [...prev, result.selectedPOI!]);
+                        }
+                        if (result.priorities) {
+                          setDebugPriorities(result.priorities);
+                        }
+                      } else {
+                        console.error("Debug step failed:", result.error);
+                      }
+                    }}
+                    className="flex-1 px-3 py-1 text-sm bg-blue-600 text-white border border-blue-500 rounded hover:bg-blue-700"
+                  >
+                    Next Step
+                  </button>
+                  
+                  <button
+                    onClick={() => {
+                      routeCalculator.disableDebugMode();
+                      setDebugMode(false);
+                      setDebugStep(0);
+                      setDebugRoute([]);
+                      setDebugPriorities([]);
+                    }}
+                    className="flex-1 px-3 py-1 text-sm bg-red-600 text-white border border-red-500 rounded hover:bg-red-700"
+                  >
+                    Disable
+                  </button>
+                </div>
+                
+                {debugPriorities.length > 0 && (
+                  <div className="bg-gray-800 p-2 rounded">
+                    <div className="text-sm font-semibold mb-1 text-green-400">Current Priorities:</div>
+                    <div className="space-y-1 text-xs max-h-32 overflow-y-auto">
+                      {debugPriorities
+                        .filter(p => p.adjustedPriority > 0)
+                        .sort((a, b) => b.adjustedPriority - a.adjustedPriority)
+                        .slice(0, 5)
+                        .map(priority => (
+                          <div key={priority.poiId} className="flex justify-between">
+                            <span>POI {priority.poiId}:</span>
+                            <span className={priority.adjustedPriority > 20 ? 'text-green-400' : priority.adjustedPriority > 10 ? 'text-yellow-400' : 'text-red-400'}>
+                              {priority.adjustedPriority.toFixed(1)}
+                            </span>
+                          </div>
+                        ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        )}
+      </div>
 
       {/* Reset Button */}
       <div className="text-center">

@@ -27,8 +27,6 @@ export type SidebarProps = {
   setPriorityCalculations?: (calculations: POIPriority[]) => void;
   completeRoute?: CompleteRoute | null;
   setCompleteRoute?: (route: CompleteRoute | null) => void;
-  debugPriorities?: POIPriority[];
-  setDebugPriorities?: (priorities: POIPriority[]) => void;
 };
 
 export function Sidebar({ 
@@ -43,8 +41,6 @@ export function Sidebar({
   setPriorityCalculations,
   completeRoute,
   setCompleteRoute,
-  debugPriorities,
-  setDebugPriorities
 }: SidebarProps) {
   if (!isOpen) return null;
 
@@ -55,11 +51,6 @@ export function Sidebar({
 
   // State for layout selection
   const [inputValue, setInputValue] = useState((layoutNumber || 1).toString());
-
-  // Debug mode state
-  const [debugMode, setDebugMode] = useState(false);
-  const [debugStep, setDebugStep] = useState(0);
-  const [debugRoute, setDebugRoute] = useState<number[]>([]);
 
   // Route calculation state
   const [routeCalculator] = useState(() => new RouteCalculator({
@@ -79,7 +70,6 @@ export function Sidebar({
   
   const currentState = routeState || localCurrentState;
   const currentPriorityCalculations = priorityCalculations || localPriorityCalculations;
-  const currentDebugPriorities = debugPriorities || [];
 
   const handleLayoutSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -297,126 +287,6 @@ export function Sidebar({
           </div>
         </div>
       )}
-
-      {/* Debug Panel */}
-      <div className="mb-4 p-3 bg-black bg-opacity-75 rounded">
-        <div className="text-sm">
-          <div className="font-bold mb-2 text-base" style={{ color: "var(--elden-accent)" }}>
-            Debug Mode
-          </div>
-          
-          {!debugMode ? (
-            <button
-              onClick={() => {
-                // Initialize debug mode
-                const nightlord = layoutData?.Nightlord as Nightlord || Nightlord.Gladius;
-                routeCalculator.initializeState(teamMembers, nightlord, 1);
-                
-                // Extract POI data from the current layout
-                const layoutPOIs = extractPOIsFromLayout(layoutData, poiMasterList).map(poi => ({
-                  id: poi.id,
-                  type: poi.type as LandmarkType,
-                  x: poiMasterList.find(p => p.id === poi.id)?.coordinates[0] || 0,
-                  y: poiMasterList.find(p => p.id === poi.id)?.coordinates[1] || 0,
-                  estimatedTime: poi.estimatedTime,
-                  estimatedRunes: poi.estimatedRunes,
-                  location: poi.location,
-                  value: poi.value
-                }));
-                
-                // Add Shifting Earth POIs
-                let allPOIs = [...layoutPOIs];
-                if (dynamicPOIData && dynamicPOIData.dynamicPOIs.length > 0) {
-                  const shiftingEarthPOIs = dynamicPOIData.dynamicPOIs.map(poi => ({
-                    id: poi.id,
-                    type: getPOITypeFromValue(poi.value) as LandmarkType,
-                    x: poi.coordinates[0],
-                    y: poi.coordinates[1],
-                    estimatedTime: getPOIStats(getPOITypeFromValue(poi.value), poi.value).estimatedTime,
-                    estimatedRunes: getPOIStats(getPOITypeFromValue(poi.value), poi.value).estimatedRunes,
-                    location: poi.location,
-                    value: poi.value
-                  }));
-                  
-                  const existingPOIIds = new Set(layoutPOIs.map(p => p.id));
-                  const newShiftingEarthPOIs = shiftingEarthPOIs.filter(poi => !existingPOIIds.has(poi.id));
-                  allPOIs.push(...newShiftingEarthPOIs);
-                }
-                
-                routeCalculator.enableDebugMode(allPOIs, layoutData);
-                setDebugMode(true);
-                setDebugStep(0);
-                setDebugRoute([]);
-                setDebugPriorities?.([]);
-              }}
-              className="px-3 py-1 text-sm bg-green-600 text-white border border-green-500 rounded hover:bg-green-700"
-            >
-              Enable Debug Mode
-            </button>
-          ) : (
-            <div>
-              <div className="mb-2">
-                <span className="text-yellow-400">Step:</span> {debugStep}
-                <br />
-                <span className="text-blue-400">Route:</span> {debugRoute.join(' → ')}
-              </div>
-              
-              <div className="flex gap-2 mb-2">
-                <button
-                  onClick={() => {
-                    const result = routeCalculator.executeNextStep();
-                    if (result.success) {
-                      setDebugStep(prev => prev + 1);
-                      if (result.selectedPOI) {
-                        setDebugRoute(prev => [...prev, result.selectedPOI!]);
-                      }
-                      if (result.priorities) {
-                        setDebugPriorities?.(result.priorities);
-                      }
-                    } else {
-                      console.error("Debug step failed:", result.error);
-                    }
-                  }}
-                  className="px-3 py-1 text-sm bg-blue-600 text-white border border-blue-500 rounded hover:bg-blue-700"
-                >
-                  Next Step
-                </button>
-                
-                <button
-                  onClick={() => {
-                    routeCalculator.disableDebugMode();
-                    setDebugMode(false);
-                    setDebugStep(0);
-                    setDebugRoute([]);
-                    setDebugPriorities?.([]);
-                  }}
-                  className="px-3 py-1 text-sm bg-red-600 text-white border border-red-500 rounded hover:bg-red-700"
-                >
-                  Disable Debug
-                </button>
-              </div>
-              
-              {currentDebugPriorities.length > 0 && (
-                <div className="text-xs">
-                  <div className="font-semibold mb-1">Current Priorities:</div>
-                  {currentDebugPriorities
-                    .filter(p => p.adjustedPriority > 0)
-                    .sort((a, b) => b.adjustedPriority - a.adjustedPriority)
-                    .slice(0, 5)
-                    .map(priority => (
-                      <div key={priority.poiId} className="flex justify-between">
-                        <span>POI {priority.poiId}:</span>
-                        <span className={priority.adjustedPriority > 20 ? 'text-green-400' : priority.adjustedPriority > 10 ? 'text-yellow-400' : 'text-red-400'}>
-                          {priority.adjustedPriority}
-                        </span>
-                      </div>
-                    ))}
-                </div>
-              )}
-            </div>
-          )}
-        </div>
-      </div>
 
       <ul className="flex flex-col gap-3">
         {/* Checklist items will go here */}
