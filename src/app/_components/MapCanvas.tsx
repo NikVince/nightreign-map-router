@@ -1386,6 +1386,7 @@ const MapCanvas: React.FC<{
                 points.push(scaledX, scaledY);
               }
               
+              // Require at least 4 points (2 POIs with x,y coordinates each) to draw a line
               if (points.length < 4) return null;
               
               return (
@@ -1436,6 +1437,7 @@ const MapCanvas: React.FC<{
             })()}
           </Layer>
         )}
+
         {/* Debug/Test Path Layer: Draw a red line between POI 183 and 103 */}
         {/*
         <Layer listening={false}>

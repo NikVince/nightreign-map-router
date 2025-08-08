@@ -33,6 +33,7 @@ export default function Home() {
   const [priorityCalculations, setPriorityCalculations] = useState<POIPriority[]>([]);
   const [completeRoute, setCompleteRoute] = useState<CompleteRoute | null>(null);
   const [debugPriorities, setDebugPriorities] = useState<POIPriority[]>([]);
+  const [debugRoute, setDebugRoute] = useState<number[]>([]);
 
   const handleToggleChange = (key: string, value: boolean) => {
     setIconToggles(toggles => ({ ...toggles, [key]: value }));
@@ -101,6 +102,8 @@ export default function Home() {
                 debugPriorities={debugPriorities}
                 setDebugPriorities={setDebugPriorities}
                 teamMembers={teamMembers}
+                debugRoute={debugRoute}
+                setDebugRoute={setDebugRoute}
               />
             </div>
           </>
@@ -118,6 +121,8 @@ export default function Home() {
               debugPriorities={debugPriorities}
               setDebugPriorities={setDebugPriorities}
               teamMembers={teamMembers}
+              debugRoute={debugRoute}
+              setDebugRoute={setDebugRoute}
             />
             {sidebarOpen && (
               <>

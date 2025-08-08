@@ -6,6 +6,7 @@ import { RouteCalculator } from "~/utils/routeCalculator";
 import { NightfarerClassType, Nightlord, LandmarkType } from "~/types/core";
 import { extractPOIsFromLayout, getPOITypeFromValue, getPOIStats } from "~/utils/poiUtils";
 import { getPOIData } from "~/utils/poiDataLoader";
+import { api } from "~/trpc/react";
 
 interface RouteDebugPanelProps {
   state: RouteState;
@@ -17,6 +18,8 @@ interface RouteDebugPanelProps {
   debugPriorities?: POIPriority[];
   setDebugPriorities?: (priorities: POIPriority[]) => void;
   teamMembers?: Array<{ id: number; nightfarer: NightfarerClassType; startsWithStoneswordKey: boolean }>;
+  debugRoute?: number[];
+  setDebugRoute?: (route: number[]) => void;
 }
 
 // Function to get POI type name based on ID and layout data
@@ -35,7 +38,9 @@ export function RouteDebugPanel({
   onClose,
   debugPriorities = [],
   setDebugPriorities = () => {},
-  teamMembers = []
+  teamMembers = [],
+  debugRoute = [],
+  setDebugRoute = () => {}
 }: RouteDebugPanelProps) {
   if (!isVisible) return null;
 
@@ -49,7 +54,7 @@ export function RouteDebugPanel({
   // Debug mode state
   const [debugMode, setDebugMode] = useState(false);
   const [debugStep, setDebugStep] = useState(0);
-  const [debugRoute, setDebugRoute] = useState<number[]>([]);
+  const [debugRouteState, setDebugRouteState] = useState<number[]>([]);
 
   // Route calculator instance
   const [routeCalculator] = useState(() => new RouteCalculator({
@@ -65,6 +70,18 @@ export function RouteDebugPanel({
 
   // Master POI list
   const poiMasterList = getPOIData();
+
+  // Fetch dynamic POI data including Shifting Earth POIs (same as Sidebar)
+  const { data: dynamicPOIData } = api.poi.getDynamicPOIs.useQuery(
+    {
+      layoutNumber: layoutData?.LayoutNumber || 1,
+      mapLayout: "default"
+    },
+    {
+      enabled: !!layoutData?.LayoutNumber,
+      staleTime: 5 * 60 * 1000, // 5 minutes
+    }
+  );
 
   const formatTime = (seconds: number): string => {
     const minutes = Math.floor(seconds / 60);
@@ -287,22 +304,66 @@ export function RouteDebugPanel({
                   const nightlord = layoutData?.Nightlord as Nightlord || Nightlord.Gladius;
                   routeCalculator.initializeState(teamMembers, nightlord, 1);
                   
-                  // Extract POI data from the current layout
-                  const layoutPOIs = extractPOIsFromLayout(layoutData, poiMasterList).map(poi => ({
+                  // Use EXACT SAME POI loading logic as main route calculation
+                  const layoutPOIs = extractPOIsFromLayout(layoutData, poiMasterList).map((poi: any) => ({
                     id: poi.id,
                     type: poi.type as LandmarkType,
-                    x: poiMasterList.find(p => p.id === poi.id)?.coordinates[0] || 0,
-                    y: poiMasterList.find(p => p.id === poi.id)?.coordinates[1] || 0,
+                    x: poiMasterList.find((p: any) => p.id === poi.id)?.coordinates[0] || 0,
+                    y: poiMasterList.find((p: any) => p.id === poi.id)?.coordinates[1] || 0,
                     estimatedTime: poi.estimatedTime,
                     estimatedRunes: poi.estimatedRunes,
                     location: poi.location,
                     value: poi.value
                   }));
                   
-                  routeCalculator.enableDebugMode(layoutPOIs, layoutData);
+                  // Add Shifting Earth POIs from dynamic POI data (EXACT SAME AS MAIN ROUTE)
+                  let allPOIs = [...layoutPOIs];
+                  if (dynamicPOIData && dynamicPOIData.dynamicPOIs.length > 0) {
+                    const shiftingEarthPOIs = dynamicPOIData.dynamicPOIs.map((poi: any) => ({
+                      id: poi.id,
+                      type: getPOITypeFromValue(poi.value) as LandmarkType,
+                      x: poi.coordinates[0],
+                      y: poi.coordinates[1],
+                      estimatedTime: getPOIStats(getPOITypeFromValue(poi.value), poi.value).estimatedTime,
+                      estimatedRunes: getPOIStats(getPOITypeFromValue(poi.value), poi.value).estimatedRunes,
+                      location: poi.location,
+                      value: poi.value
+                    }));
+                    
+                    // Only add POIs that aren't already in the layout POIs
+                    const existingPOIIds = new Set(layoutPOIs.map((p: any) => p.id));
+                    const newShiftingEarthPOIs = shiftingEarthPOIs.filter((poi: any) => !existingPOIIds.has(poi.id));
+                    allPOIs.push(...newShiftingEarthPOIs);
+                  }
+                  
+                  // Filter out POIs with "empty" values (EXACT SAME AS MAIN ROUTE)
+                  const validPOIs = allPOIs.filter((poi: any) => {
+                    if (poi.value === "empty" || poi.value === "POI X: empty") {
+                      return false;
+                    }
+                    if (poi.location === "empty" || poi.location === "") {
+                      return false;
+                    }
+                    if (poi.x === 0 && poi.y === 0) {
+                      return false;
+                    }
+                    return true;
+                  });
+                  
+                  console.log("Debug Mode: Using EXACT SAME POI loading as main route");
+                  console.log("Debug Mode: Layout POIs extracted:", layoutPOIs.length);
+                  console.log("Debug Mode: Shifting Earth POIs added:", dynamicPOIData?.dynamicPOIs?.length || 0);
+                  console.log("Debug Mode: Total POIs for route calculation:", validPOIs.length);
+                  
+                  // Enable debug mode with the same POIs as main route
+                  routeCalculator.enableDebugMode(validPOIs, layoutData);
                   setDebugMode(true);
                   setDebugStep(0);
-                  setDebugRoute([]);
+                  
+                  // Get the initial debug route from the RouteCalculator
+                  const debugState = routeCalculator.getDebugState();
+                  setDebugRouteState(debugState.route);
+                  setDebugRoute(debugState.route);
                   setDebugPriorities([]);
                 }}
                 className="w-full px-3 py-2 text-sm bg-green-600 text-white border border-green-500 rounded hover:bg-green-700"
@@ -318,7 +379,7 @@ export function RouteDebugPanel({
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-blue-400">Route:</span>
-                    <span className="text-xs">{debugRoute.join(' → ')}</span>
+                    <span className="text-xs">{debugRouteState.join(' → ')}</span>
                   </div>
                 </div>
                 
@@ -329,10 +390,15 @@ export function RouteDebugPanel({
                       if (result.success) {
                         setDebugStep(prev => prev + 1);
                         if (result.selectedPOI) {
-                          setDebugRoute(prev => [...prev, result.selectedPOI!]);
+                          const newRoute = [...debugRouteState, result.selectedPOI];
+                          setDebugRouteState(newRoute);
+                          setDebugRoute(newRoute);
                         }
                         if (result.priorities) {
                           setDebugPriorities(result.priorities);
+                        }
+                        if (result.isComplete) {
+                          console.log("Debug route completed!");
                         }
                       } else {
                         console.error("Debug step failed:", result.error);
@@ -348,6 +414,7 @@ export function RouteDebugPanel({
                       routeCalculator.disableDebugMode();
                       setDebugMode(false);
                       setDebugStep(0);
+                      setDebugRouteState([]);
                       setDebugRoute([]);
                       setDebugPriorities([]);
                     }}

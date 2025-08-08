@@ -53,6 +53,7 @@ const POI_BASE_PRIORITIES: Record<LandmarkType, number> = {
 export class RouteCalculator {
   private state: RouteState;
   private poiCoordinates: Map<number, [number, number]> = new Map();
+  // Debug mode state
   private debugMode: boolean = false;
   private debugStep: number = 0;
   private debugRoute: number[] = [];
@@ -68,6 +69,10 @@ export class RouteCalculator {
     value?: string;
   }> = [];
   private debugLayoutData: any = null;
+  private debugCompleteRoute: CompleteRoute | null = null;
+  private debugCurrentDay: 1 | 2 = 1;
+  private debugDayRoute: number[] = [];
+  private debugDayStep: number = 0;
 
   constructor(initialState: RouteState) {
     this.state = { ...initialState };
@@ -677,7 +682,7 @@ export class RouteCalculator {
   }
 
   /**
-   * Enable debug mode for step-by-step route calculation
+   * Enable debug mode using the exact same logic as main route calculation
    */
   public enableDebugMode(
     availablePOIs: Array<{
@@ -695,17 +700,27 @@ export class RouteCalculator {
     this.debugMode = true;
     this.debugStep = 0;
     this.debugRoute = [];
-    this.debugAvailablePOIs = [...availablePOIs];
+    this.debugCurrentPOI = null;
+    this.debugAvailablePOIs = availablePOIs;
     this.debugLayoutData = layoutData;
+    this.debugCompleteRoute = null;
+    this.debugCurrentDay = 1;
+    this.debugDayRoute = [];
+    this.debugDayStep = 0;
+
+    // Use the EXACT SAME logic as main route calculation
+    const result = this.calculateCompleteRoute(availablePOIs, layoutData);
+    this.debugCompleteRoute = result.route || null;
     
-    // Extract start POI
+    // Initialize with spawn POI (same as main route)
     const spawnPOI = this.extractSpawnPOI(layoutData);
     if (spawnPOI) {
       this.debugCurrentPOI = spawnPOI;
       this.debugRoute = [spawnPOI];
+      this.debugDayRoute = [spawnPOI];
     }
-    
-    console.log("Debug mode enabled. Starting from POI:", this.debugCurrentPOI);
+
+    console.log("Debug mode enabled with complete route:", this.debugCompleteRoute);
   }
 
   /**
@@ -729,34 +744,73 @@ export class RouteCalculator {
     route: number[];
     availablePOIs: number[];
     isComplete: boolean;
+    currentDay: 1 | 2;
   } {
     return {
       step: this.debugStep,
       currentPOI: this.debugCurrentPOI,
       route: this.debugRoute,
       availablePOIs: this.debugAvailablePOIs.map(poi => poi.id),
-      isComplete: this.debugStep > 0 && this.debugAvailablePOIs.length === 0
+      isComplete: this.debugCompleteRoute ? false : true,
+      currentDay: this.debugCurrentDay
     };
   }
 
   /**
-   * Execute next step in debug mode
+   * Execute next step in debug mode - steps through the actual calculated route
    */
   public executeNextStep(): {
     success: boolean;
     selectedPOI?: number;
     priorities?: POIPriority[];
     error?: string;
+    isComplete?: boolean;
   } {
-    if (!this.debugMode) {
-      return { success: false, error: "Debug mode not enabled" };
+    if (!this.debugMode || !this.debugCompleteRoute) {
+      return { success: false, error: "Debug mode not enabled or no route calculated" };
     }
 
-    if (!this.debugCurrentPOI) {
-      return { success: false, error: "No current POI" };
+    // Get the current day's route
+    const currentDayRoute = this.debugCurrentDay === 1 
+      ? this.debugCompleteRoute.day1Route?.route 
+      : this.debugCompleteRoute.day2Route?.route;
+
+    if (!currentDayRoute || this.debugDayStep >= currentDayRoute.length) {
+      // Move to next day or complete
+      if (this.debugCurrentDay === 1 && this.debugCompleteRoute.day2Route?.route) {
+        this.debugCurrentDay = 2;
+        this.debugDayStep = 0;
+        this.debugDayRoute = [];
+        
+        // Initialize day 2 with the end POI from day 1
+        const day1EndPOI = this.debugCompleteRoute.day1Route?.route?.[this.debugCompleteRoute.day1Route.route.length - 1];
+        if (day1EndPOI) {
+          this.debugDayRoute = [day1EndPOI];
+          this.debugCurrentPOI = day1EndPOI;
+        }
+        
+        console.log(`Debug: Moving to Day ${this.debugCurrentDay}`);
+        return { success: true, priorities: [] };
+      } else {
+        console.log("Debug: Route complete");
+        return { success: true, isComplete: true };
+      }
     }
 
-    // Calculate priorities for all available POIs
+    // Get the next POI from the calculated route
+    const nextPOI = currentDayRoute[this.debugDayStep];
+    if (!nextPOI) {
+      return { success: false, error: "No next POI found in route" };
+    }
+
+    // Add to debug route
+    this.debugRoute.push(nextPOI);
+    this.debugDayRoute.push(nextPOI);
+    this.debugCurrentPOI = nextPOI;
+    this.debugStep++;
+    this.debugDayStep++;
+
+    // Calculate priorities for the current step (for score overlay)
     const priorities = this.debugAvailablePOIs.map(poi => 
       this.calculatePOIPriority(
         poi.id,
@@ -769,49 +823,11 @@ export class RouteCalculator {
       )
     );
 
-    // Filter accessible POIs
-    const accessiblePOIs = priorities.filter(priority => 
-      priority.adjustedPriority > 0 &&
-      priority.estimatedTime <= this.state.remainingTime &&
-      (!priority.accessibility.requiresKeys || this.state.stoneswordKeys > 0) &&
-      priority.poiId !== this.debugCurrentPOI &&
-      !this.debugRoute.includes(priority.poiId)
-    );
-
-    // Sort by adjusted priority (highest first)
-    accessiblePOIs.sort((a, b) => b.adjustedPriority - a.adjustedPriority);
-
-    if (accessiblePOIs.length === 0) {
-      console.log(`Debug Step ${this.debugStep}: No more accessible POIs`);
-      return { 
-        success: true, 
-        priorities: priorities,
-        selectedPOI: undefined 
-      };
-    }
-
-    // Select the highest priority POI
-    const nextPOI = accessiblePOIs[0];
-    if (!nextPOI) {
-      return { success: false, error: "No valid POI found" };
-    }
-
-    this.debugRoute.push(nextPOI.poiId);
-    this.debugCurrentPOI = nextPOI.poiId;
-    this.debugStep++;
-    
-    // Remove selected POI from available POIs
-    this.debugAvailablePOIs = this.debugAvailablePOIs.filter(poi => poi.id !== nextPOI.poiId);
-    
-    // Update state
-    this.markPOIVisited(nextPOI.poiId);
-    this.state.remainingTime -= nextPOI.estimatedTime;
-    
-    console.log(`Debug Step ${this.debugStep}: Selected POI ${nextPOI.poiId} (priority: ${nextPOI.adjustedPriority})`);
+    console.log(`Debug Step ${this.debugStep} (Day ${this.debugCurrentDay}): Selected POI ${nextPOI}`);
     
     return {
       success: true,
-      selectedPOI: nextPOI.poiId,
+      selectedPOI: nextPOI,
       priorities: priorities
     };
   }
