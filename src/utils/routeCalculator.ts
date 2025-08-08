@@ -3,6 +3,7 @@
 
 import type { RouteState, POIPriority, CompleteRoute, DayRoute, RouteResult, TeamMember } from "../types/route";
 import { Nightlord, LandmarkType } from "../types/core";
+import { getPOIData, type POIData } from "./poiDataLoader";
 
 // Constants for route calculation
 const DAY_CYCLE_TIME = 15 * 60; // 15 minutes in seconds
@@ -19,6 +20,11 @@ const LEVEL_THRESHOLDS = [
   { level: 10, runes: 45000 },
   // Add more thresholds as needed
 ];
+
+// Distance calculation constants
+const MAX_MAP_DISTANCE = 1309.47; // Distance between POI 31 and POI 177 (opposite sides of map)
+const MAX_DISTANCE_TIME = 210; // 210 seconds for maximum distance
+const MAX_DISTANCE_PENALTY = 25; // 25 points penalty for maximum distance
 
 // Base priority scores from POI_INFO_FOR_ALGORITHM.md
 const POI_BASE_PRIORITIES: Record<LandmarkType, number> = {
@@ -46,9 +52,103 @@ const POI_BASE_PRIORITIES: Record<LandmarkType, number> = {
 
 export class RouteCalculator {
   private state: RouteState;
+  private poiCoordinates: Map<number, [number, number]> = new Map();
 
   constructor(initialState: RouteState) {
     this.state = { ...initialState };
+    this.loadPOICoordinates();
+  }
+
+  /**
+   * Load POI coordinates from the existing POI data loader
+   */
+  private loadPOICoordinates(): void {
+    try {
+      // Use the existing POI data loader
+      const poiData = getPOIData();
+      
+      poiData.forEach((poi: POIData) => {
+        this.poiCoordinates.set(poi.id, poi.coordinates);
+      });
+      
+      console.log(`Loaded ${this.poiCoordinates.size} POI coordinates`);
+    } catch (error) {
+      console.error("Failed to load POI coordinates:", error);
+      // Fallback to hardcoded coordinates for critical POIs
+      this.loadFallbackCoordinates();
+    }
+  }
+
+  /**
+   * Load fallback coordinates for critical POIs
+   */
+  private loadFallbackCoordinates(): void {
+    const fallbackCoordinates: Record<number, [number, number]> = {
+      31: [842, 1218.67],
+      177: [1864, 400],
+      // Add more critical POIs as needed
+    };
+    
+    Object.entries(fallbackCoordinates).forEach(([id, coords]) => {
+      this.poiCoordinates.set(parseInt(id), coords);
+    });
+    
+    console.log(`Loaded ${this.poiCoordinates.size} fallback POI coordinates`);
+  }
+
+  /**
+   * Calculate Euclidean distance between two POIs
+   */
+  private calculateDistance(poi1Id: number, poi2Id: number): number {
+    const coord1 = this.getPOICoordinates(poi1Id);
+    const coord2 = this.getPOICoordinates(poi2Id);
+    
+    if (!coord1 || !coord2) {
+      console.warn(`Missing coordinates for POI ${poi1Id} or ${poi2Id}`);
+      return 0;
+    }
+
+    const [x1, y1] = coord1;
+    const [x2, y2] = coord2;
+    
+    const deltaX = x2 - x1;
+    const deltaY = y2 - y1;
+    
+    return Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+  }
+
+  /**
+   * Get POI coordinates from the master coordinate list
+   */
+  private getPOICoordinates(poiId: number): [number, number] | null {
+    return this.poiCoordinates.get(poiId) || null;
+  }
+
+  /**
+   * Calculate distance penalty based on distance to last visited POI
+   */
+  private calculateDistancePenalty(currentPOIId: number, lastVisitedPOIId?: number): number {
+    if (!lastVisitedPOIId) {
+      return 0; // No penalty for first POI
+    }
+
+    const distance = this.calculateDistance(lastVisitedPOIId, currentPOIId);
+    
+    // Calculate penalty based on distance ratio
+    const distanceRatio = distance / MAX_MAP_DISTANCE;
+    const penalty = Math.round(distanceRatio * MAX_DISTANCE_PENALTY);
+    
+    console.log(`Distance penalty for POI ${currentPOIId} from POI ${lastVisitedPOIId}: ${distance} units (${distanceRatio.toFixed(3)} ratio) = ${penalty} points`);
+    
+    return penalty;
+  }
+
+  /**
+   * Calculate travel time based on distance
+   */
+  private calculateTravelTime(distance: number): number {
+    const timeRatio = distance / MAX_MAP_DISTANCE;
+    return Math.round(timeRatio * MAX_DISTANCE_TIME);
   }
 
   /**
@@ -146,7 +246,8 @@ export class RouteCalculator {
     estimatedTime: number,
     estimatedRunes: number,
     estimatedItems: string[] = [],
-    flaskCharges: number = 0
+    flaskCharges: number = 0,
+    lastVisitedPOIId?: number
   ): POIPriority {
     const basePriority = POI_BASE_PRIORITIES[poiType] || 0;
     
@@ -169,7 +270,10 @@ export class RouteCalculator {
     // Penalty for already visited POIs
     const visitedPenalty = this.state.visitedPOIs.includes(poiId) ? -1000 : 0;
     
-    const adjustedPriority = basePriority + timeAdjustment + levelAccessibility + keyAccessibility + teamBonus + nightlordBonus + visitedPenalty;
+    // Distance penalty (NEW)
+    const distancePenalty = this.calculateDistancePenalty(poiId, lastVisitedPOIId);
+    
+    const adjustedPriority = basePriority + timeAdjustment + levelAccessibility + keyAccessibility + teamBonus + nightlordBonus + visitedPenalty - distancePenalty;
 
     return {
       poiId,
@@ -289,54 +393,76 @@ export class RouteCalculator {
 
     console.log(`Day ${day}: Filtered ${availablePOIs.length} POIs down to ${validPOIs.length} valid POIs`);
 
-    // Calculate priorities for all valid POIs
-    const priorities = validPOIs.map(poi => 
-      this.calculatePOIPriority(
-        poi.id,
-        poi.type,
-        poi.estimatedTime,
-        poi.estimatedRunes
-      )
-    );
-
-    // Filter accessible POIs (exclude start and end POIs from route calculation)
-    const accessiblePOIs = priorities.filter(priority => 
-      priority.adjustedPriority > 0 &&
-      priority.estimatedTime <= this.state.remainingTime &&
-      (!priority.accessibility.requiresKeys || this.state.stoneswordKeys > 0) &&
-      priority.poiId !== startPOI &&
-      priority.poiId !== endPOI
-    );
-
-    // Sort by adjusted priority (highest first)
-    accessiblePOIs.sort((a, b) => b.adjustedPriority - a.adjustedPriority);
-
-    console.log(`Day ${day}: Found ${accessiblePOIs.length} accessible POIs with priorities:`, 
-      accessiblePOIs.map(p => `${p.poiId}:${p.adjustedPriority}`).join(', '));
-
     // Generate route that starts at startPOI, visits intermediate POIs, and ends at endPOI
     const route: number[] = [startPOI];
     let totalTime = 0;
     let totalDistance = 0;
+    let lastVisitedPOI = startPOI;
+    const visitedPOIsInRoute: number[] = [startPOI];
 
-    // Add intermediate POIs based on priority
-    for (const poi of accessiblePOIs) {
-      if (totalTime + poi.estimatedTime <= this.state.remainingTime) {
-        route.push(poi.poiId);
-        totalTime += poi.estimatedTime;
-        this.markPOIVisited(poi.poiId);
-        // TODO: Calculate actual distance between POIs
-        totalDistance += 100; // Placeholder distance
-      } else {
-        console.log(`Day ${day}: Skipping POI ${poi.poiId} due to time constraint`);
+    // Add intermediate POIs based on priority (recalculating after each visit)
+    while (this.state.remainingTime > 0) {
+      // Calculate priorities for all valid POIs, considering distance from last visited POI
+      const priorities = validPOIs.map(poi => 
+        this.calculatePOIPriority(
+          poi.id,
+          poi.type,
+          poi.estimatedTime,
+          poi.estimatedRunes,
+          [],
+          0,
+          lastVisitedPOI // Pass last visited POI for distance calculation
+        )
+      );
+
+      // Filter accessible POIs (exclude start, end, and already visited POIs from route calculation)
+      const accessiblePOIs = priorities.filter(priority => 
+        priority.adjustedPriority > 0 &&
+        priority.estimatedTime <= this.state.remainingTime &&
+        (!priority.accessibility.requiresKeys || this.state.stoneswordKeys > 0) &&
+        priority.poiId !== startPOI &&
+        priority.poiId !== endPOI &&
+        !visitedPOIsInRoute.includes(priority.poiId)
+      );
+
+      // Sort by adjusted priority (highest first)
+      accessiblePOIs.sort((a, b) => b.adjustedPriority - a.adjustedPriority);
+
+      if (accessiblePOIs.length === 0) {
+        console.log(`Day ${day}: No more accessible POIs, ending route`);
+        break;
       }
+
+      // Add the highest priority POI to the route
+      const nextPOI = accessiblePOIs[0];
+      if (!nextPOI) {
+        console.log(`Day ${day}: No valid POI found, ending route`);
+        break;
+      }
+
+      route.push(nextPOI.poiId);
+      totalTime += nextPOI.estimatedTime;
+      this.markPOIVisited(nextPOI.poiId);
+      visitedPOIsInRoute.push(nextPOI.poiId);
+      
+      // Calculate actual distance between POIs
+      const distance = this.calculateDistance(lastVisitedPOI, nextPOI.poiId);
+      totalDistance += distance;
+      lastVisitedPOI = nextPOI.poiId;
+      
+      // Update remaining time
+      this.state.remainingTime -= nextPOI.estimatedTime;
+      
+      console.log(`Day ${day}: Added POI ${nextPOI.poiId} to route (distance: ${distance.toFixed(2)} units, priority: ${nextPOI.adjustedPriority})`);
     }
 
-    // Add end POI
+    // Add end POI and calculate final distance
     route.push(endPOI);
+    const finalDistance = this.calculateDistance(lastVisitedPOI, endPOI);
+    totalDistance += finalDistance;
 
     console.log(`Day ${day}: Generated route with ${route.length} POIs:`, route);
-    console.log(`Day ${day}: Total route time: ${totalTime}s, remaining time: ${this.state.remainingTime}s`);
+    console.log(`Day ${day}: Total route time: ${totalTime}s, total distance: ${totalDistance.toFixed(2)} units, remaining time: ${this.state.remainingTime}s`);
 
     return {
       day,
@@ -345,10 +471,7 @@ export class RouteCalculator {
       route,
       totalTime,
       totalDistance,
-      priorities: accessiblePOIs.reduce((acc, poi) => {
-        acc[poi.poiId] = poi.adjustedPriority;
-        return acc;
-      }, {} as Record<number, number>),
+      priorities: {}, // Will be populated with final priorities
     };
   }
 
@@ -448,5 +571,93 @@ export class RouteCalculator {
       return getPOIIdForNightCircleLocation(layoutData[nightKey]);
     }
     return null;
+  }
+
+  /**
+   * Test method to verify distance calculations
+   * This can be called for debugging and validation
+   */
+  public testDistanceCalculation(): void {
+    console.log("=== Distance Calculation Test ===");
+    
+    // Test the example distance: POI 31 to POI 177
+    const distance = this.calculateDistance(31, 177);
+    const expectedDistance = 1309.47;
+    const tolerance = 0.01;
+    
+    console.log(`POI 31 to POI 177 distance: ${distance.toFixed(2)} units`);
+    console.log(`Expected distance: ${expectedDistance} units`);
+    console.log(`Difference: ${Math.abs(distance - expectedDistance).toFixed(2)} units`);
+    console.log(`Test ${Math.abs(distance - expectedDistance) < tolerance ? 'PASSED' : 'FAILED'}`);
+    
+    // Test distance penalty calculation
+    const penalty = this.calculateDistancePenalty(177, 31);
+    const expectedPenalty = 25;
+    
+    console.log(`Distance penalty for POI 177 from POI 31: ${penalty} points`);
+    console.log(`Expected penalty: ${expectedPenalty} points`);
+    console.log(`Test ${penalty === expectedPenalty ? 'PASSED' : 'FAILED'}`);
+    
+    // Test travel time calculation
+    const travelTime = this.calculateTravelTime(distance);
+    const expectedTravelTime = 210;
+    
+    console.log(`Travel time for distance ${distance.toFixed(2)}: ${travelTime} seconds`);
+    console.log(`Expected travel time: ${expectedTravelTime} seconds`);
+    console.log(`Test ${travelTime === expectedTravelTime ? 'PASSED' : 'FAILED'}`);
+    
+    // Test a shorter distance
+    const shortDistance = this.calculateDistance(1, 2);
+    const shortPenalty = this.calculateDistancePenalty(2, 1);
+    const shortTravelTime = this.calculateTravelTime(shortDistance);
+    
+    console.log(`\nShort distance test (POI 1 to POI 2):`);
+    console.log(`Distance: ${shortDistance.toFixed(2)} units`);
+    console.log(`Penalty: ${shortPenalty} points`);
+    console.log(`Travel time: ${shortTravelTime} seconds`);
+    
+    console.log("=== End Distance Calculation Test ===");
+  }
+
+  /**
+   * Get distance calculation statistics for debugging
+   */
+  public getDistanceStats(): {
+    totalPOIs: number;
+    maxDistance: number;
+    averageDistance: number;
+    sampleDistances: Array<{ from: number; to: number; distance: number }>;
+  } {
+    const poiIds = Array.from(this.poiCoordinates.keys());
+    const sampleDistances: Array<{ from: number; to: number; distance: number }> = [];
+    let maxDistance = 0;
+    let totalDistance = 0;
+    let distanceCount = 0;
+
+    // Calculate some sample distances
+    for (let i = 0; i < Math.min(10, poiIds.length); i++) {
+      for (let j = i + 1; j < Math.min(i + 5, poiIds.length); j++) {
+        const distance = this.calculateDistance(poiIds[i]!, poiIds[j]!);
+        sampleDistances.push({
+          from: poiIds[i]!,
+          to: poiIds[j]!,
+          distance: distance
+        });
+        
+        if (distance > maxDistance) {
+          maxDistance = distance;
+        }
+        
+        totalDistance += distance;
+        distanceCount++;
+      }
+    }
+
+    return {
+      totalPOIs: this.poiCoordinates.size,
+      maxDistance,
+      averageDistance: distanceCount > 0 ? totalDistance / distanceCount : 0,
+      sampleDistances
+    };
   }
 } 

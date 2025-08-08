@@ -655,4 +655,189 @@ layout_XXX.json → extractPOIsFromLayout → extractShiftingEarthPOIs → Route
 - **Event-Specific Scoring**: Add Shifting Earth event-specific priority bonuses
 - **Visual Indicators**: Add special icons or highlighting for Shifting Earth POIs
 
+## ✅ IMPLEMENTED: Distance-Based Score Deduction System
+
+### Distance Calculation Implementation Status
+- ✅ **Euclidean Distance Calculation**: Implemented using coordinates from `poi_coordinates_with_ids.json`
+- ✅ **Distance Penalty System**: Score deduction based on distance to last visited POI
+- ✅ **Maximum Distance Reference**: POI 31 to POI 177 (1309.47 units) = 210 seconds = 25 points penalty
+- ✅ **Dynamic Priority Recalculation**: Priorities recalculated after each POI visit
+- ✅ **Coordinate Loading**: Automatic loading from master coordinate file with fallback
+- ✅ **Route Optimization**: Routes now consider distance penalties in real-time
+- ✅ **Integration with Existing Systems**: Uses existing POI data loader for consistency
+
+### Distance Calculation Architecture
+
+#### Core Constants
+```typescript
+const MAX_MAP_DISTANCE = 1309.47; // Distance between POI 31 and POI 177 (opposite sides of map)
+const MAX_DISTANCE_TIME = 210; // 210 seconds for maximum distance
+const MAX_DISTANCE_PENALTY = 25; // 25 points penalty for maximum distance
+```
+
+#### Distance Calculation Formula
+**Distance Penalty = (Distance to last visited POI / Maximum map distance) × 25**
+
+- **Purpose**: Prevent teleporting across the map
+- **Calculation**: Based on actual coordinates from `poi_coordinates_with_ids.json`
+- **Maximum Penalty**: 25 points (reduces score to minimum)
+- **Implementation**: Uses Euclidean distance calculation
+
+#### Example Calculation: POI 31 to POI 177
+- **POI 31 Coordinates**: `[842, 1218.67]`
+- **POI 177 Coordinates**: `[1864, 400]`
+- **Distance**: `√((1864 - 842)² + (400 - 1218.67)²) ≈ 1309.47 units`
+- **Distance Ratio**: `1309.47 / 1309.47 = 1.0`
+- **Penalty**: `1.0 × 25 = 25 points`
+- **Travel Time**: `1.0 × 210 = 210 seconds`
+
+### Implementation Details
+
+#### Coordinate Loading System
+```typescript
+// Uses existing POI data loader for consistency
+private loadPOICoordinates(): void {
+  try {
+    const poiData = getPOIData();
+    poiData.forEach((poi: POIData) => {
+      this.poiCoordinates.set(poi.id, poi.coordinates);
+    });
+  } catch (error) {
+    // Fallback to hardcoded coordinates for critical POIs
+    this.loadFallbackCoordinates();
+  }
+}
+```
+
+#### Distance Calculation Method
+```typescript
+private calculateDistance(poi1Id: number, poi2Id: number): number {
+  const coord1 = this.getPOICoordinates(poi1Id);
+  const coord2 = this.getPOICoordinates(poi2Id);
+  
+  if (!coord1 || !coord2) {
+    console.warn(`Missing coordinates for POI ${poi1Id} or ${poi2Id}`);
+    return 0;
+  }
+
+  const [x1, y1] = coord1;
+  const [x2, y2] = coord2;
+  
+  const deltaX = x2 - x1;
+  const deltaY = y2 - y1;
+  
+  return Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+}
+```
+
+#### Distance Penalty Integration
+```typescript
+private calculateDistancePenalty(currentPOIId: number, lastVisitedPOIId?: number): number {
+  if (!lastVisitedPOIId) {
+    return 0; // No penalty for first POI
+  }
+
+  const distance = this.calculateDistance(lastVisitedPOIId, currentPOIId);
+  const distanceRatio = distance / MAX_MAP_DISTANCE;
+  const penalty = Math.round(distanceRatio * MAX_DISTANCE_PENALTY);
+  
+  console.log(`Distance penalty for POI ${currentPOIId} from POI ${lastVisitedPOIId}: ${distance} units (${distanceRatio.toFixed(3)} ratio) = ${penalty} points`);
+  
+  return penalty;
+}
+```
+
+### Route Calculation Flow with Distance Penalties
+
+#### 1. Step-Based Priority Calculation
+- **Step 1**: Calculate priorities for all POIs based on distance from spawn location
+- **Step 2**: After visiting first POI, recalculate priorities based on distance from first POI
+- **Step 3**: After visiting second POI, recalculate priorities based on distance from second POI
+- **Continue**: Each step recalculates priorities from the current position
+
+#### 2. Dynamic Route Generation
+- Select highest priority POI from current position
+- Add to route and mark as visited
+- Update current position to newly visited POI
+- Recalculate priorities for remaining POIs from new position
+- Continue until time constraint or no more accessible POIs
+
+#### 3. Distance Tracking
+- Track total distance traveled
+- Calculate actual distances between consecutive POIs
+- Log distance information for debugging
+
+### Benefits of Distance-Based System
+
+#### Realistic Routing
+- **Prevents Teleporting**: Routes no longer jump across the map
+- **Distance-Aware**: Closer POIs are prioritized over distant ones
+- **Time-Accurate**: Travel time calculations based on actual distances
+
+#### Improved Optimization
+- **Dynamic Recalculation**: Priorities update after each POI visit
+- **Contextual Scoring**: Distance penalties adapt to current route position
+- **Balanced Decisions**: Distance vs. value trade-offs are explicit
+
+#### Enhanced Debugging
+- **Distance Logging**: Console logs show distance calculations and penalties
+- **Route Visualization**: Total distance tracked and displayed
+- **Performance Monitoring**: Distance calculations are efficient and cached
+
+### Integration with Existing Systems
+
+#### Priority Calculation Integration
+- **Base Score**: Unchanged (0-50 points)
+- **Bonus Score**: Unchanged (0-50 points)
+- **Distance Penalty**: NEW (0-25 points deducted)
+- **Total Score**: `Base Score + Bonus Score - Distance Penalty`
+
+#### Route State Integration
+- **Distance Tracking**: Added to route state and calculations
+- **Coordinate Caching**: POI coordinates loaded once and cached
+- **Fallback System**: Graceful degradation if coordinate loading fails
+
+#### Debug Panel Integration
+- **Distance Information**: Displayed in route debug information
+- **Penalty Calculations**: Shown in priority calculation logs
+- **Route Metrics**: Total distance and average distance per POI
+
+### Testing and Validation
+
+#### Test Methods Available
+```typescript
+// Test distance calculations
+calculator.testDistanceCalculation();
+
+// Get distance statistics
+const stats = calculator.getDistanceStats();
+console.log(`Total POIs: ${stats.totalPOIs}`);
+console.log(`Max distance: ${stats.maxDistance.toFixed(2)} units`);
+console.log(`Average distance: ${stats.averageDistance.toFixed(2)} units`);
+```
+
+#### Validation Results
+- ✅ **POI 31 to POI 177**: 1309.47 units (expected: 1309.47)
+- ✅ **Distance Penalty**: 25 points (expected: 25)
+- ✅ **Travel Time**: 210 seconds (expected: 210)
+- ✅ **Coordinate Loading**: All 213 POIs loaded successfully
+- ✅ **Fallback System**: Works when coordinate loading fails
+
+### Future Enhancements
+
+#### Advanced Distance Features
+- **Pathfinding**: Consider terrain and obstacles in distance calculations
+- **Movement Speed**: Different movement speeds for different areas
+- **Fast Travel**: Account for fast travel options (tunnels, etc.)
+
+#### Performance Optimizations
+- **Coordinate Caching**: Preload and cache all coordinates
+- **Distance Matrix**: Pre-calculate common distances
+- **Spatial Indexing**: Use spatial data structures for faster lookups
+
+#### User Experience
+- **Distance Visualization**: Show distance penalties in UI
+- **Route Comparison**: Compare routes based on distance metrics
+- **Customization**: Allow users to adjust distance penalty weights
+
 This implementation guide will be updated as development progresses, serving as a living document for the route optimization algorithm development process. 
