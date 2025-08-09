@@ -27,6 +27,9 @@ export type SidebarProps = {
   setPriorityCalculations?: (calculations: POIPriority[]) => void;
   completeRoute?: CompleteRoute | null;
   setCompleteRoute?: (route: CompleteRoute | null) => void;
+  setDebugRoute?: (route: number[]) => void;
+  setDebugDay1Route?: (route: number[]) => void;
+  setDebugDay2Route?: (route: number[]) => void;
 };
 
 export function Sidebar({ 
@@ -41,6 +44,9 @@ export function Sidebar({
   setPriorityCalculations,
   completeRoute,
   setCompleteRoute,
+  setDebugRoute,
+  setDebugDay1Route,
+  setDebugDay2Route,
 }: SidebarProps) {
   if (!isOpen) return null;
 
@@ -75,6 +81,32 @@ export function Sidebar({
     e.preventDefault();
     const newLayoutNumber = parseInt(inputValue);
     if (newLayoutNumber >= 1 && newLayoutNumber <= 320) {
+      // Clear all route-related state when loading a new seed
+      // This prevents old routes from appearing on new map layouts
+      if (setRouteState) {
+        setRouteState(null);
+      }
+      if (setPriorityCalculations) {
+        setPriorityCalculations([]);
+      }
+      if (setCompleteRoute) {
+        setCompleteRoute(null);
+      }
+      if (setDebugRoute) {
+        setDebugRoute([]);
+      }
+      if (setDebugDay1Route) {
+        setDebugDay1Route([]);
+      }
+      if (setDebugDay2Route) {
+        setDebugDay2Route([]);
+      }
+      
+      // Also clear local state if using local state
+      setLocalCurrentState(routeCalculator.getCurrentState());
+      setLocalPriorityCalculations([]);
+      
+      // Load the new layout
       onLayoutChange?.(newLayoutNumber);
     }
   };

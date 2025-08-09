@@ -34,6 +34,8 @@ export default function Home() {
   const [completeRoute, setCompleteRoute] = useState<CompleteRoute | null>(null);
   const [debugPriorities, setDebugPriorities] = useState<POIPriority[]>([]);
   const [debugRoute, setDebugRoute] = useState<number[]>([]);
+  const [debugDay1Route, setDebugDay1Route] = useState<number[]>([]);
+  const [debugDay2Route, setDebugDay2Route] = useState<number[]>([]);
 
   const handleToggleChange = (key: string, value: boolean) => {
     setIconToggles(toggles => ({ ...toggles, [key]: value }));
@@ -85,6 +87,9 @@ export default function Home() {
                 setPriorityCalculations={setPriorityCalculations}
                 completeRoute={completeRoute}
                 setCompleteRoute={setCompleteRoute}
+                setDebugRoute={setDebugRoute}
+                setDebugDay1Route={setDebugDay1Route}
+                setDebugDay2Route={setDebugDay2Route}
               />
             </div>
             {/* 8px gap between objectives and map */}
@@ -104,6 +109,10 @@ export default function Home() {
                 teamMembers={teamMembers}
                 debugRoute={debugRoute}
                 setDebugRoute={setDebugRoute}
+                debugDay1Route={debugDay1Route}
+                setDebugDay1Route={setDebugDay1Route}
+                debugDay2Route={debugDay2Route}
+                setDebugDay2Route={setDebugDay2Route}
               />
             </div>
           </>
@@ -123,6 +132,10 @@ export default function Home() {
               teamMembers={teamMembers}
               debugRoute={debugRoute}
               setDebugRoute={setDebugRoute}
+              debugDay1Route={debugDay1Route}
+              setDebugDay1Route={setDebugDay1Route}
+              debugDay2Route={debugDay2Route}
+              setDebugDay2Route={setDebugDay2Route}
             />
             {sidebarOpen && (
               <>
@@ -150,6 +163,9 @@ export default function Home() {
                     setPriorityCalculations={setPriorityCalculations}
                     completeRoute={completeRoute}
                     setCompleteRoute={setCompleteRoute}
+                    setDebugRoute={setDebugRoute}
+                    setDebugDay1Route={setDebugDay1Route}
+                    setDebugDay2Route={setDebugDay2Route}
                   />
                 </div>
               </>

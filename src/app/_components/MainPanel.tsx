@@ -29,6 +29,10 @@ export function MainPanel({
   teamMembers = [],
   debugRoute = [],
   setDebugRoute = () => {},
+  debugDay1Route = [],
+  setDebugDay1Route = () => {},
+  debugDay2Route = [],
+  setDebugDay2Route = () => {},
 }: { 
   iconToggles: IconToggles; 
   onLayoutChange?: (layoutNumber: number) => void;
@@ -42,6 +46,10 @@ export function MainPanel({
   teamMembers?: Array<{ id: number; nightfarer: any; startsWithStoneswordKey: boolean }>;
   debugRoute?: number[];
   setDebugRoute?: (route: number[]) => void;
+  debugDay1Route?: number[];
+  setDebugDay1Route?: (route: number[]) => void;
+  debugDay2Route?: number[];
+  setDebugDay2Route?: (route: number[]) => void;
 }) {
   const [showIcons, setShowIcons] = useState(true);
   const [showTitles, setShowTitles] = useState(true);
@@ -50,8 +58,6 @@ export function MainPanel({
   
   // Route debug state
   const [debugPanelVisible, setDebugPanelVisible] = useState(false);
-  const [debugDay1Route, setDebugDay1Route] = useState<number[]>([]);
-  const [debugDay2Route, setDebugDay2Route] = useState<number[]>([]);
 
   // Fetch layout data if layoutNumber is provided
   const { data: layoutData } = api.poi.getLayout.useQuery(
@@ -89,6 +95,7 @@ export function MainPanel({
             {debugPanelVisible && (
               <div className="absolute top-full right-0 mt-2 p-4 bg-black bg-opacity-90 border border-gray-600 rounded min-w-[320px] backdrop-blur-sm max-h-[80vh] overflow-y-auto">
                 <RouteDebugPanel
+                  key={`debug-panel-${layoutNumber}`}
                   state={routeState || {
                     runesGained: 0,
                     playerLevel: 1,
