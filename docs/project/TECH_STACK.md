@@ -4,7 +4,7 @@
 **Command**: `npx create-t3-app@latest nightreign-map --typescript --tailwind --nextjs --prisma --trpc`
 
 ### Components
-- **Next.js 14+**: App router, SSR for SEO, performance optimization
+- **Next.js 15+**: App router, SSR for SEO, performance optimization
 - **TypeScript**: Type safety for complex game data structures
 - **Tailwind CSS**: Rapid responsive UI development
 - **Prisma**: Database ORM for pattern/landmark data, connected to Supabase (PostgreSQL)
@@ -14,6 +14,6 @@
 
 ## Additional Dependencies
 ```bash
-npm install konva react-konva lucide-react recharts @radix-ui/react-dialog
+npm install konva react-konva
 npm install -D @types/konva sharp
 ```
