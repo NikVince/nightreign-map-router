@@ -19,7 +19,7 @@
 - [x] Update Prisma schema to include POI tables and relations.
   - _**Completed:** Schema updated in `prisma/schema.prisma` for all POI/map pattern relations._
 - [x] Plan for future addition of coordinates to POIs.
-  - _**Completed:** See `/docs/POI_COORDINATE_ASSIGNMENT.md` for coordinate assignment plan._
+  - _**Completed:** See `/docs/POI_COORDINATE_SETUP.md` for coordinate assignment plan._
 - [x] Create migration scripts for Supabase.
   - _**Completed:** Migrations created and applied for new/updated schema._
 
@@ -37,7 +37,7 @@
 - [x] Prepare frontend types and mock data for map rendering.
   - _**Completed:** Frontend types and mock data added in `src/data/poi.ts`, aligned with backend types and API._
 - [x] Document how to assign coordinates to POIs in the future.
-  - _**Completed:** See `/docs/POI_COORDINATE_ASSIGNMENT.md`._
+  - _**Completed:** See `/docs/POI_COORDINATE_SETUP.md`._
 
 ## 5. Testing & Validation
 - [ ] Unit test data parsing and seeding logic.

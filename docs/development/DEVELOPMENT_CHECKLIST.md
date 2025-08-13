@@ -49,7 +49,7 @@
 - [x] Create sample pattern data (5-10 patterns)
 - [x] Integrate mock MapPattern and Landmark data
 - [x] Render landmarks as icons on the map using mock data
-- [x] Pattern data import pipeline (CSV-to-JSON, validation, DB import/seed) — see PATTERN_DATA_PIPELINE.md
+- [x] Pattern data import pipeline (CSV-to-JSON, validation, DB import/seed) — see DATA_PIPELINE_OVERVIEW.md
 
 ### Landmark Rendering & Interaction
 - [x] Implement landmark rendering with placeholder icons

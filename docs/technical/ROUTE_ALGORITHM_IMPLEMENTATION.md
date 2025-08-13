@@ -233,7 +233,7 @@ The algorithm maintains several critical counters that influence route decisions
 #### 1. **Runes Gained Counter**
 - **Purpose**: Tracks total runes collected during the expedition
 - **Increment**: Add estimated rune rewards from each visited POI
-- **Source**: POI_INFO_FOR_ALGORITHM.md rune values
+- **Source**: POI_PRIORITY_SCORES.md rune values
 - **Usage**: Determines player level and influences POI priority
 
 #### 2. **Player Level**
@@ -286,7 +286,7 @@ The algorithm maintains several critical counters that influence route decisions
 **Goal**: Implement core pathfinding and priority scoring
 
 #### 2.1 Priority Scoring System ✅
-- [x] Implement base priority scores from POI_INFO_FOR_ALGORITHM.md
+- [x] Implement base priority scores from POI_PRIORITY_SCORES.md
 - [x] Add time-based priority adjustments
 - [x] Implement class-specific modifiers
 - [x] Add Nightlord weakness targeting
@@ -440,7 +440,7 @@ interface POIPriority {
 - Extract available POIs from current layout
 
 #### 2. POI Priority Calculation ✅
-- Calculate base priority from POI_INFO_FOR_ALGORITHM.md
+- Calculate base priority from POI_PRIORITY_SCORES.md
 - Apply time-based adjustments
 - Add class-specific modifiers
 - Apply Nightlord weakness bonuses
@@ -493,7 +493,7 @@ interface POIPriority {
 - **MapCanvas.tsx**: Route line drawing logic ✅
 - **TeamComposition.tsx**: Calculate Route button ✅
 - **Sidebar.tsx**: Route information display ✅
-- **POI_INFO_FOR_ALGORITHM.md**: Priority score data ✅
+- **POI_PRIORITY_SCORES.md**: Priority score data ✅
 
 ### New Components Implemented ✅
 - **RouteCalculator.ts**: Core algorithm implementation ✅

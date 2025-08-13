@@ -179,8 +179,8 @@ Comprehensive documentation is available in the [`/docs`](./docs) directory:
 - **[IMPLEMENTATION_PHASES.md](./docs/IMPLEMENTATION_PHASES.md)**: Development roadmap
 - **[DEVELOPMENT_CHECKLIST.md](./docs/DEVELOPMENT_CHECKLIST.md)**: Progress tracking
 - **[TECH_STACK.md](./docs/TECH_STACK.md)**: Technology stack details
-- **[POI_COORDINATE_ASSIGNMENT.md](./docs/POI_COORDINATE_ASSIGNMENT.md)**: POI coordinate system
-- **[DYNAMIC_POI_LOADING_IMPLEMENTATION.md](./docs/DYNAMIC_POI_LOADING_IMPLEMENTATION.md)**: Dynamic POI system
+- **[POI_COORDINATE_SETUP.md](./docs/POI_COORDINATE_SETUP.md)**: POI coordinate system
+- **[POI_LOADING_SYSTEM.md](./docs/POI_LOADING_SYSTEM.md)**: Dynamic POI system
 
 ## Contributing
 

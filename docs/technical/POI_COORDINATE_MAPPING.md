@@ -90,4 +90,4 @@ const scaledY = (y / 1690) * mapHeight;
 ---
 
 ## See Also
-- For robust, up-to-date instructions on extracting and updating POI coordinates from SVGs, see `docs/ASSET_EXTRACTION.md` and the automated workflow in `docs/POI_COORDINATE_ASSIGNMENT.md`. 
+- For robust, up-to-date instructions on extracting and updating POI coordinates from SVGs, see `docs/ASSET_EXTRACTION.md` and the automated workflow in `docs/POI_COORDINATE_SETUP.md`. 

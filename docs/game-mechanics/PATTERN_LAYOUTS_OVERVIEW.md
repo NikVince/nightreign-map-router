@@ -59,7 +59,7 @@ This document describes the architecture and workflow for generating, storing, a
 ---
 
 ## References
-- See also: `PATTERN_DATA_PIPELINE.md` for more details on the data pipeline.
+- See also: `DATA_PIPELINE_OVERVIEW.md` for more details on the data pipeline.
 - See also: `map_data_extraction.md` for extraction logic and data sources.
 - **POI Number Reference:** `public/assets/maps/poi_coordinates_with_ids.json` — All POIs and their assigned numbers/coordinates.
 - **POI Name Mapping:** `public/assets/maps/coordinates_backup/poi_name_coordinate_map.js` — Maps POI numbers to descriptive titles for linking with CSV content. 

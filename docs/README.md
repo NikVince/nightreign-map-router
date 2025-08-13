@@ -11,9 +11,9 @@ This folder contains comprehensive documentation for the Nightreign Map Router p
 
 ### ⚙️ **technical/** - Technical Implementation & Algorithms
 - **ROUTE_ALGORITHM_IMPLEMENTATION.md** - Core routing algorithm implementation
-- **POI_COORDINATE_ASSIGNMENT.md** - POI coordinate system implementation
-- **POI_COORDINATE_SCALING.md** - Coordinate scaling and transformation
-- **PATTERN_DATA_PIPELINE.md** - Data processing pipeline for map patterns
+- **POI_COORDINATE_SETUP.md** - POI coordinate system setup and assignment
+- **POI_COORDINATE_MAPPING.md** - Coordinate scaling and transformation for map rendering
+- **DATA_PIPELINE_OVERVIEW.md** - Data processing pipeline for map patterns
 - **ASSET_EXTRACTION.md** - Game asset extraction and processing
 
 ### 🛠️ **development/** - Development Guidelines & Workflows
@@ -22,19 +22,19 @@ This folder contains comprehensive documentation for the Nightreign Map Router p
 - **AI_TODO_AND_REVERT_LOG.md** - AI-assisted development log
 
 ### 🎮 **game-mechanics/** - Game-Specific Mechanics & POI Information
-- **POI_INFO_FOR_ALGORITHM.md** - Complete POI reference with priority scores
+- **POI_PRIORITY_SCORES.md** - Complete POI reference with priority scores (0-100)
 - **GAME_MECHANICS.md** - Core game mechanics and systems
 - **PATTERN_LAYOUTS_OVERVIEW.md** - Map pattern layouts and variations
 
 ### 📋 **implementation/** - Implementation Phases & Workflows
 - **IMPLEMENTATION_PHASES.md** - Project implementation phases
 - **POI_IMPLEMENTATION_CHECKLIST.md** - POI implementation tasks
-- **POI_ADD_MODIFY_WORKFLOW.md** - POI modification workflow
-- **POI_NAMING_CONFLICTS.md** - POI naming conflict resolution
-- **DYNAMIC_POI_LOADING_IMPLEMENTATION.md** - Dynamic POI loading system
-- **GLOBAL_POI_NUMBERING.md** - Global POI numbering system
-- **POI_NUMBERING_STRATEGY.md** - POI numbering strategy and rules
-- **DATA_LINKING_WORKFLOW.md** - Data linking and relationship workflows
+- **POI_MANAGEMENT_WORKFLOW.md** - POI modification and management workflow
+- **POI_NAMING_RESOLUTION.md** - POI naming conflict resolution
+- **POI_LOADING_SYSTEM.md** - Dynamic POI loading system
+- **POI_NUMBERING_SYSTEM.md** - Global POI numbering system
+- **POI_NUMBERING_RULES.md** - POI numbering strategy and rules
+- **POI_DATA_LINKING.md** - Data linking and relationship workflows
 
 ### 📦 **backup/** - Backup Documentation
 - Contains backup versions of important documents

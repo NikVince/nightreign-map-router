@@ -26,7 +26,7 @@ const MAX_MAP_DISTANCE = 1309.47; // Distance between POI 31 and POI 177 (opposi
 const MAX_DISTANCE_TIME = 210; // 210 seconds for maximum distance
 const MAX_DISTANCE_PENALTY = 25; // 25 points penalty for maximum distance
 
-// Base priority scores from POI_INFO_FOR_ALGORITHM.md
+// Base priority scores from POI_PRIORITY_SCORES.md
 const POI_BASE_PRIORITIES: Record<LandmarkType, number> = {
   [LandmarkType.Church]: 50,
   [LandmarkType.GreatChurch]: 25,
