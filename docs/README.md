@@ -47,6 +47,19 @@ This folder contains comprehensive documentation for the Nightreign Map Router p
 - **Game Logic**: Review `game-mechanics/` for game-specific information
 - **Implementation**: Use `implementation/` for detailed workflows and phases
 
+## ⚠️ Route Suggestion Feature - Development Halted
+
+**Status**: Development temporarily halted
+
+The route suggestion feature has been paused in development due to project scope considerations. While this feature was initially planned to provide automated routing between POIs, the current focus has shifted to optimizing the core map display functionality.
+
+**Current Priority**: Improving the map layout search and display experience
+- **Problem**: Users must manually search through 320 available layouts, which is time-consuming
+- **Goal**: Create an intuitive interface for players to quickly find and view relevant map layouts
+- **Focus**: Streamlining the map discovery process rather than automated routing
+
+**Future**: Route suggestion may be revisited once the core map display functionality is optimized and user experience is improved.
+
 ## 📝 Document Maintenance
 
 Documents are organized by content type and purpose. When adding new documentation:
