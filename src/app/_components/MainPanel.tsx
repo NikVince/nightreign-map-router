@@ -81,7 +81,7 @@ export function MainPanel({
           onIconToggleChange={onIconToggleChange || (() => {})}
         />
         
-        {/* Route Debug Dropdown */}
+        {/* Route Debug Dropdown - TEMPORARILY COMMENTED OUT
         <div className="absolute top-4 right-4 z-20">
           <div className="relative">
             <button
@@ -125,6 +125,7 @@ export function MainPanel({
             )}
           </div>
         </div>
+        */}
         
         <MapCanvas 
           iconToggles={iconToggles} 

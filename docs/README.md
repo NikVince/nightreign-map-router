@@ -60,6 +60,41 @@ The route suggestion feature has been paused in development due to project scope
 
 **Future**: Route suggestion may be revisited once the core map display functionality is optimized and user experience is improved.
 
+## 🔧 Temporarily Commented-Out Features
+
+**Status**: Features temporarily disabled but logic preserved
+
+The following features have been temporarily commented out to focus development efforts on core map display functionality. All logic and functionality remains intact and can be easily restored when needed.
+
+### **Team Composition Panel** (Left Sidebar)
+- **Location**: `src/app/_components/Sidebar.tsx` (lines ~164-259)
+- **Purpose**: Team member management and route calculation trigger
+- **Features**: 
+  - Add/remove team members (1-3 players)
+  - Nightfarer class selection for each player
+  - Stonesword Key starting item toggle
+  - Route calculation button with full algorithm integration
+- **Status**: Commented out with `{/* Team Composition - TEMPORARILY COMMENTED OUT */}`
+
+### **Route Debug Menu** (Canvas Overlay)
+- **Location**: `src/app/_components/MainPanel.tsx` (lines ~82-118)
+- **Purpose**: Debug information display and route testing
+- **Features**:
+  - Route debug panel toggle button
+  - Priority calculations display
+  - Route state monitoring
+  - Debug route manipulation tools
+- **Status**: Commented out with `{/* Route Debug Dropdown - TEMPORARILY COMMENTED OUT */}`
+
+### **Restoration Instructions**
+To restore these features:
+1. Remove the comment blocks from the respective files
+2. Ensure all required props and state variables are properly passed
+3. Verify that the `TeamComposition` and `RouteDebugPanel` components are imported
+4. Test functionality to ensure no breaking changes occurred during development
+
+**Note**: These features contain significant routing algorithm logic and should be preserved for future route suggestion implementation.
+
 ## 📝 Document Maintenance
 
 Documents are organized by content type and purpose. When adding new documentation:

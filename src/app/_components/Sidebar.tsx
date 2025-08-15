@@ -161,7 +161,7 @@ export function Sidebar({
         </form>
       </div>
 
-      {/* Team Composition */}
+      {/* Team Composition - TEMPORARILY COMMENTED OUT
       <TeamComposition 
         teamMembers={teamMembers}
         onTeamChange={(updatedTeam) => {
@@ -257,6 +257,7 @@ export function Sidebar({
           console.log("State with route:", stateWithRoute);
         }}
       />
+      */}
 
       {/* Layout Information */}
       {layoutData && (
