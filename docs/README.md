@@ -35,6 +35,7 @@ This folder contains comprehensive documentation for the Nightreign Map Router p
 - **POI_NUMBERING_SYSTEM.md** - Global POI numbering system
 - **POI_NUMBERING_RULES.md** - POI numbering strategy and rules
 - **POI_DATA_LINKING.md** - Data linking and relationship workflows
+- **SMART_LAYOUT_FILTERING_IMPLEMENTATION.md** - Smart layout filtering system implementation plan
 
 ### 📦 **backup/** - Backup Documentation
 - Contains backup versions of important documents
@@ -57,6 +58,11 @@ The route suggestion feature has been paused in development due to project scope
 - **Problem**: Users must manually search through 320 available layouts, which is time-consuming
 - **Goal**: Create an intuitive interface for players to quickly find and view relevant map layouts
 - **Focus**: Streamlining the map discovery process rather than automated routing
+
+**Solution**: Smart Layout Filtering System
+- **Implementation Plan**: See `implementation/SMART_LAYOUT_FILTERING_IMPLEMENTATION.md`
+- **Expected Improvement**: Reduce layout identification time from 30-60 seconds to 5-10 seconds
+- **Approach**: Intelligent filtering based on visible POIs rather than manual search
 
 **Future**: Route suggestion may be revisited once the core map display functionality is optimized and user experience is improved.
 
