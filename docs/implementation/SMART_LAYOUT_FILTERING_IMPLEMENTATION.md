@@ -15,21 +15,53 @@ This document outlines the implementation plan for the Smart Layout Filtering sy
 ### Core Concept
 Instead of requiring users to manually search through 320 layouts, the system will intelligently filter layouts based on POIs the user can identify on their current map.
 
+### Three-Stage Filtering System
+1. **Nightlord Selection** - User selects their target Nightlord (reduces from 320 to 40 layouts)
+2. **Map Tile Layout** - User selects the active map tile layout (reduces from 40 to 5-20 layouts)
+3. **POI Pattern Recognition** - User selects visible POIs to identify the exact layout
+
+### Phased Implementation Strategy
+**Phase 1: Church-Only Filtering (Initial Release)**
+- Implement filtering using only church spawn locations
+- Test accuracy and user experience
+- Measure how many layouts remain after filtering
+
+**Phase 2: Enhanced POI Filtering (Future Release)**
+- Add Sorcerer's Rise locations to the filtering system
+- Combine Church + Sorcerer's Rise patterns for maximum accuracy
+- Expected to achieve 95-98% accuracy (1-2 layouts remaining)
+
 ### User Experience Flow
 1. **Quick Start**: User opens app and sees "What do you see on your map?" interface
-2. **POI Selection**: User clicks on 2-3 key POIs they can identify
-3. **Smart Filtering**: System filters from 320 layouts to 5-10 matching candidates
-4. **Visual Confirmation**: User sees thumbnails and selects correct layout
-5. **Instant Loading**: Map loads with correct layout immediately
+2. **Nightlord Selection**: User selects their target Nightlord from dropdown
+3. **Map Layout Selection**: User selects the active map tile layout
+4. **POI Selection**: User clicks on 2-3 key POIs they can identify (starting with churches)
+5. **Smart Filtering**: System filters from 320 layouts to 1-5 matching candidates
+6. **Visual Confirmation**: User sees thumbnails and selects correct layout
+7. **Instant Loading**: Map loads with correct layout immediately
 
 ### Expected Performance Improvement
 - **Before**: 30-60 seconds to find correct layout
 - **After**: 5-10 seconds to identify and load correct layout
 - **Improvement**: 6-12x faster layout identification
 
+### Accuracy Assessment
+- **Phase 1 (Church-Only)**: Expected 80-90% accuracy (5-10 layouts remaining)
+- **Phase 2 (Church + Sorcerer's Rise)**: Expected 95-98% accuracy (1-2 layouts remaining)
+- **Fallback**: When multiple layouts match, user selects from visual previews
+
 ## Technical Implementation
 
-### 1. POI Picker Interface
+### 1. Three-Stage Filter Interface
+
+#### Component: `LayoutFilterWizard.tsx`
+- **Location**: `src/app/_components/LayoutFilterWizard.tsx`
+- **Purpose**: Step-by-step interface for the three-stage filtering process
+- **Features**:
+  - Step 1: Nightlord selection dropdown
+  - Step 2: Map tile layout selection
+  - Step 3: POI selection (starting with churches)
+  - Progress indicator and navigation
 
 #### Component: `POIPicker.tsx`
 - **Location**: `src/app/_components/POIPicker.tsx`
@@ -55,24 +87,47 @@ interface SelectedPOI {
 }
 ```
 
-### 2. Layout Filtering Algorithm
+### 2. Three-Stage Layout Filtering Algorithm
+
+#### Core Function: `filterLayoutsByThreeStages`
+- **Location**: `src/utils/layoutFilter.ts`
+- **Purpose**: Filter 320 layouts using the three-stage approach
+- **Algorithm**:
+  1. **Stage 1**: Filter by Nightlord (320 → 40 layouts)
+  2. **Stage 2**: Filter by map tile layout (40 → 5-20 layouts)
+  3. **Stage 3**: Filter by POI patterns (5-20 → 1-5 layouts)
 
 #### Core Function: `filterLayoutsByPOIs`
 - **Location**: `src/utils/layoutFilter.ts`
-- **Purpose**: Filter 320 layouts based on selected POIs
+- **Purpose**: Filter layouts based on selected POIs (Stage 3)
 - **Algorithm**:
   1. For each selected POI, find layouts containing that POI
   2. Calculate intersection of matching layouts
   3. Rank results by number of matching POIs
-  4. Return top 10 most likely matches
+  4. Return top 5 most likely matches
 
 #### Implementation Logic
 ```typescript
-function filterLayoutsByPOIs(selectedPOIs: SelectedPOI[]): LayoutMatch[] {
+function filterLayoutsByThreeStages(
+  nightlord: string,
+  mapTileLayout: string,
+  selectedPOIs: SelectedPOI[]
+): LayoutMatch[] {
+  // Stage 1: Filter by Nightlord
+  let filteredLayouts = filterLayoutsByNightlord(nightlord);
+  
+  // Stage 2: Filter by map tile layout
+  filteredLayouts = filterLayoutsByMapTile(filteredLayouts, mapTileLayout);
+  
+  // Stage 3: Filter by POI patterns
+  return filterLayoutsByPOIs(filteredLayouts, selectedPOIs);
+}
+
+function filterLayoutsByPOIs(availableLayouts: number[], selectedPOIs: SelectedPOI[]): LayoutMatch[] {
   const layoutMatches = new Map<number, number>();
   
   selectedPOIs.forEach(poi => {
-    const matchingLayouts = findLayoutsWithPOI(poi);
+    const matchingLayouts = findLayoutsWithPOI(poi, availableLayouts);
     matchingLayouts.forEach(layoutId => {
       layoutMatches.set(layoutId, (layoutMatches.get(layoutId) || 0) + 1);
     });
@@ -81,7 +136,7 @@ function filterLayoutsByPOIs(selectedPOIs: SelectedPOI[]): LayoutMatch[] {
   return Array.from(layoutMatches.entries())
     .map(([layoutId, score]) => ({ layoutId, score, confidence: score / selectedPOIs.length }))
     .sort((a, b) => b.score - a.score)
-    .slice(0, 10);
+    .slice(0, 5);
 }
 ```
 
@@ -146,29 +201,31 @@ interface LayoutPreview {
 
 ## Implementation Phases
 
-### Phase 1: Core Infrastructure (Week 1)
-- [ ] Create POIPicker component
-- [ ] Implement layout filtering algorithm
-- [ ] Create POI-layout mapping system
-- [ ] Basic integration with main app
+### Phase 1: Church-Only Filtering (Initial Release - Week 1-2)
+- [ ] Create three-stage filter interface (Nightlord → Map Tile → POI)
+- [ ] Implement church-based layout filtering algorithm
+- [ ] Build layout preview system
+- [ ] Integrate with existing map system
+- [ ] Test accuracy with church-only filtering
+- [ ] Collect user feedback and measure performance
 
-### Phase 2: User Interface (Week 2)
-- [ ] Design and implement POI selection interface
-- [ ] Create layout preview grid
-- [ ] Add search and filtering capabilities
-- [ ] Implement responsive design
+**Expected Outcome**: 80-90% accuracy, reducing 320 layouts to 5-10 candidates
 
-### Phase 3: Performance & Polish (Week 3)
-- [ ] Optimize filtering performance
-- [ ] Add layout thumbnails
-- [ ] Implement caching system
-- [ ] Add user feedback and error handling
+### Phase 2: Enhanced POI Filtering (Future Release - Week 3-4)
+- [ ] Add Sorcerer's Rise locations to filtering system
+- [ ] Implement Church + Sorcerer's Rise combination filtering
+- [ ] Optimize filtering algorithm performance
+- [ ] Add caching for frequently accessed layouts
+- [ ] Implement lazy loading for layout previews
 
-### Phase 4: Testing & Deployment (Week 4)
-- [ ] User testing and feedback
-- [ ] Performance optimization
-- [ ] Bug fixes and refinements
-- [ ] Production deployment
+**Expected Outcome**: 95-98% accuracy, reducing 320 layouts to 1-2 candidates
+
+### Phase 3: Advanced Features (Long-term)
+- [ ] Add POI type filtering and categorization
+- [ ] Implement layout similarity scoring
+- [ ] Add user preference learning
+- [ ] Create layout recommendation system
+- [ ] Add keyboard shortcuts and accessibility features
 
 ## Technical Considerations
 
@@ -195,9 +252,12 @@ interface LayoutPreview {
 - **Adoption rate**: Track usage of new vs. manual method
 
 ### Secondary Metrics
-- **Filtering accuracy**: Percentage of correct layout suggestions
+- **Filtering accuracy**: 
+  - Phase 1 Target: 80-90% (5-10 layouts remaining)
+  - Phase 2 Target: 95-98% (1-2 layouts remaining)
 - **Performance**: Filtering response time
 - **Error rate**: Incorrect layout selections
+- **User fallback usage**: How often users need to select from multiple candidates
 
 ## Future Enhancements
 
@@ -231,8 +291,8 @@ The phased implementation approach ensures rapid delivery of core functionality 
 
 ---
 
-**Document Version**: 1.0  
-**Last Updated**: August 16, 2025  
-**Next Review**: September 16, 2025  
+**Document Version**: 1.1  
+**Last Updated**: August 17, 2025  
+**Next Review**: September 17, 2025  
 **Implementation Owner**: Development Team  
-**Status**: Planning Phase
+**Status**: Planning Phase - Enhanced with Three-Stage Filtering Approach
