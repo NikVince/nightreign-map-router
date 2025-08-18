@@ -32,13 +32,12 @@ Instead of requiring users to manually search through 320 layouts, the system wi
 - Expected to achieve 95-98% accuracy (1-2 layouts remaining)
 
 ### User Experience Flow
-1. **Quick Start**: User opens app and sees "What do you see on your map?" interface
-2. **Nightlord Selection**: User selects their target Nightlord from dropdown
-3. **Map Layout Selection**: User selects the active map tile layout
-4. **POI Selection**: User clicks on 2-3 key POIs they can identify (starting with churches)
-5. **Smart Filtering**: System filters from 320 layouts to 1-5 matching candidates
-6. **Visual Confirmation**: User sees thumbnails and selects correct layout
-7. **Instant Loading**: Map loads with correct layout immediately
+1. **Find My Seed Button**: User clicks "Find My Seed" button in left sidebar (under manual seed loading)
+2. **Layout Clearing**: Current layout is removed, map becomes empty, seed loading shows 0
+3. **Nightlord & Event Selection**: Popup with two dropdowns for target Nightlord and shifting earth event
+4. **Church Location Highlighting**: All possible church spawn locations are highlighted on the map
+5. **Church Selection**: User manually selects/deselects visible churches on their map
+6. **Layout Loading**: System loads correct layout and updates seed loading to show the correct seed number
 
 ### Expected Performance Improvement
 - **Before**: 30-60 seconds to find correct layout
@@ -50,18 +49,110 @@ Instead of requiring users to manually search through 320 layouts, the system wi
 - **Phase 2 (Church + Sorcerer's Rise)**: Expected 95-98% accuracy (1-2 layouts remaining)
 - **Fallback**: When multiple layouts match, user selects from visual previews
 
+## UI/UX Implementation Specifications
+
+### 1. Find My Seed Button Integration
+
+#### Button Placement
+- **Location**: Left sidebar, positioned under the manual seed loading section
+- **Label**: "Find My Seed"
+- **Styling**: Primary button style, clearly visible and accessible
+- **Behavior**: Clicking clears current layout and initiates the seed finding process
+
+#### Layout Clearing Behavior
+- **Map State**: Current layout is completely removed, map becomes empty
+- **Seed Display**: Seed loading number at top of left pane is reset to 0
+- **Visual Feedback**: Clear indication that previous layout has been cleared
+
+### 2. Nightlord & Event Selection Popup
+
+#### Popup Design
+- **Trigger**: Appears immediately after clicking "Find My Seed"
+- **Modal Type**: Centered popup with backdrop overlay
+- **Size**: Appropriate for two dropdown selections without being overwhelming
+
+#### Dropdown Components
+- **Target Nightlord Dropdown**:
+  - Options: All 8 available Nightlords
+  - Default: First option or "Select Nightlord" placeholder
+  - Required: User must select before proceeding
+  
+- **Shifting Earth Event Dropdown**:
+  - Options: Default map layout, Shifting Earth events
+  - Default: "Default Map Layout" or first option
+  - Required: User must select before proceeding
+
+#### Navigation
+- **Continue Button**: Only enabled when both dropdowns have selections
+- **Cancel Button**: Closes popup and returns to empty map state
+
+### 3. Church Location Highlighting System
+
+#### Highlighting Behavior
+- **Trigger**: After Nightlord and event selection, before church selection
+- **Visual Style**: All possible church spawn locations are clearly highlighted
+- **Highlight Type**: Distinct visual treatment (e.g., glowing borders, different colors)
+- **Coverage**: Shows all church locations for the selected Nightlord/event combination
+
+#### Map Interaction
+- **Selection**: Users can click on highlighted locations to select/deselect
+- **Visual Feedback**: Selected churches show different highlighting than available ones
+- **Deselection**: Users can click again to deselect if they made an error
+
+### 4. Church Selection Interface
+
+#### Selection Process
+- **User Action**: Manual clicking on highlighted church locations
+- **Selection State**: Clear visual indication of which churches are selected
+- **Deselection**: Ability to unselect churches by clicking again
+- **Counter**: Visual indicator showing how many churches are currently selected
+
+#### Confirmation
+- **Button**: "Confirm Selection" button appears after at least one church is selected
+- **Validation**: Ensures user has made selections before proceeding
+- **Proceed**: Only enabled when churches are selected
+
+### 5. Layout Loading & Seed Update
+
+#### Loading Process
+- **Algorithm Execution**: Three-stage filtering runs with selected parameters
+- **Loading State**: Visual feedback during processing (spinner, progress bar)
+- **Result**: Correct layout is identified and loaded
+
+#### Seed Display Update
+- **Automatic Update**: Seed loading number automatically updates to show correct seed
+- **Visual Confirmation**: Clear indication that the correct layout has been loaded
+- **Success State**: Map displays the identified layout with all POIs
+
 ## Technical Implementation
 
 ### 1. Three-Stage Filter Interface
 
-#### Component: `LayoutFilterWizard.tsx`
-- **Location**: `src/app/_components/LayoutFilterWizard.tsx`
-- **Purpose**: Step-by-step interface for the three-stage filtering process
+#### Component: `FindMySeedButton.tsx`
+- **Location**: `src/app/_components/FindMySeedButton.tsx`
+- **Purpose**: Main entry point for the seed finding process
 - **Features**:
-  - Step 1: Nightlord selection dropdown
-  - Step 2: Map tile layout selection
-  - Step 3: POI selection (starting with churches)
-  - Progress indicator and navigation
+  - Positioned under manual seed loading in left sidebar
+  - Clears current layout and resets seed display to 0
+  - Triggers the seed finding workflow
+
+#### Component: `NightlordEventSelector.tsx`
+- **Location**: `src/app/_components/NightlordEventSelector.tsx`
+- **Purpose**: Popup interface for Nightlord and event selection
+- **Features**:
+  - Modal popup with two required dropdowns
+  - Nightlord selection (8 options)
+  - Shifting Earth event selection
+  - Continue/Cancel navigation
+
+#### Component: `ChurchLocationHighlighter.tsx`
+- **Location**: `src/app/_components/ChurchLocationHighlighter.tsx`
+- **Purpose**: Highlights and manages church location selection
+- **Features**:
+  - Highlights all possible church spawn locations
+  - Handles click selection/deselection
+  - Visual feedback for selected vs. available churches
+  - Confirmation button for proceeding
 
 #### Component: `POIPicker.tsx`
 - **Location**: `src/app/_components/POIPicker.tsx`
@@ -202,12 +293,14 @@ interface LayoutPreview {
 ## Implementation Phases
 
 ### Phase 1: Church-Only Filtering (Initial Release - Week 1-2)
-- [ ] Create three-stage filter interface (Nightlord → Map Tile → POI)
-- [ ] Implement church-based layout filtering algorithm
-- [ ] Build layout preview system
-- [ ] Integrate with existing map system
+- [ ] Create Find My Seed button component and integrate into sidebar
+- [ ] Implement layout clearing functionality (map reset, seed display reset)
+- [ ] Build NightlordEventSelector popup component
+- [ ] Create ChurchLocationHighlighter component for church selection
+- [ ] Implement three-stage filtering algorithm
+- [ ] Add automatic seed display update after layout identification
 - [ ] Test accuracy with church-only filtering
-- [ ] Collect user feedback and measure performance
+- [ ] Measure user experience improvements
 
 **Expected Outcome**: 80-90% accuracy, reducing 320 layouts to 5-10 candidates
 
@@ -291,8 +384,8 @@ The phased implementation approach ensures rapid delivery of core functionality 
 
 ---
 
-**Document Version**: 1.1  
-**Last Updated**: August 17, 2025  
-**Next Review**: September 17, 2025  
+**Document Version**: 1.2  
+**Last Updated**: August 18, 2025  
+**Next Review**: September 18, 2025  
 **Implementation Owner**: Development Team  
-**Status**: Planning Phase - Enhanced with Three-Stage Filtering Approach
+**Status**: Planning Phase - Enhanced with Detailed UI/UX Specifications
