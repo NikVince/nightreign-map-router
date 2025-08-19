@@ -7,6 +7,9 @@ import { NightfarerClassType, Nightlord, LandmarkType } from "~/types/core";
 import { getPOIIdForLocationWithContext } from "~/utils/poiLocationMapping";
 import { getPOIData } from "~/utils/poiDataLoader";
 import { extractPOIsFromLayout, getPOITypeFromValue, getPOIStats } from "~/utils/poiUtils";
+import { FindMySeedButton } from "./FindMySeedButton";
+import { ChurchLocationHighlighter } from "./ChurchLocationHighlighter";
+import { filterLayoutsByThreeStages, getBestLayoutMatch, type ChurchLocation } from "~/utils/layoutFilter";
 
 // TODO: Add state reset when seed changes (clear route, remove line, reset calculations)
 // TODO: Fix stonesword keys counter to update only on team member toggle changes
@@ -57,6 +60,12 @@ export function Sidebar({
 
   // State for layout selection
   const [inputValue, setInputValue] = useState((layoutNumber || 1).toString());
+
+  // State for seed finding
+  const [showChurchSelector, setShowChurchSelector] = useState(false);
+  const [selectedNightlord, setSelectedNightlord] = useState<string>("");
+  const [selectedEvent, setSelectedEvent] = useState<string>("");
+  const [selectedChurches, setSelectedChurches] = useState<ChurchLocation[]>([]);
 
   // Route calculation state
   const [routeCalculator] = useState(() => new RouteCalculator({
@@ -111,6 +120,55 @@ export function Sidebar({
     }
   };
 
+  // Seed finding handlers
+  const handleClearLayout = () => {
+    // Clear current layout and reset seed display
+    if (onLayoutChange) {
+      onLayoutChange(0); // This will clear the layout
+    }
+    // Reset seed finding state
+    setShowChurchSelector(false);
+    setSelectedNightlord("");
+    setSelectedEvent("");
+    setSelectedChurches([]);
+  };
+
+  const handleFindSeed = (nightlord: string, event: string) => {
+    // Store the selected Nightlord and event
+    setSelectedNightlord(nightlord);
+    setSelectedEvent(event);
+    // Show the church selector
+    setShowChurchSelector(true);
+  };
+
+  const handleChurchSelection = (churches: ChurchLocation[]) => {
+    setSelectedChurches(churches);
+  };
+
+  const handleConfirmChurches = () => {
+    if (selectedChurches.length > 0) {
+      // Run the three-stage filtering algorithm
+      const matches = filterLayoutsByThreeStages(
+        selectedNightlord,
+        selectedEvent,
+        selectedChurches
+      );
+      
+      const bestMatch = getBestLayoutMatch(matches);
+      
+      if (bestMatch) {
+        // Load the best matching layout
+        onLayoutChange?.(bestMatch.layoutId);
+        
+        // Reset seed finding state
+        setShowChurchSelector(false);
+        setSelectedNightlord("");
+        setSelectedEvent("");
+        setSelectedChurches([]);
+      }
+    }
+  };
+
   // Fetch layout data if layoutNumber is provided
   const { data: layoutData } = api.poi.getLayout.useQuery(
     { layoutNumber: layoutNumber || 1 },
@@ -160,6 +218,12 @@ export function Sidebar({
           )}
         </form>
       </div>
+
+      {/* Find My Seed Button */}
+      <FindMySeedButton
+        onFindSeed={handleFindSeed}
+        onClearLayout={handleClearLayout}
+      />
 
       {/* Team Composition - TEMPORARILY COMMENTED OUT
       <TeamComposition 
@@ -325,6 +389,16 @@ export function Sidebar({
         {/* Checklist items will go here */}
         
       </ul>
+
+      {/* Church Location Highlighter */}
+      {showChurchSelector && (
+        <ChurchLocationHighlighter
+          nightlord={selectedNightlord}
+          event={selectedEvent}
+          onChurchSelection={handleChurchSelection}
+          onConfirm={handleConfirmChurches}
+        />
+      )}
     </aside>
   );
 } 
