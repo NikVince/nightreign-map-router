@@ -194,6 +194,37 @@ Contributions, feedback, and suggestions are welcome! If you notice issues, have
 - **Incremental Development**: Break complex features into testable components
 - **Performance Focus**: Optimize for mobile devices and sub-3s load times
 
+## 🤝 Open for Contributions!
+
+**We're actively seeking contributors to help grow this project!** 
+
+As a developer currently juggling work, studies, and multiple side projects, I would greatly appreciate any help from the community. Whether you're a seasoned developer or just getting started, there are many ways you can contribute:
+
+### How You Can Help
+
+- **🐛 Bug Fixes**: Help identify and fix issues
+- **✨ Feature Development**: Implement planned features from our roadmap
+- **🎨 UI/UX Improvements**: Enhance the user interface and experience
+- **📚 Documentation**: Improve or expand our documentation
+- **🧪 Testing**: Help test features and report bugs
+- **💡 Ideas & Feedback**: Share your thoughts on game mechanics and features
+
+### Getting Started
+
+1. Check out our [Development Guidelines](./docs/DEVELOPMENT_GUIDELINES.md)
+2. Look at the [Implementation Phases](./docs/IMPLEMENTATION_PHASES.md) for current priorities
+3. Browse open issues or start a discussion about a feature you'd like to work on
+4. Fork the repository and submit a pull request
+
+### Current Priority Areas
+
+- **Route Planning Algorithm**: Core pathfinding and optimization logic
+- **Timer System**: Day cycle and circle phase tracking
+- **Performance Optimization**: Mobile optimization and loading improvements
+- **Accessibility**: ARIA labels and keyboard navigation
+
+**Every contribution, no matter how small, helps make this project better for the entire Elden Ring: Nightreign community!**
+
 ## Legal Disclaimer
 
 This is a **fan project** created for educational and non-commercial purposes only. Nightreign Router is **not affiliated with, endorsed by, or sponsored by FromSoftware or Bandai Namco**. All referenced game content, names, and assets are © FromSoftware and Bandai Namco. No assets or code from this project may be used for commercial purposes.

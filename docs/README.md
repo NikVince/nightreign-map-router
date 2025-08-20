@@ -108,6 +108,41 @@ Documents are organized by content type and purpose. When adding new documentati
 2. Follow the existing naming convention (UPPERCASE_WITH_UNDERSCORES.md)
 3. Update this README if adding new categories
 
+## 🤝 Contributing
+
+**We welcome contributions from the community!**
+
+This project is currently maintained by a single developer who is juggling work, studies, and various courses, making it challenging to dedicate significant time to development. If you're interested in helping improve the Nightreign Map Router, your contributions would be greatly appreciated!
+
+### **How You Can Help**
+
+- **Bug Reports**: Found an issue? Please report it with detailed steps to reproduce
+- **Feature Requests**: Have ideas for improvements? We'd love to hear them
+- **Code Contributions**: Pull requests for bug fixes, improvements, or new features
+- **Documentation**: Help improve or expand the documentation
+- **Testing**: Test the application and provide feedback on user experience
+- **UI/UX Improvements**: Suggestions for better user interface and experience
+
+### **Getting Started**
+
+1. **Fork the repository** and create a feature branch
+2. **Check the development guidelines** in the `development/` folder
+3. **Review the project overview** in `project/PROJECT_OVERVIEW.md` to understand the goals
+4. **Make your changes** following the established coding standards
+5. **Submit a pull request** with a clear description of your changes
+
+### **Areas That Could Use Help**
+
+- **Smart Layout Filtering**: Implementation of the intelligent POI-based filtering system
+- **Performance Optimization**: Improving map rendering and search speed
+- **Mobile Responsiveness**: Better mobile device support
+- **Testing**: Unit tests and integration tests
+- **Documentation**: Expanding technical documentation and user guides
+
+### **Questions or Need Help?**
+
+Feel free to open an issue for any questions, suggestions, or if you need help getting started. Even small contributions can make a big difference!
+
 ---
 
 *Last updated: August 13, 2024*
